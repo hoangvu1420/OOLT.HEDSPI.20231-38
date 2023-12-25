@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
+    <BorderPane>
+        <center>
+            <Pane fx:id="boardPane" prefHeight="800.0" prefWidth="800.0" />
+        </center>
+        <top>
+            <ToolBar nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
+                <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onBtnExitClick" style="-fx-background-color: #CB3B3B;" text="Exit" textFill="WHITE">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </ToolBar>
+        </top>
+    </BorderPane>
+</StackPane>

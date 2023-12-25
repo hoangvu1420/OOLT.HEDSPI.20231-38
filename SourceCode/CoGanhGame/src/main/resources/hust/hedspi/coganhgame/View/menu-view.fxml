@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="600.0"
+            xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="hust.hedspi.coganhgame.Controller.MenuController">
+   <center>
+      <VBox alignment="CENTER" prefHeight="350.0" prefWidth="590.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+         <BorderPane.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </BorderPane.margin>
+         <Label alignment="CENTER" text="Cờ Gánh">
+            <VBox.margin>
+               <Insets />
+            </VBox.margin>
+            <font>
+               <Font name="Lora" size="48.0" />
+            </font>
+            <effect>
+               <DropShadow>
+                  <color>
+                     <Color red="0.7368420958518982" green="0.36569201946258545" blue="0.36569201946258545" />
+                  </color>
+               </DropShadow>
+            </effect>
+         </Label>
+         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+            <VBox.margin>
+               <Insets bottom="20.0" />
+            </VBox.margin>
+            <Image url="@images/512x512bb.png" />
+         </ImageView>
+         <Button fx:id="btnNewGame" mnemonicParsing="false" onAction="#onNewGameClick" prefHeight="30.0" prefWidth="110.0" text="New game">
+            <VBox.margin>
+               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+            </VBox.margin>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
+         <Button fx:id="btnContinue" mnemonicParsing="false" onAction="#onContinueClick" prefHeight="30.0" prefWidth="110.0" text="Continue">
+            <VBox.margin>
+               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+            </VBox.margin>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
+         <Button fx:id="btnHow" mnemonicParsing="false" onAction="#onHowClick" prefHeight="30.0" prefWidth="110.0" text="How to play">
+            <VBox.margin>
+               <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+            </VBox.margin>
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
+      </VBox>
+   </center>
+   <top>
+      <HBox alignment="CENTER_RIGHT" prefHeight="36.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+         </BorderPane.margin>
+         <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onExitClick" prefHeight="30.0" prefWidth="40.0" style="-fx-background-color: #E74646; -fx-text-fill: white;" text="Exit">
+            <cursor>
+               <Cursor fx:constant="HAND" />
+            </cursor>
+         </Button>
+      </HBox>
+   </top>
+</BorderPane>
