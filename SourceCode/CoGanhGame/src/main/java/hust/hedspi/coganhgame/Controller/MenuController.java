@@ -16,9 +16,13 @@ import javafx.stage.Stage;
 
 
 public class MenuController {
+    @FXML
     public Button btnNewGame;
+    @FXML
     public Button btnContinue;
+    @FXML
     public Button btnHow;
+    @FXML
     public Button btnExit;
 
     @FXML
@@ -44,6 +48,7 @@ public class MenuController {
         }
     }
 
+    @FXML
     public void onContinueClick(ActionEvent actionEvent) {
         try {
             Game game;
@@ -77,9 +82,11 @@ public class MenuController {
         }
     }
 
+    @FXML
     public void onHowClick(ActionEvent actionEvent) {
     }
 
+    @FXML
     public void onExitClick() {
         Alert alert = new Alert(AlertType.CONFIRMATION);
         alert.setTitle("Exit Confirmation");

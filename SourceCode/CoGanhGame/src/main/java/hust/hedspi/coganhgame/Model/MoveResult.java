@@ -23,7 +23,7 @@ public class MoveResult {
         return isValidMove;
     }
 
-    public boolean isCarryMove() {
+    public boolean isCaptureMove() {
         return capturedPieces != null;
     }
 

@@ -150,11 +150,11 @@ public class Game implements Serializable {
         int oldCol = piece.getCol();
 
         // get the connected tiles of the tile at (oldRow, oldCol)
-        ArrayList<Tile> connectedTiles = this.connectionMap.get(this.board[oldRow][oldCol]);
+        ArrayList<Tile> connectedTiles = getConnectedTiles(oldRow, oldCol);
         if (connectedTiles.contains(this.board[row][col])) {
             // if the tile at (row, col) is in the connected tiles, move the piece to the new position
             movePiece(piece, row, col);
-            ArrayList<Piece> capturedPieces = new ArrayList<>(getCarriedPieces(piece, this.connectionMap.get(this.board[row][col])));
+            ArrayList<Piece> capturedPieces = new ArrayList<>(getCarriedPieces(piece, getConnectedTiles(row, col)));
             capturedPieces.addAll(getSurroundedPieces());
             if (!capturedPieces.isEmpty()) {
                 // if the captured pieces are not empty, return a capture move
@@ -181,10 +181,10 @@ public class Game implements Serializable {
 
     private ArrayList<Piece> getCarriedPieces(Piece piece, ArrayList<Tile> connectedTiles) {
         ArrayList<Piece> carriedPieces = new ArrayList<>();
-        // loop through all the connected tiles, check each pair of connected tiles
         int tileRow = piece.getRow();
         int tileCol = piece.getCol();
 
+        // loop through all the connected tiles, check each pair of connected tiles
         for (int i = 0; i < connectedTiles.size(); i++) {
             Tile tile1 = connectedTiles.get(i);
             for (int j = i + 1; j < connectedTiles.size(); j++) {
@@ -244,7 +244,7 @@ public class Game implements Serializable {
         group.add(piece);
 
         boolean isSurrounded = true;
-        ArrayList<Tile> connectedTiles = this.connectionMap.get(this.board[row][col]);
+        ArrayList<Tile> connectedTiles = getConnectedTiles(row, col);
         for (Tile tile : connectedTiles) {
             if (!tile.hasPiece()) {
                 isSurrounded = false;
@@ -259,6 +259,10 @@ public class Game implements Serializable {
         for (Piece piece : group) {
             piece.flipSide();
         }
+    }
+
+    private ArrayList<Tile> getConnectedTiles(int row, int col) {
+        return this.connectionMap.get(this.board[row][col]);
     }
 
     public boolean isGameOver() {
@@ -284,7 +288,7 @@ public class Game implements Serializable {
             if (!file.exists() || file.length() == 0) {
                 throw new GameNotFoundException();
             }
-            FileInputStream fis = new FileInputStream("game_state.txt");
+            FileInputStream fis = new FileInputStream(file);
             ObjectInputStream ois = new ObjectInputStream(fis);
             game = (Game) ois.readObject();
             ois.close();

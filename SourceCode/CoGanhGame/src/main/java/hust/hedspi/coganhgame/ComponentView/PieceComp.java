@@ -9,7 +9,6 @@ import static hust.hedspi.coganhgame.Const.TILE_SIZE;
 import static hust.hedspi.coganhgame.Const.PIECE_SIZE;
 
 public class PieceComp extends StackPane {
-
     private boolean side; // true: red, false: blue
     private double mouseX, mouseY;
     private double oldX, oldY;
