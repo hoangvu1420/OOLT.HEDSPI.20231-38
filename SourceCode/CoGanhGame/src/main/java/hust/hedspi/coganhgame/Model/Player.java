@@ -23,8 +23,6 @@ public class Player implements Serializable{
     private transient IntegerProperty timeLeft;
     private transient Timeline timeline;
 
-    // TODO: finish save/load game
-
     public Player(String name, boolean side, int timeLimit) {
         this.name = name;
         this.side = side;

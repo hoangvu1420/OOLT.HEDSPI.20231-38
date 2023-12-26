@@ -5,7 +5,6 @@ import javafx.scene.layout.Pane;
 import static hust.hedspi.coganhgame.Const.TILE_SIZE;
 
 public class TileComp extends Pane {
-
     public TileComp(int row, int col) {
         // Position the tile
         relocate(col * TILE_SIZE, row * TILE_SIZE);

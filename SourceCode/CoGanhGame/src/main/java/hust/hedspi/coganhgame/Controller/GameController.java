@@ -152,7 +152,7 @@ public class GameController {
 
             if (moveResult.isValidMove()) {
                 pieceComp.move(newRow, newCol);
-                if (moveResult.isCarryMove()) {
+                if (moveResult.isCaptureMove()) {
                     // if the move is a capture move, we remove the pieces that are captured
                     for (Piece capturedModelPiece : moveResult.getCapturedPieces()) {
                         PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
@@ -179,7 +179,6 @@ public class GameController {
     }
 
     private void switchPlayer() {
-
         game.getCurrentPlayer().makeMove();
         game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
         game.getCurrentPlayer().setTimeLeft(game.getTimeLimit());
@@ -208,6 +207,7 @@ public class GameController {
         // TODO: Delete these lines after finished the UI
     }
 
+    @FXML
     public void onBtnExitClick(ActionEvent actionEvent) {
         game.getCurrentPlayer().pauseTimer();
 
