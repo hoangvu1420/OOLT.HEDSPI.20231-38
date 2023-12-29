@@ -263,15 +263,10 @@ public class Game implements Serializable {
         return this.connectionMap.get(this.board[row][col]);
     }
 
-    public ArrayList<Pair<Integer, Integer>> getValidMoves(int row, int col) {
-        ArrayList<Pair<Integer, Integer>> validMoves = new ArrayList<>();
-        ArrayList<Tile> connectedTiles = getConnectedTiles(row, col);
-        for (Tile tile : connectedTiles) {
-            if (!tile.hasPiece()) {
-                validMoves.add(new Pair<>(tile.getRow(), tile.getCol()));
-            }
-        }
-        return validMoves;
+    public ArrayList<Tile> getValidMoves(Tile tile) {
+        ArrayList<Tile> connectedTiles = getConnectedTiles(tile.getRow(), tile.getCol());
+        connectedTiles.removeIf(Tile::hasPiece);
+        return connectedTiles;
     }
 
     public boolean isGameOver() {
