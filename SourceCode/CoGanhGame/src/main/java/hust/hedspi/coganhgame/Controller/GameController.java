@@ -152,7 +152,7 @@ public class GameController {
                 return;
             }
             currentTile = game.getBoard()[rowPressed][colPressed];
-            for (Tile move : game.getValidMoves(currentTile)) {
+            for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
                 System.out.println(move.getRow() + "-" + move.getCol());
                 // TODO: Delete this line after finished the UI,
                 //  replace it with a method to highlight the valid moves on the UI
@@ -168,7 +168,7 @@ public class GameController {
             int colDragged = toBoardPos(pieceComp.getLayoutX());
             if (rowDragged != currentTile.getRow() || colDragged != currentTile.getCol()) {
                 Tile draggedTile = game.getBoard()[rowDragged][colDragged];
-                if (game.getValidMoves(currentTile).contains(draggedTile)) {
+                if (currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
                     System.out.println("To: " + draggedTile.getRow() + "-" + draggedTile.getCol());
                     // TODO: Delete this line after finished the UI,
                     //  replace it with a method to highlight the tileComp that the piece is being dragged to on the UI

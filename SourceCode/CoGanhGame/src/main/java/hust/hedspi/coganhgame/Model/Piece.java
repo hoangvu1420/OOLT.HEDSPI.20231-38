@@ -2,7 +2,7 @@ package hust.hedspi.coganhgame.Model;
 
 import java.io.Serializable;
 
-public class Piece implements Serializable{
+public class Piece implements Serializable {
     private boolean side; // true: red, false: blue
 
     public Piece(boolean side) {

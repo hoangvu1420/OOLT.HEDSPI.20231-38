@@ -1,8 +1,9 @@
 package hust.hedspi.coganhgame.Model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
-public class Tile implements Serializable{
+public abstract class Tile implements Serializable {
     private Piece piece; // each tile may have a piece or not
     private final int row;
     private final int col;
@@ -35,5 +36,27 @@ public class Tile implements Serializable{
 
     public void removePiece() {
         this.piece = null;
+    }
+
+    public abstract ArrayList<Tile> getConnectedTiles(Tile[][] board);
+
+    public ArrayList<Tile> getAvailableMoves(Tile[][] board) {
+        ArrayList<Tile> availableMoves = new ArrayList<>();
+        ArrayList<Tile> connectedTiles = getConnectedTiles(board);
+        for (Tile tile : connectedTiles) {
+            if (!tile.hasPiece()) {
+                availableMoves.add(tile);
+            }
+        }
+        return availableMoves;
+    }
+
+    public static Tile getTileType(Piece piece, int row, int col) {
+        // if row + col is even or 0, return a Tile8Direct otherwise return a Tile4Direct
+        if ((row + col) % 2 == 0) {
+            return new Tile8Direct(piece, row, col);
+        } else {
+            return new Tile4Direct(piece, row, col);
+        }
     }
 }
