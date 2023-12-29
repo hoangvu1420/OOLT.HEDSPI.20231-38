@@ -21,6 +21,7 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class GameController {
     private final Game game;
@@ -136,8 +137,29 @@ public class GameController {
 
     private PieceComp makePieceComp(boolean side, int row, int col) {
         PieceComp pieceComp = new PieceComp(side, row, col);
+        AtomicReference<Double> mouseX = new AtomicReference<>((double) 0);
+        AtomicReference<Double> mouseY = new AtomicReference<>((double) 0);
 
-        pieceComp.setOnMouseReleased(e -> {
+        pieceComp.getEllipse().setOnMousePressed(e -> {
+            mouseX.set(e.getSceneX());
+            mouseY.set(e.getSceneY());
+            int rowPressed = toBoardPos(pieceComp.getLayoutY());
+            int colPressed = toBoardPos(pieceComp.getLayoutX());
+            for (var move : game.getValidMoves(rowPressed, colPressed)) {
+                System.out.println(move.toString());
+            }
+            // bring the piece to the front
+            pieceComp.toFront();
+        });
+
+        pieceComp.getEllipse().setOnMouseDragged(e -> {
+            pieceComp.relocate(e.getSceneX() - mouseX.get() + pieceComp.getOldX(), e.getSceneY() - mouseY.get() + pieceComp.getOldY());
+            int rowDragged = toBoardPos(pieceComp.getLayoutY());
+            int colDragged = toBoardPos(pieceComp.getLayoutX());
+//            System.out.println("Dragged to: " + rowDragged + " " + colDragged);
+        });
+
+        pieceComp.getEllipse().setOnMouseReleased(e -> {
             // when the piece is released, that means the player has finished moving the piece
             // then we process the move
 
@@ -147,8 +169,7 @@ public class GameController {
             int oldRow = toBoardPos(pieceComp.getOldY());
             int oldCol = toBoardPos(pieceComp.getOldX());
 
-            Tile[][] modelBoard = game.getBoard();
-            MoveResult moveResult = game.processMove(modelBoard[oldRow][oldCol].getPiece(), newRow, newCol);
+            MoveResult moveResult = game.processMove(oldRow, oldCol, newRow, newCol);
 
             if (moveResult.isValidMove()) {
                 pieceComp.move(newRow, newCol);
@@ -167,7 +188,6 @@ public class GameController {
             } else {
                 pieceComp.abortMove();
             }
-
         });
 
         return pieceComp;

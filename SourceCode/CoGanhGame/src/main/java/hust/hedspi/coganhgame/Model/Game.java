@@ -2,6 +2,7 @@ package hust.hedspi.coganhgame.Model;
 
 import hust.hedspi.coganhgame.Const;
 import hust.hedspi.coganhgame.exception.GameNotFoundException;
+import javafx.util.Pair;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -39,26 +40,26 @@ public class Game implements Serializable {
                 // if the side is true, the piece is red, otherwise it is blue
                 // make the first row of the board red
                 if (row == 0) {
-                    piece = new Piece(true, row, col);
+                    piece = new Piece(true);
                 }
                 // make the last row of the board blue
                 if (row == Const.HEIGHT - 1) {
-                    piece = new Piece(false, row, col);
+                    piece = new Piece(false);
                 }
                 // make the first column of the board red
                 if (col == 0) {
                     if (row == 1) {
-                        piece = new Piece(true, row, col);
+                        piece = new Piece(true);
                     } else if (row == 2 || row == 3) {
-                        piece = new Piece(false, row, col);
+                        piece = new Piece(false);
                     }
                 }
                 // make the last column of the board blue
                 if (col == Const.WIDTH - 1) {
                     if (row == Const.HEIGHT - 2) {
-                        piece = new Piece(false, row, col);
+                        piece = new Piece(false);
                     } else if (row == Const.HEIGHT - 3 || row == Const.HEIGHT - 4) {
-                        piece = new Piece(true, row, col);
+                        piece = new Piece(true);
                     }
                 }
 
@@ -140,21 +141,26 @@ public class Game implements Serializable {
         }
     }
 
-    public MoveResult processMove(Piece piece, int row, int col) {
-        if (this.board[row][col].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
+    public MoveResult processMove(int oldRow, int oldCol, int newRow, int newCol) {
+        if (newRow < 0 || newRow >= Const.HEIGHT || newCol < 0 || newCol >= Const.WIDTH) {
+            // if the position (row, col) is out of the board, return invalid move
+            return new MoveResult(false);
+        }
+
+        Piece piece = this.board[oldRow][oldCol].getPiece();
+        if (this.board[newRow][newCol].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
             // if the tile at (row, col) already has a piece, return invalid move
             return new MoveResult(false);
         }
 
-        int oldRow = piece.getRow();
-        int oldCol = piece.getCol();
-
         // get the connected tiles of the tile at (oldRow, oldCol)
         ArrayList<Tile> connectedTiles = getConnectedTiles(oldRow, oldCol);
-        if (connectedTiles.contains(this.board[row][col])) {
+        if (connectedTiles.contains(this.board[newRow][newCol])) {
             // if the tile at (row, col) is in the connected tiles, move the piece to the new position
-            movePiece(piece, row, col);
-            ArrayList<Piece> capturedPieces = new ArrayList<>(getCarriedPieces(piece, getConnectedTiles(row, col)));
+            this.board[oldRow][oldCol].removePiece();
+            this.board[newRow][newCol].setPiece(piece);
+            ArrayList<Piece> capturedPieces = new ArrayList<>();
+            capturedPieces.addAll(getCarriedPieces(newRow, newCol, getConnectedTiles(newRow, newCol)));
             capturedPieces.addAll(getSurroundedPieces());
             if (!capturedPieces.isEmpty()) {
                 // if the captured pieces are not empty, return a capture move
@@ -173,24 +179,17 @@ public class Game implements Serializable {
         return new MoveResult(false);
     }
 
-    private void movePiece(Piece piece, int row, int col) {
-        this.board[piece.getRow()][piece.getCol()].removePiece();
-        piece.move(row, col);
-        this.board[row][col].setPiece(piece);
-    }
-
-    private ArrayList<Piece> getCarriedPieces(Piece piece, ArrayList<Tile> connectedTiles) {
+    private ArrayList<Piece> getCarriedPieces(int row, int col, ArrayList<Tile> connectedTiles) {
         ArrayList<Piece> carriedPieces = new ArrayList<>();
-        int tileRow = piece.getRow();
-        int tileCol = piece.getCol();
 
+        Piece piece = this.board[row][col].getPiece();
         // loop through all the connected tiles, check each pair of connected tiles
         for (int i = 0; i < connectedTiles.size(); i++) {
             Tile tile1 = connectedTiles.get(i);
             for (int j = i + 1; j < connectedTiles.size(); j++) {
                 Tile tile2 = connectedTiles.get(j);
 
-                if (tile1.getRow() + tile2.getRow() != 2 * tileRow || tile1.getCol() + tile2.getCol() != 2 * tileCol) {
+                if (tile1.getRow() + tile2.getRow() != 2 * row || tile1.getCol() + tile2.getCol() != 2 * col) {
                     continue;
                 }
 
@@ -218,12 +217,12 @@ public class Game implements Serializable {
         for (int row = 0; row < Const.HEIGHT; row++) {
             for (int col = 0; col < Const.WIDTH; col++) {
                 Tile tile = this.board[row][col];
-                if (tile.hasPiece() && !visited[row][col]) {
+                if (tile.hasPiece() && !visited[row][col] && tile.getPiece().getSide() != this.currentPlayer.getSide()) {
                     // for each piece that has not been visited, we use flood fill algorithm to find the group of pieces
                     // that form a group, if the group is surrounded, we flip the side of the pieces in the group
                     // and add them to the surrounded pieces
                     ArrayList<Piece> group = new ArrayList<>();
-                    if (floodFill(tile.getPiece(), group, visited)) {
+                    if (floodFill(row, col, group, visited)) {
                         flipGroup(group);
                         surroundedPieces.addAll(group);
                         break;
@@ -236,10 +235,9 @@ public class Game implements Serializable {
         return surroundedPieces;
     }
 
-    private boolean floodFill(Piece piece, ArrayList<Piece> group, boolean[][] visited) {
+    private boolean floodFill(int row, int col, ArrayList<Piece> group, boolean[][] visited) {
         // this algorithm is used to find the pieces that form a group then check if the group is surrounded
-        int row = piece.getRow();
-        int col = piece.getCol();
+        Piece piece = this.board[row][col].getPiece();
         visited[row][col] = true;
         group.add(piece);
 
@@ -249,7 +247,7 @@ public class Game implements Serializable {
             if (!tile.hasPiece()) {
                 isSurrounded = false;
             } else if (tile.getPiece().getSide() == piece.getSide() && !visited[tile.getRow()][tile.getCol()]) {
-                isSurrounded &= floodFill(tile.getPiece(), group, visited);
+                isSurrounded &= floodFill(tile.getRow(), tile.getCol(), group, visited);
             }
         }
         return isSurrounded;
@@ -263,6 +261,17 @@ public class Game implements Serializable {
 
     private ArrayList<Tile> getConnectedTiles(int row, int col) {
         return this.connectionMap.get(this.board[row][col]);
+    }
+
+    public ArrayList<Pair<Integer, Integer>> getValidMoves(int row, int col) {
+        ArrayList<Pair<Integer, Integer>> validMoves = new ArrayList<>();
+        ArrayList<Tile> connectedTiles = getConnectedTiles(row, col);
+        for (Tile tile : connectedTiles) {
+            if (!tile.hasPiece()) {
+                validMoves.add(new Pair<>(tile.getRow(), tile.getCol()));
+            }
+        }
+        return validMoves;
     }
 
     public boolean isGameOver() {
