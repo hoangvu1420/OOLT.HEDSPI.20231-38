@@ -10,7 +10,6 @@ import static hust.hedspi.coganhgame.Const.PIECE_SIZE;
 
 public class PieceComp extends StackPane {
     private boolean side; // true: red, false: blue
-    private double mouseX, mouseY;
     private double oldX, oldY;
     private final Ellipse ellipse;
 
@@ -38,16 +37,6 @@ public class PieceComp extends StackPane {
         ellipse.setCursor(Cursor.HAND);
 
         getChildren().addAll(bg, ellipse);
-
-        ellipse.setOnMousePressed(e -> {
-            mouseX = e.getSceneX();
-            mouseY = e.getSceneY();
-            // bring the piece to the front
-            toFront();
-        });
-        ellipse.setOnMouseDragged(e -> {
-            relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
-        });
     }
 
     public double getOldY() {
@@ -60,6 +49,10 @@ public class PieceComp extends StackPane {
 
     public boolean getSide() {
         return side;
+    }
+
+    public Ellipse getEllipse() {
+        return ellipse;
     }
 
     public void move(int row, int col) {

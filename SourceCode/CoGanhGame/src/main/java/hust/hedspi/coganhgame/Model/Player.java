@@ -82,7 +82,6 @@ public class Player implements Serializable{
     }
 
     public void setTurn() {
-        System.out.println("It's " + name + "'s turn");
         playTimer();
     }
 
