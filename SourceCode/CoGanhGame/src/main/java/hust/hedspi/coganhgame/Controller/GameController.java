@@ -30,6 +30,7 @@ public class GameController {
     @FXML
     public Button btnExit;
 
+    private Tile currentTile;
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
     private final TileComp[][] viewBoard = new TileComp[Const.WIDTH][Const.HEIGHT];
@@ -145,8 +146,17 @@ public class GameController {
             mouseY.set(e.getSceneY());
             int rowPressed = toBoardPos(pieceComp.getLayoutY());
             int colPressed = toBoardPos(pieceComp.getLayoutX());
-            for (var move : game.getValidMoves(rowPressed, colPressed)) {
-                System.out.println(move.toString());
+            if (currentTile == null) {
+                currentTile = game.getBoard()[rowPressed][colPressed];
+            } else if (rowPressed == currentTile.getRow() && colPressed == currentTile.getCol()) {
+                return;
+            }
+            currentTile = game.getBoard()[rowPressed][colPressed];
+            for (Tile move : game.getValidMoves(currentTile)) {
+                System.out.println(move.getRow() + "-" + move.getCol());
+                // TODO: Delete this line after finished the UI,
+                //  replace it with a method to highlight the valid moves on the UI
+                // set the tileComp of the valid moves to be highlighted
             }
             // bring the piece to the front
             pieceComp.toFront();
@@ -156,7 +166,15 @@ public class GameController {
             pieceComp.relocate(e.getSceneX() - mouseX.get() + pieceComp.getOldX(), e.getSceneY() - mouseY.get() + pieceComp.getOldY());
             int rowDragged = toBoardPos(pieceComp.getLayoutY());
             int colDragged = toBoardPos(pieceComp.getLayoutX());
-//            System.out.println("Dragged to: " + rowDragged + " " + colDragged);
+            if (rowDragged != currentTile.getRow() || colDragged != currentTile.getCol()) {
+                Tile draggedTile = game.getBoard()[rowDragged][colDragged];
+                if (game.getValidMoves(currentTile).contains(draggedTile)) {
+                    System.out.println("To: " + draggedTile.getRow() + "-" + draggedTile.getCol());
+                    // TODO: Delete this line after finished the UI,
+                    //  replace it with a method to highlight the tileComp that the piece is being dragged to on the UI
+                    // set the tileComp that the piece is being dragged to be highlighted
+                }
+            }
         });
 
         pieceComp.getEllipse().setOnMouseReleased(e -> {
