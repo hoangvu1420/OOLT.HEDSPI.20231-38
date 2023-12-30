@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Game implements Serializable {
-    private Tile[][] board;
+    protected Tile[][] board;
     private final Player player1;
     private final Player player2;
     private Player currentPlayer;
