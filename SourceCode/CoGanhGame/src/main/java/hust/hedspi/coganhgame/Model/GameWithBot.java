@@ -3,8 +3,12 @@ package hust.hedspi.coganhgame.Model;
 import hust.hedspi.coganhgame.Const;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class GameWithBot extends Game{
+    // this GameWithBot class is a subclass of Game class; it provides some methods to serve the bot which
+    // is implemented with Minimax algorithm
+    private static final Stack<Tile[][]> boardHistory = new Stack<>();
     public GameWithBot(String playerName, int timeLimit) {
         super(playerName, "Bot", timeLimit);
     }
@@ -19,7 +23,7 @@ public class GameWithBot extends Game{
                 }
                 ArrayList<Tile> availableTiles = board[row][col].getAvailableMoves(board);
                 for (Tile tile : availableTiles) {
-                    moves.add(new Move(piece, board[row][col], tile));
+                    moves.add(new Move(board[row][col], tile));
                 }
             }
         }
@@ -27,9 +31,21 @@ public class GameWithBot extends Game{
     }
 
     public void makeMove(Move move) {
-        move.getPiece().move(move.getToTile());
-        move.getToTile().setPiece(move.getPiece());
-        move.getFromTile().setPiece(null);
-        flipCurrentSide();
+        int fromRow = move.fromTile().getRow();
+        int fromCol = move.fromTile().getCol();
+        int toRow = move.toTile().getRow();
+        int toCol = move.toTile().getCol();
+        boardHistory.push(board);
+        processMove(fromRow, fromCol, toRow, toCol);
+        switchPlayer();
+    }
+
+    public void undoMove() {
+        if (boardHistory.isEmpty()) {
+            return;
+        }
+        board = boardHistory.pop();
+        switchPlayer();
+        // the method of using stack to store board history is called Memento
     }
 }

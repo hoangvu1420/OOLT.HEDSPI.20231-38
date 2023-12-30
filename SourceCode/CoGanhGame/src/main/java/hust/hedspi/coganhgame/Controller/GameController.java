@@ -191,9 +191,9 @@ public class GameController {
 
             if (moveResult.isValidMove()) {
                 pieceComp.move(newRow, newCol);
-                if (moveResult.isCaptureMove()) {
+                if (moveResult.capturedPieces() != null) {
                     // if the move is a capture move, we remove the pieces that are captured
-                    for (Piece capturedModelPiece : moveResult.getCapturedPieces()) {
+                    for (Piece capturedModelPiece : moveResult.capturedPieces()) {
                         PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
                         capturedPieceComp.flipSide();
                     }

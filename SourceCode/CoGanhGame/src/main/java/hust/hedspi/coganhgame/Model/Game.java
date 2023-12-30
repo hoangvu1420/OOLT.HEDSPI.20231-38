@@ -94,13 +94,13 @@ public class Game implements Serializable {
     public MoveResult processMove(int oldRow, int oldCol, int newRow, int newCol) {
         if (newRow < 0 || newRow >= Const.HEIGHT || newCol < 0 || newCol >= Const.WIDTH) {
             // if the position (row, col) is out of the board, return invalid move
-            return new MoveResult(false);
+            return new MoveResult(false, null);
         }
 
         Piece piece = this.board[oldRow][oldCol].getPiece();
         if (this.board[newRow][newCol].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
             // if the tile at (row, col) already has a piece, return invalid move
-            return new MoveResult(false);
+            return new MoveResult(false, null);
         }
 
         // get the connected tiles of the tile at (oldRow, oldCol)
@@ -123,10 +123,10 @@ public class Game implements Serializable {
                 }
                 return new MoveResult(true, capturedPieces);
             }
-            return new MoveResult(true);
+            return new MoveResult(true, null);
         }
 
-        return new MoveResult(false);
+        return new MoveResult(false, null);
     }
 
     private ArrayList<Piece> getCarriedPieces(int row, int col, ArrayList<Tile> connectedTiles) {
