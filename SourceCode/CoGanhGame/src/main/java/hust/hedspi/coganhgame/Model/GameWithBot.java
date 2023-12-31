@@ -65,10 +65,10 @@ public class GameWithBot extends Game{
         int totalValue = 0;
         for (int row = 0; row < Const.HEIGHT; row++) {
             for (int col = 0; col < Const.WIDTH; col++) {
-                Piece piece = board[row][col].getPiece();
-                if (piece == null) {
+                if (!board[row][col].hasPiece()) {
                     continue;
                 }
+                Piece piece = board[row][col].getPiece();
                 if (piece.getSide() == Const.RED_SIDE) {
                     totalValue += 10;
                     totalValue += favourablePosition[row][col];
