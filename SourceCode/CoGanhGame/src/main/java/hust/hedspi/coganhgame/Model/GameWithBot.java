@@ -28,6 +28,7 @@ public class GameWithBot extends Game{
     }
 
     public MoveResult makeMove(Move move) {
+        // make the move for the bot player
         int fromRow = move.fromTile().getRow();
         int fromCol = move.fromTile().getCol();
         int toRow = move.toTile().getRow();
@@ -38,16 +39,27 @@ public class GameWithBot extends Game{
     }
 
     public void undoMove(Move move, MoveResult moveResult) {
+        // undo the move for the bot player
         Piece piece = move.toTile().getPiece();
         move.toTile().removePiece();
         move.fromTile().setPiece(piece);
         if (moveResult.capturedPieces() != null) {
             getCurrentPlayer().increaseTotalPiece(moveResult.capturedPieces().size());
+            getOpponent().decreaseTotalPiece(moveResult.capturedPieces().size());
             for (Piece capturedPiece : moveResult.capturedPieces()) {
                 capturedPiece.flipSide();
             }
         }
+        switchPlayer();
     }
+
+    public static final int[][] favourablePosition = {
+            {-1, 0, 1, 0, -1},
+            {0, 3, 2, 3, 0},
+            {1, 2, 4, 2, 1},
+            {0, 3, 2, 3, 0},
+            {-1, 0, 1, 0, -1}
+    };
 
     public int evaluateBoard() {
         int totalValue = 0;
@@ -57,10 +69,12 @@ public class GameWithBot extends Game{
                 if (piece == null) {
                     continue;
                 }
-                if (piece.getSide() == Const.BLUE_SIDE) {
+                if (piece.getSide() == Const.RED_SIDE) {
                     totalValue += 10;
+                    totalValue += favourablePosition[row][col];
                 } else {
                     totalValue -= 10;
+                    totalValue -= favourablePosition[row][col];
                 }
             }
         }
