@@ -1,13 +1,10 @@
 package hust.hedspi.coganhgame.Model;
 
 import hust.hedspi.coganhgame.Const;
-import hust.hedspi.coganhgame.exception.GameNotFoundException;
-import javafx.util.Pair;
+import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Game implements Serializable {
     protected Tile[][] board;
@@ -214,7 +211,7 @@ public class Game implements Serializable {
     }
 
     public boolean isGameOver() {
-        return this.currentPlayer.getTotalPiece() == Const.TOTAL_PIECE;
+        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == Const.TOTAL_PIECE;
     }
 
     public void saveGame() {
