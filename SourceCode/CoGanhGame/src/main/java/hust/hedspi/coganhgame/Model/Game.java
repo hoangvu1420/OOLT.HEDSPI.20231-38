@@ -79,6 +79,14 @@ public class Game implements Serializable {
         return this.currentPlayer;
     }
 
+    public Player getOpponent() {
+        if (this.currentPlayer == this.player1) {
+            return this.player2;
+        } else {
+            return this.player1;
+        }
+    }
+
     public int getTimeLimit() {
         return this.timeLimit;
     }
@@ -116,11 +124,7 @@ public class Game implements Serializable {
                 // if the captured pieces are not empty, return a capture move
                 this.currentPlayer.increaseTotalPiece(capturedPieces.size());
                 // decrease the number of pieces of the opponent
-                if (this.currentPlayer == this.player1) {
-                    this.player2.decreaseTotalPiece(capturedPieces.size());
-                } else {
-                    this.player1.decreaseTotalPiece(capturedPieces.size());
-                }
+                getOpponent().decreaseTotalPiece(capturedPieces.size());
                 return new MoveResult(true, capturedPieces);
             }
             return new MoveResult(true, null);

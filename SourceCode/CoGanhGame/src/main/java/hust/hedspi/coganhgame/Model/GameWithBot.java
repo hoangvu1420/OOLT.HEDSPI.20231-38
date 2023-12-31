@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 public class GameWithBot extends Game{
-    // this GameWithBot class is a subclass of Game class; it provides some methods to serve the bot which
-    // is implemented with Minimax algorithm
-    private static final Stack<Tile[][]> boardHistory = new Stack<>();
     public GameWithBot(String playerName, int timeLimit) {
         super(playerName, "Bot", timeLimit);
     }
@@ -30,22 +27,43 @@ public class GameWithBot extends Game{
         return moves;
     }
 
-    public void makeMove(Move move) {
+    public MoveResult makeMove(Move move) {
         int fromRow = move.fromTile().getRow();
         int fromCol = move.fromTile().getCol();
         int toRow = move.toTile().getRow();
         int toCol = move.toTile().getCol();
-        boardHistory.push(board);
-        processMove(fromRow, fromCol, toRow, toCol);
+        MoveResult moveResult = processMove(fromRow, fromCol, toRow, toCol);
         switchPlayer();
+        return moveResult;
     }
 
-    public void undoMove() {
-        if (boardHistory.isEmpty()) {
-            return;
+    public void undoMove(Move move, MoveResult moveResult) {
+        Piece piece = move.toTile().getPiece();
+        move.toTile().removePiece();
+        move.fromTile().setPiece(piece);
+        if (moveResult.capturedPieces() != null) {
+            getCurrentPlayer().increaseTotalPiece(moveResult.capturedPieces().size());
+            for (Piece capturedPiece : moveResult.capturedPieces()) {
+                capturedPiece.flipSide();
+            }
         }
-        board = boardHistory.pop();
-        switchPlayer();
-        // the method of using stack to store board history is called Memento
+    }
+
+    public int evaluateBoard() {
+        int totalValue = 0;
+        for (int row = 0; row < Const.HEIGHT; row++) {
+            for (int col = 0; col < Const.WIDTH; col++) {
+                Piece piece = board[row][col].getPiece();
+                if (piece == null) {
+                    continue;
+                }
+                if (piece.getSide() == Const.BLUE_SIDE) {
+                    totalValue += 10;
+                } else {
+                    totalValue -= 10;
+                }
+            }
+        }
+        return totalValue;
     }
 }
