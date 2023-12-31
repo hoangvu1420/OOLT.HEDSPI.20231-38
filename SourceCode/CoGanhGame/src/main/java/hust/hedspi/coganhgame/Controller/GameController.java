@@ -192,7 +192,7 @@ public class GameController {
             if (moveResult.isValidMove()) {
                 pieceComp.move(newRow, newCol);
                 if (moveResult.capturedPieces() != null) {
-                    // if the move is a capture move, we remove the pieces that are captured
+                    // if the move is a capture move, we flip the side of the captured pieces
                     for (Piece capturedModelPiece : moveResult.capturedPieces()) {
                         PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
                         capturedPieceComp.flipSide();
@@ -219,7 +219,7 @@ public class GameController {
     private void switchPlayer() {
         game.getCurrentPlayer().makeMove();
         game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
-        game.getCurrentPlayer().setTimeLeft(game.getTimeLimit());
+        game.getCurrentPlayer().setTimeLeft(game.getTimeLimit() * 1000);
         game.switchPlayer();
         game.getCurrentPlayer().getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().setTurn();

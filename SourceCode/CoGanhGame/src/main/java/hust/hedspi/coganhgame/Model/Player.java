@@ -33,8 +33,8 @@ public class Player implements Serializable{
     }
 
     public void initTimeline() {
-        this.timeLeft = new SimpleIntegerProperty(timeLimit);
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), event -> {
+        this.timeLeft = new SimpleIntegerProperty(timeLimit * 1000);
+        timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
             totalTime++;
             timeLeft.set(timeLeft.get() - 1);
         }));
