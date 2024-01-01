@@ -21,6 +21,14 @@ public class Game implements Serializable {
         initBoard();
     }
 
+    public Game(String playerName, int timeLimit, int botLevel) {
+        this.player1 = new Player(playerName, true, timeLimit); // player1 is red and turn first
+        this.player2 = new BotPlayer(timeLimit, botLevel); // player2 is blue and turn second
+        this.timeLimit = timeLimit;
+        this.currentPlayer = this.player1;
+        initBoard();
+    }
+
     private void initBoard() {
         // init board
         this.board = new Tile[Const.WIDTH][Const.HEIGHT];
@@ -96,26 +104,30 @@ public class Game implements Serializable {
         }
     }
 
-    public MoveResult processMove(int oldRow, int oldCol, int newRow, int newCol) {
-        if (newRow < 0 || newRow >= Const.HEIGHT || newCol < 0 || newCol >= Const.WIDTH) {
+    public MoveResult processMove(Move move) {
+        int fromRow = move.fromTile().getRow();
+        int fromCol = move.fromTile().getCol();
+        int toRow = move.toTile().getRow();
+        int toCol = move.toTile().getCol();
+        if (toRow < 0 || toRow >= Const.HEIGHT || toCol < 0 || toCol >= Const.WIDTH) {
             // if the position (row, col) is out of the board, return invalid move
             return new MoveResult(false, null);
         }
 
-        Piece piece = this.board[oldRow][oldCol].getPiece();
-        if (this.board[newRow][newCol].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
+        Piece piece = this.board[fromRow][fromCol].getPiece();
+        if (this.board[toRow][toCol].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
             // if the tile at (row, col) already has a piece, return invalid move
             return new MoveResult(false, null);
         }
 
         // get the connected tiles of the tile at (oldRow, oldCol)
-        ArrayList<Tile> connectedTiles = board[oldRow][oldCol].getConnectedTiles(this.board);
-        if (connectedTiles.contains(this.board[newRow][newCol])) {
+        ArrayList<Tile> connectedTiles = board[fromRow][fromCol].getConnectedTiles(this.board);
+        if (connectedTiles.contains(this.board[toRow][toCol])) {
             // if the tile at (row, col) is in the connected tiles, move the piece to the new position
-            this.board[oldRow][oldCol].removePiece();
-            this.board[newRow][newCol].setPiece(piece);
+            this.board[fromRow][fromCol].removePiece();
+            this.board[toRow][toCol].setPiece(piece);
             ArrayList<Piece> capturedPieces = new ArrayList<>();
-            capturedPieces.addAll(getCarriedPieces(newRow, newCol, board[newRow][newCol].getConnectedTiles(this.board)));
+            capturedPieces.addAll(getCarriedPieces(toRow, toCol, board[toRow][toCol].getConnectedTiles(this.board)));
             capturedPieces.addAll(getSurroundedPieces());
             if (!capturedPieces.isEmpty()) {
                 // if the captured pieces are not empty, return a capture move
@@ -211,7 +223,7 @@ public class Game implements Serializable {
     }
 
     public boolean isGameOver() {
-        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == Const.TOTAL_PIECE;
+        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == 0;
     }
 
     public void saveGame() {

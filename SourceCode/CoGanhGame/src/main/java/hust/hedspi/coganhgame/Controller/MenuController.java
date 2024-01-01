@@ -3,6 +3,7 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
+import hust.hedspi.coganhgame.Model.GameWithBot;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +33,8 @@ public class MenuController {
             Stage currentStage = (Stage) source.getScene().getWindow();
 
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/game-view.fxml"));
-            GameController controller = new GameController("Player 1", "Player 2", 100);
+//            GameController controller = new GameController("Player 1", "Player 2", 100);
+            GameController controller = new GameController("Player 1", 100, 2);
             fxmlLoader.setControllerFactory(c -> controller);
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");

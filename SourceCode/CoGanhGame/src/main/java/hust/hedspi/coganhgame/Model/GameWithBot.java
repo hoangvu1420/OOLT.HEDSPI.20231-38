@@ -3,11 +3,10 @@ package hust.hedspi.coganhgame.Model;
 import hust.hedspi.coganhgame.Const;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class GameWithBot extends Game{
-    public GameWithBot(String playerName, int timeLimit) {
-        super(playerName, "Bot", timeLimit);
+    public GameWithBot(String playerName, int timeLimit, int botLevel) {
+        super(playerName, timeLimit, botLevel);
     }
 
     public ArrayList<Move> generateMoves() {
@@ -29,11 +28,7 @@ public class GameWithBot extends Game{
 
     public MoveResult makeMove(Move move) {
         // make the move for the bot player
-        int fromRow = move.fromTile().getRow();
-        int fromCol = move.fromTile().getCol();
-        int toRow = move.toTile().getRow();
-        int toCol = move.toTile().getCol();
-        MoveResult moveResult = processMove(fromRow, fromCol, toRow, toCol);
+        MoveResult moveResult = processMove(move);
         switchPlayer();
         return moveResult;
     }
@@ -51,33 +46,5 @@ public class GameWithBot extends Game{
             }
         }
         switchPlayer();
-    }
-
-    public static final int[][] favourablePosition = {
-            {-1, 0, 1, 0, -1},
-            {0, 3, 2, 3, 0},
-            {1, 2, 4, 2, 1},
-            {0, 3, 2, 3, 0},
-            {-1, 0, 1, 0, -1}
-    };
-
-    public int evaluateBoard() {
-        int totalValue = 0;
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
-                if (!board[row][col].hasPiece()) {
-                    continue;
-                }
-                Piece piece = board[row][col].getPiece();
-                if (piece.getSide() == Const.RED_SIDE) {
-                    totalValue += 10;
-                    totalValue += favourablePosition[row][col];
-                } else {
-                    totalValue -= 10;
-                    totalValue -= favourablePosition[row][col];
-                }
-            }
-        }
-        return totalValue;
     }
 }
