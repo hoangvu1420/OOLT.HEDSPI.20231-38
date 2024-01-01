@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Utilities;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.IntegerProperty;
@@ -27,7 +27,7 @@ public class Player implements Serializable{
         this.name = name;
         this.side = side;
         this.timeLimit = timeLimit;
-        this.totalPiece = Const.TOTAL_PIECE / 2;
+        this.totalPiece = Utilities.TOTAL_PIECE / 2;
 
         initTimeline();
     }
