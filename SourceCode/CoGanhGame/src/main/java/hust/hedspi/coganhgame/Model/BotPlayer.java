@@ -77,7 +77,7 @@ public class BotPlayer extends Player{
         }
     }
 
-    public final int[][] favourablePosition = {
+    private final int[][] favourablePosition = {
             {-1, 0, 1, 0, -1},
             {0, 3, 2, 3, 0},
             {1, 2, 4, 2, 1},
@@ -85,7 +85,7 @@ public class BotPlayer extends Player{
             {-1, 0, 1, 0, -1}
     };
 
-    public int evaluateBoard(Tile[][] board) {
+    private int evaluateBoard(Tile[][] board) {
         int totalValue = 0;
         for (int row = 0; row < Const.HEIGHT; row++) {
             for (int col = 0; col < Const.WIDTH; col++) {
