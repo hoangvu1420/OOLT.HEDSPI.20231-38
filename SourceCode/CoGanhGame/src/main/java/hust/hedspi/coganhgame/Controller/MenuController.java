@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Controller;
 
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
@@ -39,7 +39,7 @@ public class MenuController {
             //  - Add a method to allow user to choose bot level if they choose to play with bot
             //  - Call the constructor of GameController accordingly to the user's choices
 //            GameController controller = new GameController("Player 1", "Player 2", 100); // constructor for 2 players
-            GameController controller = new GameController("Player 1", 100, Const.BOT_LEVEL_MEDIUM); // constructor for 1 player
+            GameController controller = new GameController("Player 1", 100, Utilities.BOT_LEVEL_MEDIUM); // constructor for 1 player
             fxmlLoader.setControllerFactory(c -> controller);
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");
@@ -62,11 +62,7 @@ public class MenuController {
             try {
                 game = Game.loadGame();
             } catch (GameNotFoundException e) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText(null);
-                alert.setContentText(e.getMessage());
-                alert.showAndWait();
+                Utilities.showAlert("Error", "No saved game found!", AlertType.ERROR);
                 return;
             }
 
