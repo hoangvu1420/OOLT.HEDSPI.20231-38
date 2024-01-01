@@ -1,4 +1,6 @@
-package hust.hedspi.coganhgame.Model;
+package hust.hedspi.coganhgame.Model.Tile;
+
+import hust.hedspi.coganhgame.Model.Piece;
 
 import java.io.Serializable;
 import java.util.ArrayList;

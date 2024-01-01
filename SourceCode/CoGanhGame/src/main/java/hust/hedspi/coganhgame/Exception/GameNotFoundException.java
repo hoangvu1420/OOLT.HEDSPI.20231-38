@@ -1,4 +1,4 @@
-package hust.hedspi.coganhgame.exception;
+package hust.hedspi.coganhgame.Exception;
 
 public class GameNotFoundException extends Exception{
     public GameNotFoundException() {
