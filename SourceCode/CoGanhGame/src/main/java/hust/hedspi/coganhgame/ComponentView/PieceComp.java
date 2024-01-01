@@ -1,10 +1,13 @@
 package hust.hedspi.coganhgame.ComponentView;
 
 import hust.hedspi.coganhgame.Const;
+import javafx.animation.TranslateTransition;
 import javafx.scene.Cursor;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
+import javafx.util.Duration;
+
 import static hust.hedspi.coganhgame.Const.TILE_SIZE;
 import static hust.hedspi.coganhgame.Const.PIECE_SIZE;
 
@@ -60,6 +63,32 @@ public class PieceComp extends StackPane {
         oldX = col * TILE_SIZE;
         relocate(oldX, oldY);
     }
+
+    public void slowMove(int row, int col) {
+        double newY = row * TILE_SIZE;
+        double newX = col * TILE_SIZE;
+
+        TranslateTransition transition = new TranslateTransition();
+        transition.setDuration(Duration.seconds(1));
+        transition.setNode(this);
+
+        transition.setFromX(oldX);
+        transition.setFromY(oldY);
+        transition.setToX(newX);
+        transition.setToY(newY);
+
+        transition.setOnFinished(event -> {
+            this.relocate(newX, newY);
+            this.setTranslateX(0);
+            this.setTranslateY(0);
+        });
+
+        transition.play();
+
+        oldX = newX;
+        oldY = newY;
+    }
+
 
     public void flipSide() {
         ellipse.setFill(ellipse.getFill() == Const.RED_PIECE_COLOR ? Const.BUE_PIECE_COLOR : Const.RED_PIECE_COLOR);
