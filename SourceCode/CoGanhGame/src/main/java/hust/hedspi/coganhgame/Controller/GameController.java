@@ -176,7 +176,7 @@ public class GameController {
             if (rowDragged != currentTile.getRow() || colDragged != currentTile.getCol()) {
                 Tile draggedTile = game.getBoard()[rowDragged][colDragged];
                 if (currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
-//                    System.out.println("To: " + draggedTile.getRow() + "-" + draggedTile.getCol());
+                    System.out.println("To: " + draggedTile.getRow() + "-" + draggedTile.getCol());
                     // TODO: Delete this line after finished the UI,
                     //  replace it with a method to highlight the tileComp that the piece is being dragged to on the UI
                     // set the tileComp that the piece is being dragged to be highlighted
