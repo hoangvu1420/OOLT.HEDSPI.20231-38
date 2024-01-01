@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.ComponentView;
 
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Utilities;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Cursor;
 import javafx.scene.layout.StackPane;
@@ -8,8 +8,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.util.Duration;
 
-import static hust.hedspi.coganhgame.Const.TILE_SIZE;
-import static hust.hedspi.coganhgame.Const.PIECE_SIZE;
+import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
+import static hust.hedspi.coganhgame.Utilities.PIECE_SIZE;
 
 public class PieceComp extends StackPane {
     private boolean side; // true: red, false: blue
@@ -32,7 +32,7 @@ public class PieceComp extends StackPane {
 
         // make a red or blue piece
         ellipse = new Ellipse(PIECE_SIZE, PIECE_SIZE * 0.832);
-        ellipse.setFill(side ? Const.RED_PIECE_COLOR : Const.BUE_PIECE_COLOR); // if the side is true, the piece is red, otherwise it is blue
+        ellipse.setFill(side ? Utilities.RED_PIECE_COLOR : Utilities.BUE_PIECE_COLOR); // if the side is true, the piece is red, otherwise it is blue
         ellipse.setStroke(Color.BLACK);
         ellipse.setStrokeWidth(PIECE_STROKE_WIDTH);
         ellipse.setTranslateX((TILE_SIZE - PIECE_SIZE * 2) / 2);
@@ -91,7 +91,7 @@ public class PieceComp extends StackPane {
 
 
     public void flipSide() {
-        ellipse.setFill(ellipse.getFill() == Const.RED_PIECE_COLOR ? Const.BUE_PIECE_COLOR : Const.RED_PIECE_COLOR);
+        ellipse.setFill(ellipse.getFill() == Utilities.RED_PIECE_COLOR ? Utilities.BUE_PIECE_COLOR : Utilities.RED_PIECE_COLOR);
         side = !side;
     }
 

@@ -1,9 +1,10 @@
 package hust.hedspi.coganhgame;
 
+import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public final class Const {
+public final class Utilities {
     public static final int TILE_SIZE = 160;
     public static final int WIDTH = 5;
     public static final int HEIGHT = 5;
@@ -23,4 +24,12 @@ public final class Const {
     public static final Color RED_PIECE_COLOR = Color.valueOf("#E21818");
     public static final Color BUE_PIECE_COLOR = Color.valueOf("#2666CF");
     public static final Font COOR_FONT = new Font("Arial", 20);
+
+    public static void showAlert(String title, String content, Alert.AlertType alertType) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }

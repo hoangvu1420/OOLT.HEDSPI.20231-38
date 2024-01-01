@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
@@ -14,7 +14,7 @@ public class BotPlayer extends Player {
     private final int botLevel; // the botLevel is the depth of the minimax algorithm
 
     public BotPlayer(int timeLimit, int botLevel) {
-        super("Bot", Const.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
+        super("Bot", Utilities.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
         this.botLevel = botLevel;
     }
 
@@ -101,13 +101,13 @@ public class BotPlayer extends Player {
 
     private int evaluateBoard(Tile[][] board) {
         int totalValue = 0;
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
+        for (int row = 0; row < Utilities.HEIGHT; row++) {
+            for (int col = 0; col < Utilities.WIDTH; col++) {
                 if (!board[row][col].hasPiece()) {
                     continue;
                 }
                 Piece piece = board[row][col].getPiece();
-                if (piece.getSide() == Const.RED_SIDE) {
+                if (piece.getSide() == Utilities.RED_SIDE) {
                     totalValue += 10;
                     totalValue += favourablePosition[row][col];
                 } else {

@@ -2,7 +2,7 @@ package hust.hedspi.coganhgame.ComponentView;
 
 import javafx.scene.layout.Pane;
 
-import static hust.hedspi.coganhgame.Const.TILE_SIZE;
+import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
 
 public class TileComp extends Pane {
     public TileComp(int row, int col) {
