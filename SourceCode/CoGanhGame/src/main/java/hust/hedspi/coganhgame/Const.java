@@ -15,6 +15,9 @@ public final class Const {
     public static final boolean RED_SIDE = true;
     public static final boolean BLUE_SIDE = false;
     public static final int BOT_MOVE_DELAY = 1;
+    public static final int BOT_LEVEL_EASY = 3;
+    public static final int BOT_LEVEL_MEDIUM = 5;
+    public static final int BOT_LEVEL_HARD = 7;
 
     public static final Color BOARD_STROKE_COLOR = Color.valueOf("#222831");
     public static final Color RED_PIECE_COLOR = Color.valueOf("#E21818");
