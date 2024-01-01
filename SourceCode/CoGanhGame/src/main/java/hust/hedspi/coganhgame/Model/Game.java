@@ -223,7 +223,7 @@ public class Game implements Serializable {
     }
 
     public boolean isGameOver() {
-        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == 0;
+        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == Const.TOTAL_PIECE;
     }
 
     public void saveGame() {
