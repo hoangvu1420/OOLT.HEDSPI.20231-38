@@ -1,8 +1,9 @@
 package hust.hedspi.coganhgame.Controller;
 
+import hust.hedspi.coganhgame.Const;
 import hust.hedspi.coganhgame.GameApplication;
-import hust.hedspi.coganhgame.Model.Game;
-import hust.hedspi.coganhgame.exception.GameNotFoundException;
+import hust.hedspi.coganhgame.Model.Game.Game;
+import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +33,12 @@ public class MenuController {
             Stage currentStage = (Stage) source.getScene().getWindow();
 
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/game-view.fxml"));
-            GameController controller = new GameController("Player 1", "Player 2", 100);
+            // TODO:
+            //  add a method to allow user to choose game mode:
+            //  1 player or 2 players then call the appropriate constructor
+            GameController controller = new GameController("Player 1", "Player 2", 100); // constructor for 2 players
+//            GameController controller = new GameController("Player 1", 100, Const.BOT_LEVEL_MEDIUM); // constructor for 1 player
+            // TODO: add a method to allow user to choose bot level if they choose to play with bot
             fxmlLoader.setControllerFactory(c -> controller);
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");
