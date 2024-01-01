@@ -6,13 +6,14 @@ import java.util.ArrayList;
 
 public class BotPlayer extends Player{
     // this class is used to simulate a bot player using minimax algorithm and alpha-beta pruning
-    private final int depth;
+    private final int botLevel;
     // the difficulty of the bot player which is the depth of the minimax algorithm, the higher the difficulty is,
     // the smarter the bot player is but also cost more time to calculate the best move.
-    public BotPlayer(int timeLimit, int depth) {
+    public BotPlayer(int timeLimit, int botLevel) {
         super("Bot", Const.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
-        this.depth = depth;
+        this.botLevel = botLevel;
     }
+    public static int positionCount = 0;
 
     public Move getBestMove(GameWithBot game) {
         int depth = this.depth;
@@ -32,8 +33,9 @@ public class BotPlayer extends Player{
     }
 
     private int minimax(GameWithBot game, int depth, int alpha, int beta, boolean maximizingPlayer) {
+        positionCount++;
         if (depth == 0 || game.isGameOver()) {
-            return -game.evaluateBoard();
+            return -evaluateBoard(game.getBoard());
         }
         if (maximizingPlayer) {
             int maxEval = -9999;
@@ -64,5 +66,33 @@ public class BotPlayer extends Player{
             }
             return minEval;
         }
+    }
+
+    public final int[][] favourablePosition = {
+            {-1, 0, 1, 0, -1},
+            {0, 3, 2, 3, 0},
+            {1, 2, 4, 2, 1},
+            {0, 3, 2, 3, 0},
+            {-1, 0, 1, 0, -1}
+    };
+
+    public int evaluateBoard(Tile[][] board) {
+        int totalValue = 0;
+        for (int row = 0; row < Const.HEIGHT; row++) {
+            for (int col = 0; col < Const.WIDTH; col++) {
+                if (!board[row][col].hasPiece()) {
+                    continue;
+                }
+                Piece piece = board[row][col].getPiece();
+                if (piece.getSide() == Const.RED_SIDE) {
+                    totalValue += 10;
+                    totalValue += favourablePosition[row][col];
+                } else {
+                    totalValue -= 10;
+                    totalValue -= favourablePosition[row][col];
+                }
+            }
+        }
+        return totalValue;
     }
 }
