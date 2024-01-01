@@ -6,9 +6,7 @@ import java.util.ArrayList;
 
 public class BotPlayer extends Player{
     // this class is used to simulate a bot player using minimax algorithm and alpha-beta pruning
-    private final int botLevel;
-    // the difficulty of the bot player which is the depth of the minimax algorithm, the higher the difficulty is,
-    // the smarter the bot player is but also cost more time to calculate the best move.
+    private final int botLevel; // the botLevel is the depth of the minimax algorithm
     public BotPlayer(int timeLimit, int botLevel) {
         super("Bot", Const.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
         this.botLevel = botLevel;
@@ -16,7 +14,7 @@ public class BotPlayer extends Player{
     public static int positionCount = 0;
 
     public Move getBestMove(GameWithBot game) {
-        Move bestMove = null;
+        Move bestMove;
         int bestScore = -9999;
         ArrayList<Move> allMoves = game.generateMoves();
         int[] scores = new int[allMoves.size()];
@@ -26,9 +24,7 @@ public class BotPlayer extends Player{
             int score = minimax(game, this.botLevel - 1, -10000, 10000, false);
             scores[i] = score;
             game.undoMove(move, moveResult);
-            if (score >= bestScore) {
-                bestScore = score;
-            }
+            bestScore = Math.max(bestScore, score);
         }
         ArrayList<Move> bestMoves = new ArrayList<>();
         for (int i = 0; i < allMoves.size(); i++) {
@@ -94,10 +90,10 @@ public class BotPlayer extends Player{
                 }
                 Piece piece = board[row][col].getPiece();
                 if (piece.getSide() == Const.RED_SIDE) {
-                    totalValue += 10;
+                    totalValue += 15;
                     totalValue += favourablePosition[row][col];
                 } else {
-                    totalValue -= 10;
+                    totalValue -= 15;
                     totalValue -= favourablePosition[row][col];
                 }
             }
