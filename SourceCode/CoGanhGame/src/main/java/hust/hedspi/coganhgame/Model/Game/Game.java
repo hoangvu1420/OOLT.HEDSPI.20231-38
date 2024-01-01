@@ -1,22 +1,22 @@
-package hust.hedspi.coganhgame.Model;
+package hust.hedspi.coganhgame.Model.Game;
 
 import hust.hedspi.coganhgame.Const;
-import hust.hedspi.coganhgame.exception.GameNotFoundException;
-import javafx.util.Pair;
+import hust.hedspi.coganhgame.Exception.GameNotFoundException;
+import hust.hedspi.coganhgame.Model.*;
+import hust.hedspi.coganhgame.Model.Move.Move;
+import hust.hedspi.coganhgame.Model.Move.MoveResult;
+import hust.hedspi.coganhgame.Model.Player.BotPlayer;
+import hust.hedspi.coganhgame.Model.Player.Player;
+import hust.hedspi.coganhgame.Model.Tile.Tile;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Game implements Serializable {
-    private Tile[][] board;
+    protected Tile[][] board;
     private final Player player1;
     private final Player player2;
     private Player currentPlayer;
-
-    // make a map to store the connected tiles of any tile in the board
-    private final Map<Tile, ArrayList<Tile>> connectionMap;
     private final int timeLimit;
 
     public Game(String name1, String name2, int timeLimit) {
@@ -24,9 +24,15 @@ public class Game implements Serializable {
         this.player2 = new Player(name2, false, timeLimit); // player2 is blue and turn second
         this.timeLimit = timeLimit;
         this.currentPlayer = this.player1;
-        this.connectionMap = new HashMap<>();
         initBoard();
-        initConnectionMap();
+    }
+
+    public Game(String playerName, int timeLimit, int botLevel) {
+        this.player1 = new Player(playerName, true, timeLimit); // player1 is red and turn first
+        this.player2 = new BotPlayer(timeLimit, botLevel); // player2 is blue and turn second
+        this.timeLimit = timeLimit;
+        this.currentPlayer = this.player1;
+        initBoard();
     }
 
     private void initBoard() {
@@ -63,52 +69,7 @@ public class Game implements Serializable {
                     }
                 }
 
-                this.board[row][col] = new Tile(piece, row, col);
-            }
-        }
-    }
-
-    private void initConnectionMap() {
-        // there are 2 types of tiles:
-        // - the first type is the tile that connected to 8 surrounding tiles in 8 directions.
-        // - the second type is the tile that connected to 4 surrounding tiles in 4 directions.
-        // the top left tile is the first type tile, then the next tile to its right is the second type tile, and so on.
-
-        boolean flag = true; // true for first type tile, false for second type tile
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
-                Tile tile = this.board[row][col];
-                ArrayList<Tile> connectedTiles = new ArrayList<>();
-                // first, we add 4 surrounding tiles to the connected tiles
-                if (row > 0) {
-                    connectedTiles.add(this.board[row - 1][col]);
-                }
-                if (row < Const.HEIGHT - 1) {
-                    connectedTiles.add(this.board[row + 1][col]);
-                }
-                if (col > 0) {
-                    connectedTiles.add(this.board[row][col - 1]);
-                }
-                if (col < Const.WIDTH - 1) {
-                    connectedTiles.add(this.board[row][col + 1]);
-                }
-                if (flag) {
-                    // if the tile is a first type tile, add 4 more surrounding tiles to the connected tiles
-                    if (row > 0 && col > 0) {
-                        connectedTiles.add(this.board[row - 1][col - 1]);
-                    }
-                    if (row < Const.HEIGHT - 1 && col < Const.WIDTH - 1) {
-                        connectedTiles.add(this.board[row + 1][col + 1]);
-                    }
-                    if (row > 0 && col < Const.WIDTH - 1) {
-                        connectedTiles.add(this.board[row - 1][col + 1]);
-                    }
-                    if (row < Const.HEIGHT - 1 && col > 0) {
-                        connectedTiles.add(this.board[row + 1][col - 1]);
-                    }
-                }
-                this.connectionMap.put(tile, connectedTiles);
-                flag = !flag;
+                this.board[row][col] = Tile.getTileType(piece, row, col);
             }
         }
     }
@@ -129,6 +90,14 @@ public class Game implements Serializable {
         return this.currentPlayer;
     }
 
+    public Player getOpponent() {
+        if (this.currentPlayer == this.player1) {
+            return this.player2;
+        } else {
+            return this.player1;
+        }
+    }
+
     public int getTimeLimit() {
         return this.timeLimit;
     }
@@ -141,42 +110,42 @@ public class Game implements Serializable {
         }
     }
 
-    public MoveResult processMove(int oldRow, int oldCol, int newRow, int newCol) {
-        if (newRow < 0 || newRow >= Const.HEIGHT || newCol < 0 || newCol >= Const.WIDTH) {
+    public MoveResult processMove(Move move) {
+        int fromRow = move.fromTile().getRow();
+        int fromCol = move.fromTile().getCol();
+        int toRow = move.toTile().getRow();
+        int toCol = move.toTile().getCol();
+        if (toRow < 0 || toRow >= Const.HEIGHT || toCol < 0 || toCol >= Const.WIDTH) {
             // if the position (row, col) is out of the board, return invalid move
-            return new MoveResult(false);
+            return new MoveResult(false, null);
         }
 
-        Piece piece = this.board[oldRow][oldCol].getPiece();
-        if (this.board[newRow][newCol].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
+        Piece piece = this.board[fromRow][fromCol].getPiece();
+        if (this.board[toRow][toCol].hasPiece() || piece.getSide() != this.currentPlayer.getSide()) {
             // if the tile at (row, col) already has a piece, return invalid move
-            return new MoveResult(false);
+            return new MoveResult(false, null);
         }
 
         // get the connected tiles of the tile at (oldRow, oldCol)
-        ArrayList<Tile> connectedTiles = getConnectedTiles(oldRow, oldCol);
-        if (connectedTiles.contains(this.board[newRow][newCol])) {
+        ArrayList<Tile> connectedTiles = board[fromRow][fromCol].getConnectedTiles(this.board);
+        if (connectedTiles.contains(this.board[toRow][toCol])) {
             // if the tile at (row, col) is in the connected tiles, move the piece to the new position
-            this.board[oldRow][oldCol].removePiece();
-            this.board[newRow][newCol].setPiece(piece);
+            this.board[fromRow][fromCol].removePiece();
+            this.board[toRow][toCol].setPiece(piece);
             ArrayList<Piece> capturedPieces = new ArrayList<>();
-            capturedPieces.addAll(getCarriedPieces(newRow, newCol, getConnectedTiles(newRow, newCol)));
+            capturedPieces.addAll(getCarriedPieces(toRow, toCol, board[toRow][toCol].getConnectedTiles(this.board)));
             capturedPieces.addAll(getSurroundedPieces());
             if (!capturedPieces.isEmpty()) {
                 // if the captured pieces are not empty, return a capture move
                 this.currentPlayer.increaseTotalPiece(capturedPieces.size());
                 // decrease the number of pieces of the opponent
-                if (this.currentPlayer == this.player1) {
-                    this.player2.decreaseTotalPiece(capturedPieces.size());
-                } else {
-                    this.player1.decreaseTotalPiece(capturedPieces.size());
-                }
+                getOpponent().decreaseTotalPiece(capturedPieces.size());
                 return new MoveResult(true, capturedPieces);
             }
-            return new MoveResult(true);
+            return new MoveResult(true, null);
         }
 
-        return new MoveResult(false);
+        return new MoveResult(false, null);
     }
 
     private ArrayList<Piece> getCarriedPieces(int row, int col, ArrayList<Tile> connectedTiles) {
@@ -242,7 +211,7 @@ public class Game implements Serializable {
         group.add(piece);
 
         boolean isSurrounded = true;
-        ArrayList<Tile> connectedTiles = getConnectedTiles(row, col);
+        ArrayList<Tile> connectedTiles = board[row][col].getConnectedTiles(this.board);
         for (Tile tile : connectedTiles) {
             if (!tile.hasPiece()) {
                 isSurrounded = false;
@@ -259,18 +228,8 @@ public class Game implements Serializable {
         }
     }
 
-    private ArrayList<Tile> getConnectedTiles(int row, int col) {
-        return this.connectionMap.get(this.board[row][col]);
-    }
-
-    public ArrayList<Tile> getValidMoves(Tile tile) {
-        ArrayList<Tile> connectedTiles = getConnectedTiles(tile.getRow(), tile.getCol());
-        connectedTiles.removeIf(Tile::hasPiece);
-        return connectedTiles;
-    }
-
     public boolean isGameOver() {
-        return this.currentPlayer.getTotalPiece() == Const.TOTAL_PIECE;
+        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == Const.TOTAL_PIECE;
     }
 
     public void saveGame() {

@@ -3,10 +3,14 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
 import hust.hedspi.coganhgame.Const;
-import hust.hedspi.coganhgame.Model.Game;
-import hust.hedspi.coganhgame.Model.MoveResult;
-import hust.hedspi.coganhgame.Model.Piece;
-import hust.hedspi.coganhgame.Model.Tile;
+import hust.hedspi.coganhgame.Model.*;
+import hust.hedspi.coganhgame.Model.Game.Game;
+import hust.hedspi.coganhgame.Model.Game.GameWithBot;
+import hust.hedspi.coganhgame.Model.Move.Move;
+import hust.hedspi.coganhgame.Model.Move.MoveResult;
+import hust.hedspi.coganhgame.Model.Player.BotPlayer;
+import hust.hedspi.coganhgame.Model.Tile.Tile;
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +22,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.layout.Region;
 import javafx.scene.Node;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +45,7 @@ public class GameController {
             System.out.println("Time out");
             // TODO: Delete this line after finished the UI
             switchPlayer();
+            botMakeMove();
         }
     };
 
@@ -47,8 +53,15 @@ public class GameController {
         this.game = new Game(player1Name, player2Name, timeLimit);
     }
 
+    public GameController(String player1Name, int timeLimit, int botLevel) {
+        this.game = new GameWithBot(player1Name, timeLimit, botLevel);
+    }
+
     public GameController(Game game) {
         this.game = game;
+        if (game instanceof GameWithBot) {
+            System.out.println("Game with bot");
+        }
     }
 
     @FXML
@@ -152,7 +165,7 @@ public class GameController {
                 return;
             }
             currentTile = game.getBoard()[rowPressed][colPressed];
-            for (Tile move : game.getValidMoves(currentTile)) {
+            for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
                 System.out.println(move.getRow() + "-" + move.getCol());
                 // TODO: Delete this line after finished the UI,
                 //  replace it with a method to highlight the valid moves on the UI
@@ -168,7 +181,7 @@ public class GameController {
             int colDragged = toBoardPos(pieceComp.getLayoutX());
             if (rowDragged != currentTile.getRow() || colDragged != currentTile.getCol()) {
                 Tile draggedTile = game.getBoard()[rowDragged][colDragged];
-                if (game.getValidMoves(currentTile).contains(draggedTile)) {
+                if (currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
                     System.out.println("To: " + draggedTile.getRow() + "-" + draggedTile.getCol());
                     // TODO: Delete this line after finished the UI,
                     //  replace it with a method to highlight the tileComp that the piece is being dragged to on the UI
@@ -187,13 +200,14 @@ public class GameController {
             int oldRow = toBoardPos(pieceComp.getOldY());
             int oldCol = toBoardPos(pieceComp.getOldX());
 
-            MoveResult moveResult = game.processMove(oldRow, oldCol, newRow, newCol);
+            Move move = new Move(game.getBoard()[oldRow][oldCol], game.getBoard()[newRow][newCol]);
+            MoveResult moveResult = game.processMove(move);
 
             if (moveResult.isValidMove()) {
                 pieceComp.move(newRow, newCol);
-                if (moveResult.isCaptureMove()) {
-                    // if the move is a capture move, we remove the pieces that are captured
-                    for (Piece capturedModelPiece : moveResult.getCapturedPieces()) {
+                if (moveResult.capturedPieces() != null) {
+                    // if the move is a capture move, we flip the side of the captured pieces
+                    for (Piece capturedModelPiece : moveResult.capturedPieces()) {
                         PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
                         capturedPieceComp.flipSide();
                     }
@@ -203,11 +217,11 @@ public class GameController {
                     return;
                 }
                 switchPlayer();
+                botMakeMove();
             } else {
                 pieceComp.abortMove();
             }
         });
-
         return pieceComp;
     }
 
@@ -219,7 +233,7 @@ public class GameController {
     private void switchPlayer() {
         game.getCurrentPlayer().makeMove();
         game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
-        game.getCurrentPlayer().setTimeLeft(game.getTimeLimit());
+        game.getCurrentPlayer().setTimeLeft(game.getTimeLimit() * 1000);
         game.switchPlayer();
         game.getCurrentPlayer().getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().setTurn();
@@ -231,6 +245,36 @@ public class GameController {
                 piece.setDisablePiece();
             }
         }
+    }
+
+    private void botMakeMove() {
+        // if the game is played with the bot, we make the bot player make a move
+        if (!(game instanceof GameWithBot)) {
+            return;
+        }
+        PauseTransition pause = new PauseTransition(Duration.seconds(Const.BOT_MOVE_DELAY));
+        pause.setOnFinished(event -> {
+            BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
+            Move botMove = botPlayer.getBestMove((GameWithBot) game);
+            PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
+            MoveResult botMoveResult = game.processMove(botMove);
+            botPieceComp.move(botMove.toTile().getRow(), botMove.toTile().getCol());
+            if (botMoveResult.capturedPieces() != null) {
+                // if the move is a capture move, we flip the side of the captured pieces
+                for (Piece capturedModelPiece : botMoveResult.capturedPieces()) {
+                    PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
+                    capturedPieceComp.flipSide();
+                }
+            }
+            if (game.isGameOver()) {
+                endGame();
+                return;
+            }
+            System.out.println("Position count: " + BotPlayer.positionCount);
+            BotPlayer.positionCount = 0;
+            switchPlayer();
+        });
+        pause.play();
     }
 
     private void endGame() {
