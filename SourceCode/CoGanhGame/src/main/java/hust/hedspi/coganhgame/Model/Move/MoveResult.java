@@ -1,4 +1,6 @@
-package hust.hedspi.coganhgame.Model;
+package hust.hedspi.coganhgame.Model.Move;
+
+import hust.hedspi.coganhgame.Model.Piece;
 
 import java.util.ArrayList;
 

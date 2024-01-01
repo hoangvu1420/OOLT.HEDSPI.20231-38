@@ -1,7 +1,13 @@
-package hust.hedspi.coganhgame.Model;
+package hust.hedspi.coganhgame.Model.Game;
 
 import hust.hedspi.coganhgame.Const;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
+import hust.hedspi.coganhgame.Model.*;
+import hust.hedspi.coganhgame.Model.Move.Move;
+import hust.hedspi.coganhgame.Model.Move.MoveResult;
+import hust.hedspi.coganhgame.Model.Player.BotPlayer;
+import hust.hedspi.coganhgame.Model.Player.Player;
+import hust.hedspi.coganhgame.Model.Tile.Tile;
 
 import java.io.*;
 import java.util.ArrayList;

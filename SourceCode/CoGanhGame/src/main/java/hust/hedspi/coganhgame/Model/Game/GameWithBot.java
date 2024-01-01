@@ -1,10 +1,14 @@
-package hust.hedspi.coganhgame.Model;
+package hust.hedspi.coganhgame.Model.Game;
 
 import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Model.Move.Move;
+import hust.hedspi.coganhgame.Model.Move.MoveResult;
+import hust.hedspi.coganhgame.Model.Piece;
+import hust.hedspi.coganhgame.Model.Tile.Tile;
 
 import java.util.ArrayList;
 
-public class GameWithBot extends Game{
+public class GameWithBot extends Game {
     public GameWithBot(String playerName, int timeLimit, int botLevel) {
         super(playerName, timeLimit, botLevel);
     }

@@ -1,4 +1,4 @@
-package hust.hedspi.coganhgame.Model;
+package hust.hedspi.coganhgame.Model.Player;
 
 import hust.hedspi.coganhgame.Const;
 import javafx.animation.KeyFrame;
