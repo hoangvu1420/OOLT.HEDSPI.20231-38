@@ -34,11 +34,12 @@ public class MenuController {
 
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/game-view.fxml"));
             // TODO:
-            //  add a method to allow user to choose game mode:
-            //  1 player or 2 players then call the appropriate constructor
-            GameController controller = new GameController("Player 1", "Player 2", 100); // constructor for 2 players
-//            GameController controller = new GameController("Player 1", 100, Const.BOT_LEVEL_MEDIUM); // constructor for 1 player
-            // TODO: add a method to allow user to choose bot level if they choose to play with bot
+            //  - Add a method to allow user to choose game mode: 1 player or 2 players
+            //  - Add a method to allow user to choose time limit and player name
+            //  - Add a method to allow user to choose bot level if they choose to play with bot
+            //  - Call the constructor of GameController accordingly to the user's choices
+//            GameController controller = new GameController("Player 1", "Player 2", 100); // constructor for 2 players
+            GameController controller = new GameController("Player 1", 100, Const.BOT_LEVEL_MEDIUM); // constructor for 1 player
             fxmlLoader.setControllerFactory(c -> controller);
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");

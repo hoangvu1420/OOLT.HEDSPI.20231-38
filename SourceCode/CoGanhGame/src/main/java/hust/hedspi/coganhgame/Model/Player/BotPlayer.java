@@ -93,9 +93,9 @@ public class BotPlayer extends Player {
 
     private final int[][] favourablePosition = {
             {-1, 0, 1, 0, -1},
-            {0, 3, 2, 3, 0},
-            {1, 2, 4, 2, 1},
-            {0, 3, 2, 3, 0},
+            {0, 0, 1, 0, 0},
+            {1, 1, 2, 1, 1},
+            {0, 0, 1, 0, 0},
             {-1, 0, 1, 0, -1}
     };
 
@@ -108,10 +108,10 @@ public class BotPlayer extends Player {
                 }
                 Piece piece = board[row][col].getPiece();
                 if (piece.getSide() == Const.RED_SIDE) {
-                    totalValue += 15;
+                    totalValue += 10;
                     totalValue += favourablePosition[row][col];
                 } else {
-                    totalValue -= 15;
+                    totalValue -= 10;
                     totalValue -= favourablePosition[row][col];
                 }
             }
