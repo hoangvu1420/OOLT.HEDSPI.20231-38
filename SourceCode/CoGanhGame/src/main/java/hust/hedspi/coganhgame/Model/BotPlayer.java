@@ -16,19 +16,28 @@ public class BotPlayer extends Player{
     public static int positionCount = 0;
 
     public Move getBestMove(GameWithBot game) {
-        int depth = this.depth;
         Move bestMove = null;
         int bestScore = -9999;
         ArrayList<Move> allMoves = game.generateMoves();
-        for (Move move : allMoves) {
+        int[] scores = new int[allMoves.size()];
+        for (int i = 0; i < allMoves.size(); i++) {
+            Move move = allMoves.get(i);
             MoveResult moveResult = game.makeMove(move);
-            int score = minimax(game, depth, -10000, 10000, false);
+            int score = minimax(game, this.botLevel - 1, -10000, 10000, false);
+            scores[i] = score;
             game.undoMove(move, moveResult);
             if (score >= bestScore) {
                 bestScore = score;
-                bestMove = move;
             }
         }
+        ArrayList<Move> bestMoves = new ArrayList<>();
+        for (int i = 0; i < allMoves.size(); i++) {
+            if (scores[i] == bestScore) {
+                bestMoves.add(allMoves.get(i));
+            }
+        }
+        // pick a random move from the best moves
+        bestMove = bestMoves.get((int) (Math.random() * bestMoves.size()));
         return bestMove;
     }
 
