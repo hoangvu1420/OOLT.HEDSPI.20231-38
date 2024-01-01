@@ -4,13 +4,15 @@ import hust.hedspi.coganhgame.Const;
 
 import java.util.ArrayList;
 
-public class BotPlayer extends Player{
+public class BotPlayer extends Player {
     // this class is used to simulate a bot player using minimax algorithm and alpha-beta pruning
     private final int botLevel; // the botLevel is the depth of the minimax algorithm
+
     public BotPlayer(int timeLimit, int botLevel) {
         super("Bot", Const.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
         this.botLevel = botLevel;
     }
+
     public static int positionCount = 0;
 
     public Move getBestMove(GameWithBot game) {
@@ -18,15 +20,26 @@ public class BotPlayer extends Player{
         int bestScore = -9999;
         ArrayList<Move> allMoves = game.generateMoves();
         int[] scores = new int[allMoves.size()];
+        ArrayList<Move> bestMoves = new ArrayList<>();
         for (int i = 0; i < allMoves.size(); i++) {
             Move move = allMoves.get(i);
             MoveResult moveResult = game.makeMove(move);
-            int score = minimax(game, this.botLevel - 1, -10000, 10000, false);
-            scores[i] = score;
+            if (game.isGameOver()) {
+                bestMoves.add(move);
+            } else {
+                int score = minimax(game, this.botLevel - 1, -10000, 10000, false);
+                scores[i] = score;
+                bestScore = Math.max(bestScore, score);
+            }
             game.undoMove(move, moveResult);
-            bestScore = Math.max(bestScore, score);
         }
-        ArrayList<Move> bestMoves = new ArrayList<>();
+        if (!bestMoves.isEmpty()) {
+            // when bestMoves is not empty, it means that there is a move that can end the game.
+            // if we don't choose the move that can end the game,
+            // the bot will try to maximize the board value on its side before ending the game and lead to time-wasting
+            bestMove = bestMoves.get((int) (Math.random() * bestMoves.size()));
+            return bestMove;
+        }
         for (int i = 0; i < allMoves.size(); i++) {
             if (scores[i] == bestScore) {
                 bestMoves.add(allMoves.get(i));
