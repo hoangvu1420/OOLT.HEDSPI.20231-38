@@ -51,7 +51,7 @@ public class MenuController {
 
             newStage.show();
         } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+            Utilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
         }
     }
 
@@ -81,7 +81,7 @@ public class MenuController {
 
             newStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            Utilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
         }
     }
 
