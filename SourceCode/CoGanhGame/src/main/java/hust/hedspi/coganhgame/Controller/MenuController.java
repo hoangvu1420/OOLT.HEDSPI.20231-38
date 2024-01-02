@@ -37,7 +37,7 @@ public class MenuController {
             //  - Add a method to allow user to choose bot level if they choose to play with bot
             //  - Call the constructor of GameController accordingly to the user's choices
 //            GameController controller = new GameController("Player 1", "Player 2", 100); // constructor for 2 players
-            GameController controller = new GameController("Player 1", 100, Utilities.BOT_LEVEL_MEDIUM); // constructor for 1 player
+            GameController controller = new GameController("Player 1", 100, Utilities.BOT_LEVEL_HARD); // constructor for 1 player
             fxmlLoader.setControllerFactory(c -> controller);
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");
