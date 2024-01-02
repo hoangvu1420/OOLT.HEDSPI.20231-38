@@ -1,6 +1,7 @@
 package hust.hedspi.coganhgame.Model.Game;
 
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
+import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Move.Move;
@@ -8,6 +9,7 @@ import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Player.Player;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,16 +22,16 @@ public class Game implements Serializable {
     private final int timeLimit;
 
     public Game(String name1, String name2, int timeLimit) {
-        this.player1 = new Player(name1, true, timeLimit); // player1 is red and turn first
-        this.player2 = new Player(name2, false, timeLimit); // player2 is blue and turn second
+        this.player1 = new HumanPlayer(name1, true, timeLimit); // player1 is red and turn first
+        this.player2 = new HumanPlayer(name2, false, timeLimit); // player2 is blue and turn second
         this.timeLimit = timeLimit;
         this.currentPlayer = this.player1;
         initBoard();
     }
 
     public Game(String playerName, int timeLimit, int botLevel) {
-        this.player1 = new Player(playerName, true, timeLimit); // player1 is red and turn first
-        this.player2 = new BotPlayer(timeLimit, botLevel); // player2 is blue and turn second
+        this.player1 = new HumanPlayer(playerName, true, timeLimit); // human player is red and turn first
+        this.player2 = new BotPlayer(botLevel); // bot player is blue and turn second
         this.timeLimit = timeLimit;
         this.currentPlayer = this.player1;
         initBoard();
@@ -37,11 +39,11 @@ public class Game implements Serializable {
 
     private void initBoard() {
         // init board
-        this.board = new Tile[Const.WIDTH][Const.HEIGHT];
+        this.board = new Tile[Utilities.WIDTH][Utilities.HEIGHT];
 
         // init pieces
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
+        for (int row = 0; row < Utilities.HEIGHT; row++) {
+            for (int col = 0; col < Utilities.WIDTH; col++) {
                 Piece piece = null;
                 // if the side is true, the piece is red, otherwise it is blue
                 // make the first row of the board red
@@ -49,7 +51,7 @@ public class Game implements Serializable {
                     piece = new Piece(true);
                 }
                 // make the last row of the board blue
-                if (row == Const.HEIGHT - 1) {
+                if (row == Utilities.HEIGHT - 1) {
                     piece = new Piece(false);
                 }
                 // make the first column of the board red
@@ -61,10 +63,10 @@ public class Game implements Serializable {
                     }
                 }
                 // make the last column of the board blue
-                if (col == Const.WIDTH - 1) {
-                    if (row == Const.HEIGHT - 2) {
+                if (col == Utilities.WIDTH - 1) {
+                    if (row == Utilities.HEIGHT - 2) {
                         piece = new Piece(false);
-                    } else if (row == Const.HEIGHT - 3 || row == Const.HEIGHT - 4) {
+                    } else if (row == Utilities.HEIGHT - 3 || row == Utilities.HEIGHT - 4) {
                         piece = new Piece(true);
                     }
                 }
@@ -115,7 +117,7 @@ public class Game implements Serializable {
         int fromCol = move.fromTile().getCol();
         int toRow = move.toTile().getRow();
         int toCol = move.toTile().getCol();
-        if (toRow < 0 || toRow >= Const.HEIGHT || toCol < 0 || toCol >= Const.WIDTH) {
+        if (toRow < 0 || toRow >= Utilities.HEIGHT || toCol < 0 || toCol >= Utilities.WIDTH) {
             // if the position (row, col) is out of the board, return invalid move
             return new MoveResult(false, null);
         }
@@ -182,9 +184,9 @@ public class Game implements Serializable {
 
     public ArrayList<Piece> getSurroundedPieces() {
         ArrayList<Piece> surroundedPieces = new ArrayList<>();
-        boolean[][] visited = new boolean[Const.HEIGHT][Const.WIDTH];
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
+        boolean[][] visited = new boolean[Utilities.HEIGHT][Utilities.WIDTH];
+        for (int row = 0; row < Utilities.HEIGHT; row++) {
+            for (int col = 0; col < Utilities.WIDTH; col++) {
                 Tile tile = this.board[row][col];
                 if (tile.hasPiece() && !visited[row][col] && tile.getPiece().getSide() != this.currentPlayer.getSide()) {
                     // for each piece that has not been visited, we use flood fill algorithm to find the group of pieces
@@ -229,7 +231,7 @@ public class Game implements Serializable {
     }
 
     public boolean isGameOver() {
-        return getCurrentPlayer().getTotalPiece() == Const.TOTAL_PIECE || getOpponent().getTotalPiece() == Const.TOTAL_PIECE;
+        return getCurrentPlayer().getTotalPiece() == Utilities.TOTAL_PIECE || getOpponent().getTotalPiece() == Utilities.TOTAL_PIECE;
     }
 
     public void saveGame() {
@@ -240,7 +242,7 @@ public class Game implements Serializable {
             oos.close();
             fos.close();
         } catch (IOException ex) {
-            System.out.println("Error saving game: " + ex.getMessage());
+            Utilities.showAlert("Error", "Error saving game", ex.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -257,7 +259,7 @@ public class Game implements Serializable {
             ois.close();
             fis.close();
         } catch (IOException | ClassNotFoundException ex) {
-            System.out.println("Error loading game: " + ex.getMessage());
+            Utilities.showAlert("Error", "Error loading game", ex.getMessage(), Alert.AlertType.ERROR);
         }
         return game;
     }

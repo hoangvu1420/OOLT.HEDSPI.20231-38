@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
@@ -12,9 +12,10 @@ import java.util.ArrayList;
 public class BotPlayer extends Player {
     // this class is used to simulate a bot player using minimax algorithm and alpha-beta pruning
     private final int botLevel; // the botLevel is the depth of the minimax algorithm
+    private long startTime;
 
-    public BotPlayer(int timeLimit, int botLevel) {
-        super("Bot", Const.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
+    public BotPlayer(int botLevel) {
+        super("Bot", Utilities.BLUE_SIDE); // the bot player is always on the blue side (false)
         this.botLevel = botLevel;
     }
 
@@ -93,29 +94,41 @@ public class BotPlayer extends Player {
 
     private final int[][] favourablePosition = {
             {-1, 0, 1, 0, -1},
-            {0, 3, 2, 3, 0},
-            {1, 2, 4, 2, 1},
-            {0, 3, 2, 3, 0},
+            {0, 0, 1, 0, 0},
+            {1, 1, 2, 1, 1},
+            {0, 0, 1, 0, 0},
             {-1, 0, 1, 0, -1}
     };
 
     private int evaluateBoard(Tile[][] board) {
         int totalValue = 0;
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
+        for (int row = 0; row < Utilities.HEIGHT; row++) {
+            for (int col = 0; col < Utilities.WIDTH; col++) {
                 if (!board[row][col].hasPiece()) {
                     continue;
                 }
                 Piece piece = board[row][col].getPiece();
-                if (piece.getSide() == Const.RED_SIDE) {
-                    totalValue += 15;
+                if (piece.getSide() == Utilities.RED_SIDE) {
+                    totalValue += 10;
                     totalValue += favourablePosition[row][col];
                 } else {
-                    totalValue -= 15;
+                    totalValue -= 10;
                     totalValue -= favourablePosition[row][col];
                 }
             }
         }
         return totalValue;
+    }
+
+    @Override
+    public void playTimer() {
+        startTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void pauseTimer() {
+        long endTime = System.currentTimeMillis();
+        int time = (int) (endTime - startTime);
+        totalTime += time;
     }
 }

@@ -2,7 +2,8 @@ package hust.hedspi.coganhgame.Controller;
 
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
-import hust.hedspi.coganhgame.Const;
+import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
+import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
@@ -38,7 +39,7 @@ public class GameController {
     private Tile currentTile;
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
-    private final TileComp[][] viewBoard = new TileComp[Const.WIDTH][Const.HEIGHT];
+    private final TileComp[][] viewBoard = new TileComp[Utilities.WIDTH][Utilities.HEIGHT];
     private final Map<Piece, PieceComp> pieceMap = new HashMap<>();
     private final ChangeListener<Number> timeLeftListener = (observable, oldValue, newValue) -> {
         if (newValue.intValue() <= 0) {
@@ -59,45 +60,42 @@ public class GameController {
 
     public GameController(Game game) {
         this.game = game;
-        if (game instanceof GameWithBot) {
-            System.out.println("Game with bot");
-        }
     }
 
     @FXML
     public void initialize() {
-        boardPane.setPrefSize(Const.BOARD_WIDTH, Const.BOARD_HEIGHT);
+        boardPane.setPrefSize(Utilities.BOARD_WIDTH, Utilities.BOARD_HEIGHT);
         initViewBoard();
         boardPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // this line is used to make the boardPane fit the size of the board
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
         // set the outline of the board
         boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
-        game.getCurrentPlayer().getTimeLeft().addListener(timeLeftListener);
-        game.getCurrentPlayer().setTurn();
+        ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
+        game.getCurrentPlayer().playTimer();
     }
 
     public void initViewBoard() {
         Tile[][] modelBoard = game.getBoard();
 
-        for (int row = 0; row < Const.HEIGHT; row++) {
-            for (int col = 0; col < Const.WIDTH; col++) {
+        for (int row = 0; row < Utilities.HEIGHT; row++) {
+            for (int col = 0; col < Utilities.WIDTH; col++) {
                 TileComp tileComp = new TileComp(row, col);
                 viewBoard[row][col] = tileComp;
 
                 // we use numbers from 1-5 to represent the rows of the board
                 // and letters from A-E to represent the columns of the board
-                if (col == 0 || col == Const.WIDTH - 1) {
-                    Label label = new Label(String.valueOf(Const.HEIGHT - row));
-                    label.setLayoutX((double) Const.TILE_SIZE / 2 + (col == 0 ? -65 : +50));
-                    label.setLayoutY((double) Const.TILE_SIZE / 2 - 10);
-                    label.setFont(Const.COOR_FONT);
+                if (col == 0 || col == Utilities.WIDTH - 1) {
+                    Label label = new Label(String.valueOf(Utilities.HEIGHT - row));
+                    label.setLayoutX((double) Utilities.TILE_SIZE / 2 + (col == 0 ? -65 : +50));
+                    label.setLayoutY((double) Utilities.TILE_SIZE / 2 - 10);
+                    label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
-                if (row == 0 || row == Const.HEIGHT - 1) {
+                if (row == 0 || row == Utilities.HEIGHT - 1) {
                     Label label = new Label(String.valueOf((char) (col + 65)));
-                    label.setLayoutX((double) Const.TILE_SIZE / 2 - 5);
-                    label.setLayoutY((double) Const.TILE_SIZE / 2 + (row == 0 ? -65 : +45));
-                    label.setFont(Const.COOR_FONT);
+                    label.setLayoutX((double) Utilities.TILE_SIZE / 2 - 5);
+                    label.setLayoutY((double) Utilities.TILE_SIZE / 2 + (row == 0 ? -65 : +45));
+                    label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
 
@@ -115,25 +113,25 @@ public class GameController {
             }
         }
         // draw a line from the top left tileComp to the bottom right tileComp
-        drawLine(viewBoard[0][0], viewBoard[Const.HEIGHT - 1][Const.WIDTH - 1]);
+        drawLine(viewBoard[0][0], viewBoard[Utilities.HEIGHT - 1][Utilities.WIDTH - 1]);
         // draw a line from the top right tileComp to the bottom left tileComp
-        drawLine(viewBoard[0][Const.WIDTH - 1], viewBoard[Const.HEIGHT - 1][0]);
+        drawLine(viewBoard[0][Utilities.WIDTH - 1], viewBoard[Utilities.HEIGHT - 1][0]);
         // for each tileComp in the first row, draw a line from that tileComp to the tileComp in the last row
-        for (int i = 0; i < Const.WIDTH; i++) {
-            drawLine(viewBoard[0][i], viewBoard[Const.HEIGHT - 1][i]);
+        for (int i = 0; i < Utilities.WIDTH; i++) {
+            drawLine(viewBoard[0][i], viewBoard[Utilities.HEIGHT - 1][i]);
         }
         // for each tileComp in the first column, draw a line from that tileComp to the tileComp in the last column
-        for (int i = 0; i < Const.HEIGHT; i++) {
-            drawLine(viewBoard[i][0], viewBoard[i][Const.WIDTH - 1]);
+        for (int i = 0; i < Utilities.HEIGHT; i++) {
+            drawLine(viewBoard[i][0], viewBoard[i][Utilities.WIDTH - 1]);
         }
         // draw a line from the center tileComp of the first row to the center tileComp of the last column
-        drawLine(viewBoard[0][Const.WIDTH / 2], viewBoard[Const.HEIGHT / 2][Const.WIDTH - 1]);
+        drawLine(viewBoard[0][Utilities.WIDTH / 2], viewBoard[Utilities.HEIGHT / 2][Utilities.WIDTH - 1]);
         // draw a line from the center tileComp of the last column to the center tileComp of the last row
-        drawLine(viewBoard[Const.HEIGHT / 2][Const.WIDTH - 1], viewBoard[Const.HEIGHT - 1][Const.WIDTH / 2]);
+        drawLine(viewBoard[Utilities.HEIGHT / 2][Utilities.WIDTH - 1], viewBoard[Utilities.HEIGHT - 1][Utilities.WIDTH / 2]);
         // draw a line from the center tileComp of the last row to the center tileComp of the first column
-        drawLine(viewBoard[Const.HEIGHT - 1][Const.WIDTH / 2], viewBoard[Const.HEIGHT / 2][0]);
+        drawLine(viewBoard[Utilities.HEIGHT - 1][Utilities.WIDTH / 2], viewBoard[Utilities.HEIGHT / 2][0]);
         // draw a line from the center tileComp of the first column to the center tileComp of the first row
-        drawLine(viewBoard[Const.HEIGHT / 2][0], viewBoard[0][Const.WIDTH / 2]);
+        drawLine(viewBoard[Utilities.HEIGHT / 2][0], viewBoard[0][Utilities.WIDTH / 2]);
     }
 
     private void drawLine(TileComp firstTile, TileComp lastTile) {
@@ -142,8 +140,8 @@ public class GameController {
         double endX = lastTile.getCenterX();
         double endY = lastTile.getCenterY();
         Line line = new Line(startX, startY, endX, endY);
-        line.setStroke(Const.BOARD_STROKE_COLOR);
-        line.setStrokeWidth(Const.BOARD_STROKE_WIDTH);
+        line.setStroke(Utilities.BOARD_STROKE_COLOR);
+        line.setStrokeWidth(Utilities.BOARD_STROKE_WIDTH);
         // make the tip of the line rounded
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         tileCompGroup.getChildren().add(line);
@@ -212,10 +210,6 @@ public class GameController {
                         capturedPieceComp.flipSide();
                     }
                 }
-                if (game.isGameOver()) {
-                    endGame();
-                    return;
-                }
                 switchPlayer();
                 botMakeMove();
             } else {
@@ -227,17 +221,24 @@ public class GameController {
 
     private int toBoardPos(double pixel) {
         // this method is used to convert the pixel position on the screen to the position on the board
-        return (int) (pixel + Const.TILE_SIZE / 2) / Const.TILE_SIZE;
+        return (int) (pixel + Utilities.TILE_SIZE / 2) / Utilities.TILE_SIZE;
     }
 
     private void switchPlayer() {
-        game.getCurrentPlayer().makeMove();
-        game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
-        game.getCurrentPlayer().setTimeLeft(game.getTimeLimit() * 1000);
+        if (game.isGameOver()) {
+            endGame();
+            return;
+        }
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            game.getCurrentPlayer().pauseTimer();
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
+            ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
+        }
         game.switchPlayer();
-        game.getCurrentPlayer().getTimeLeft().addListener(timeLeftListener);
-        game.getCurrentPlayer().setTurn();
-
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
+            game.getCurrentPlayer().playTimer();
+        }
         for (PieceComp piece : pieceMap.values()) {
             if (piece.getSide() == game.getCurrentPlayer().getSide()) {
                 piece.setEnablePiece();
@@ -249,16 +250,20 @@ public class GameController {
 
     private void botMakeMove() {
         // if the game is played with the bot, we make the bot player make a move
-        if (!(game instanceof GameWithBot)) {
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
             return;
         }
-        PauseTransition pause = new PauseTransition(Duration.seconds(Const.BOT_MOVE_DELAY));
+        BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
+        botPlayer.playTimer();
+        Move botMove = botPlayer.getBestMove((GameWithBot) game);
+        PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
+        MoveResult botMoveResult = game.processMove(botMove);
+        botPlayer.pauseTimer();
+        botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(Utilities.BOT_MOVE_DELAY));
+
         pause.setOnFinished(event -> {
-            BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
-            Move botMove = botPlayer.getBestMove((GameWithBot) game);
-            PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
-            MoveResult botMoveResult = game.processMove(botMove);
-            botPieceComp.move(botMove.toTile().getRow(), botMove.toTile().getCol());
             if (botMoveResult.capturedPieces() != null) {
                 // if the move is a capture move, we flip the side of the captured pieces
                 for (Piece capturedModelPiece : botMoveResult.capturedPieces()) {
@@ -266,20 +271,21 @@ public class GameController {
                     capturedPieceComp.flipSide();
                 }
             }
-            if (game.isGameOver()) {
-                endGame();
-                return;
-            }
             System.out.println("Position count: " + BotPlayer.positionCount);
+            // TODO: Delete these lines after finished the UI,
+            //  display the time and position count of the bot on the UI
             BotPlayer.positionCount = 0;
             switchPlayer();
         });
+
         pause.play();
     }
 
     private void endGame() {
-        game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
-        game.getCurrentPlayer().pauseTimer();
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
+            game.getCurrentPlayer().pauseTimer();
+        }
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
@@ -291,7 +297,9 @@ public class GameController {
 
     @FXML
     public void onBtnExitClick(ActionEvent actionEvent) {
-        game.getCurrentPlayer().pauseTimer();
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            game.getCurrentPlayer().pauseTimer();
+        }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit Confirmation");
@@ -318,7 +326,9 @@ public class GameController {
                 currentStage.hide();
             } else {
                 // User chose Cancel or closed the dialog -> play the timer again
-                game.getCurrentPlayer().playTimer();
+                if (game.getCurrentPlayer() instanceof HumanPlayer) {
+                    game.getCurrentPlayer().playTimer();
+                }
             }
         } else {
             alert.getButtonTypes().setAll(yesButton, noButton);
