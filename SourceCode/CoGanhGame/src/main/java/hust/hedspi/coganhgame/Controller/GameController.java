@@ -284,7 +284,7 @@ public class GameController {
     private void endGame() {
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
-            ((HumanPlayer) game.getCurrentPlayer()).pauseTimer();
+            game.getCurrentPlayer().pauseTimer();
         }
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
@@ -298,7 +298,7 @@ public class GameController {
     @FXML
     public void onBtnExitClick(ActionEvent actionEvent) {
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
-            ((HumanPlayer) game.getCurrentPlayer()).pauseTimer();
+            game.getCurrentPlayer().pauseTimer();
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -327,7 +327,7 @@ public class GameController {
             } else {
                 // User chose Cancel or closed the dialog -> play the timer again
                 if (game.getCurrentPlayer() instanceof HumanPlayer) {
-                    ((HumanPlayer) game.getCurrentPlayer()).playTimer();
+                    game.getCurrentPlayer().playTimer();
                 }
             }
         } else {

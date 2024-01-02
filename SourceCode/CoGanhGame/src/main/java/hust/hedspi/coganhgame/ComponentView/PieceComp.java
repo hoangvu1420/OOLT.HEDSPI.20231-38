@@ -4,15 +4,14 @@ import hust.hedspi.coganhgame.Utilities;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.scene.Cursor;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.util.Duration;
 
-import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
 import static hust.hedspi.coganhgame.Utilities.PIECE_SIZE;
+import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
 
 public class PieceComp extends StackPane {
     private boolean side; // true: red, false: blue

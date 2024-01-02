@@ -1,18 +1,16 @@
 package hust.hedspi.coganhgame.Controller;
 
-import hust.hedspi.coganhgame.Utilities;
+import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
-import hust.hedspi.coganhgame.Exception.GameNotFoundException;
+import hust.hedspi.coganhgame.Utilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 

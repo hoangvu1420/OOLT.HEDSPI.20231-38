@@ -1,15 +1,7 @@
 package hust.hedspi.coganhgame.Model.Player;
 
 import hust.hedspi.coganhgame.Utilities;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.util.Duration;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serial;
 import java.io.Serializable;
 
 public abstract class Player implements Serializable{
