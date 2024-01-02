@@ -12,6 +12,7 @@ import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
 import javafx.animation.PauseTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -46,7 +47,6 @@ public class GameController {
             System.out.println("Time out");
             // TODO: Delete this line after finished the UI
             switchPlayer();
-            botMakeMove();
         }
     };
 
@@ -211,7 +211,6 @@ public class GameController {
                     }
                 }
                 switchPlayer();
-                botMakeMove();
             } else {
                 pieceComp.abortMove();
             }
@@ -238,21 +237,22 @@ public class GameController {
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
             game.getCurrentPlayer().playTimer();
-        }
-        for (PieceComp piece : pieceMap.values()) {
-            if (piece.getSide() == game.getCurrentPlayer().getSide()) {
-                piece.setEnablePiece();
-            } else {
+            for (PieceComp piece : pieceMap.values()) {
+                if (piece.getSide() == game.getCurrentPlayer().getSide()) {
+                    piece.setEnablePiece();
+                } else {
+                    piece.setDisablePiece();
+                }
+            }
+        } else {
+            for (PieceComp piece : pieceMap.values()) {
                 piece.setDisablePiece();
             }
+            new Thread(() -> Platform.runLater(this::botMakeMove)).start();
         }
     }
 
     private void botMakeMove() {
-        // if the game is played with the bot, we make the bot player make a move
-        if (game.getCurrentPlayer() instanceof HumanPlayer) {
-            return;
-        }
         BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
         botPlayer.playTimer();
         Move botMove = botPlayer.getBestMove((GameWithBot) game);
@@ -292,7 +292,9 @@ public class GameController {
 
         System.out.println("Game over");
         System.out.println("Winner: " + game.getCurrentPlayer().getName());
-        // TODO: Delete these lines after finished the UI
+        System.out.println(game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime());
+        System.out.println(game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime());
+        // TODO: Delete these lines after finished the UI, display the winner and total time of each player on the UI
     }
 
     @FXML
