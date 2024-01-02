@@ -14,6 +14,7 @@ import hust.hedspi.coganhgame.Model.Tile.Tile;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -248,37 +249,48 @@ public class GameController {
             for (PieceComp piece : pieceMap.values()) {
                 piece.setDisablePiece();
             }
-            new Thread(() -> Platform.runLater(this::botMakeMove)).start();
+            botMakeMove();
         }
     }
 
     private void botMakeMove() {
-        BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
-        botPlayer.playTimer();
-        Move botMove = botPlayer.getBestMove((GameWithBot) game);
-        PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
-        MoveResult botMoveResult = game.processMove(botMove);
-        botPlayer.pauseTimer();
-        botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
-
-        PauseTransition pause = new PauseTransition(Duration.seconds(Utilities.BOT_MOVE_DELAY));
-
-        pause.setOnFinished(event -> {
-            if (botMoveResult.capturedPieces() != null) {
-                // if the move is a capture move, we flip the side of the captured pieces
-                for (Piece capturedModelPiece : botMoveResult.capturedPieces()) {
-                    PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
-                    capturedPieceComp.flipSide();
-                }
+        // Create a new Task
+        Task<Move> botMoveTask = new Task<>() {
+            @Override
+            protected Move call() {
+                // Perform the long-running operation (bot deciding its move)
+                BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
+                botPlayer.playTimer();
+                Move botMove = botPlayer.getBestMove((GameWithBot) game);
+                botPlayer.pauseTimer();
+                return botMove;
             }
-            System.out.println("Position count: " + BotPlayer.positionCount);
-            // TODO: Delete these lines after finished the UI,
-            //  display the time and position count of the bot on the UI
-            BotPlayer.positionCount = 0;
-            switchPlayer();
+        };
+
+        // Set up what to do when the Task is done
+        botMoveTask.setOnSucceeded(event -> {
+            Move botMove = botMoveTask.getValue();
+
+            PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
+            MoveResult botMoveResult = game.processMove(botMove);
+            botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
+
+            PauseTransition pause = new PauseTransition(Duration.seconds(Utilities.BOT_MOVE_DELAY));
+            pause.setOnFinished(e -> {
+                if (botMoveResult.capturedPieces() != null) {
+                    // if the move is a capture move, we flip the side of the captured pieces
+                    for (Piece capturedModelPiece : botMoveResult.capturedPieces()) {
+                        PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
+                        capturedPieceComp.flipSide();
+                    }
+                }
+                switchPlayer();
+            });
+            pause.play();
         });
 
-        pause.play();
+        // Start the Task on a new Thread
+        new Thread(botMoveTask).start();
     }
 
     private void endGame() {
