@@ -3,6 +3,7 @@ package hust.hedspi.coganhgame;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -19,8 +20,7 @@ public class GameApplication extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e){
-            e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
+            Utilities.showAlert("Error", "Error loading menu view", e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
