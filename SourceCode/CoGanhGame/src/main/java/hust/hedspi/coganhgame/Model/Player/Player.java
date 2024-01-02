@@ -1,60 +1,19 @@
 package hust.hedspi.coganhgame.Model.Player;
 
 import hust.hedspi.coganhgame.Utilities;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.util.Duration;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serial;
 import java.io.Serializable;
 
-public class Player implements Serializable{
-    @Serial
-    private static final long serialVersionUID = 6171647155107564395L;
+public abstract class Player implements Serializable{
     private final String name;
     private final boolean side; // true: red, false: black
     private int totalPiece;
-    private int totalTime = 0;
-    private final int timeLimit;
-    private transient IntegerProperty timeLeft;
-    private transient Timeline timeline;
+    protected int totalTime = 0; // in milliseconds
 
-    public Player(String name, boolean side, int timeLimit) {
+    public Player(String name, boolean side) {
         this.name = name;
         this.side = side;
-        this.timeLimit = timeLimit;
         this.totalPiece = Utilities.TOTAL_PIECE / 2;
-
-        initTimeline();
-    }
-
-    public void initTimeline() {
-        this.timeLeft = new SimpleIntegerProperty(timeLimit * 1000);
-        timeline = new Timeline(new KeyFrame(Duration.millis(1), event -> {
-            totalTime++;
-            timeLeft.set(timeLeft.get() - 1);
-        }));
-        timeline.setCycleCount(Timeline.INDEFINITE);
-    }
-
-    public IntegerProperty getTimeLeft() {
-        return timeLeft;
-    }
-
-    public void setTimeLeft(int time) {
-        timeLeft.set(time);
-    }
-
-    public void playTimer() {
-        timeline.play();
-    }
-
-    public void pauseTimer() {
-        timeline.pause();
     }
 
     public String getName() {
@@ -81,18 +40,7 @@ public class Player implements Serializable{
         totalPiece -= qty;
     }
 
-    public void setTurn() {
-        playTimer();
-    }
+    public abstract void playTimer();
 
-    public void makeMove() {
-        pauseTimer();
-    }
-
-    @Serial
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        initTimeline();
-    }
-
+    public abstract void pauseTimer();
 }

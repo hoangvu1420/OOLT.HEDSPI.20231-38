@@ -1,15 +1,17 @@
 package hust.hedspi.coganhgame.ComponentView;
 
 import hust.hedspi.coganhgame.Utilities;
-import javafx.animation.TranslateTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.scene.Cursor;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.util.Duration;
 
-import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
 import static hust.hedspi.coganhgame.Utilities.PIECE_SIZE;
+import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
 
 public class PieceComp extends StackPane {
     private boolean side; // true: red, false: blue
@@ -68,27 +70,24 @@ public class PieceComp extends StackPane {
         double newY = row * TILE_SIZE;
         double newX = col * TILE_SIZE;
 
-        TranslateTransition transition = new TranslateTransition();
-        transition.setDuration(Duration.seconds(1));
-        transition.setNode(this);
+        Timeline timeline = new Timeline();
+        KeyValue kvX = new KeyValue(this.translateXProperty(), newX - oldX);
+        KeyValue kvY = new KeyValue(this.translateYProperty(), newY - oldY);
+        KeyFrame kf = new KeyFrame(Duration.seconds(Utilities.BOT_MOVE_DELAY), kvX, kvY);
+        timeline.getKeyFrames().add(kf);
 
-        transition.setFromX(oldX);
-        transition.setFromY(oldY);
-        transition.setToX(newX);
-        transition.setToY(newY);
-
-        transition.setOnFinished(event -> {
+        timeline.setOnFinished(event -> {
             this.relocate(newX, newY);
             this.setTranslateX(0);
             this.setTranslateY(0);
         });
 
-        transition.play();
+        this.toFront();
+        timeline.play();
 
         oldX = newX;
         oldY = newY;
     }
-
 
     public void flipSide() {
         ellipse.setFill(ellipse.getFill() == Utilities.RED_PIECE_COLOR ? Utilities.BUE_PIECE_COLOR : Utilities.RED_PIECE_COLOR);

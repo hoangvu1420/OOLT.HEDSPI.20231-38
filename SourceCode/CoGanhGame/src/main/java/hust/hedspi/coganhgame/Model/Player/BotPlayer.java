@@ -12,9 +12,10 @@ import java.util.ArrayList;
 public class BotPlayer extends Player {
     // this class is used to simulate a bot player using minimax algorithm and alpha-beta pruning
     private final int botLevel; // the botLevel is the depth of the minimax algorithm
+    private long startTime;
 
-    public BotPlayer(int timeLimit, int botLevel) {
-        super("Bot", Utilities.BLUE_SIDE, timeLimit); // the bot player is always on the blue side (false)
+    public BotPlayer(int botLevel) {
+        super("Bot", Utilities.BLUE_SIDE); // the bot player is always on the blue side (false)
         this.botLevel = botLevel;
     }
 
@@ -117,5 +118,17 @@ public class BotPlayer extends Player {
             }
         }
         return totalValue;
+    }
+
+    @Override
+    public void playTimer() {
+        startTime = System.currentTimeMillis();
+    }
+
+    @Override
+    public void pauseTimer() {
+        long endTime = System.currentTimeMillis();
+        int time = (int) (endTime - startTime);
+        totalTime += time;
     }
 }

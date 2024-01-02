@@ -1,18 +1,16 @@
 package hust.hedspi.coganhgame.Controller;
 
-import hust.hedspi.coganhgame.Utilities;
+import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
-import hust.hedspi.coganhgame.Exception.GameNotFoundException;
+import hust.hedspi.coganhgame.Utilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 
@@ -91,16 +89,8 @@ public class MenuController {
 
     @FXML
     public void onExitClick() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Exit Confirmation");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to exit?");
-
-        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
-        if (result == ButtonType.OK){
-            // User chose OK
+        if (Utilities.showConfirm("Exit", "Are you sure you want to exit?")) {
             System.exit(0);
         }
     }
-
 }
