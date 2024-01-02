@@ -284,6 +284,10 @@ public class GameController {
                         capturedPieceComp.flipSide();
                     }
                 }
+                System.out.println("Position count: " + BotPlayer.positionCount);
+                // TODO: Delete these lines after finished the UI,
+                //  display the time and position count of the bot on the UI
+                BotPlayer.positionCount = 0;
                 switchPlayer();
             });
             pause.play();
