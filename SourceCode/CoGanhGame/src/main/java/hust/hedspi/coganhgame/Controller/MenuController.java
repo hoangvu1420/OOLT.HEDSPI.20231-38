@@ -91,16 +91,8 @@ public class MenuController {
 
     @FXML
     public void onExitClick() {
-        Alert alert = new Alert(AlertType.CONFIRMATION);
-        alert.setTitle("Exit Confirmation");
-        alert.setHeaderText(null);
-        alert.setContentText("Are you sure you want to exit?");
-
-        ButtonType result = alert.showAndWait().orElse(ButtonType.CANCEL);
-        if (result == ButtonType.OK){
-            // User chose OK
+        if (Utilities.showConfirm("Exit", "Are you sure you want to exit?")) {
             System.exit(0);
         }
     }
-
 }

@@ -2,6 +2,7 @@ package hust.hedspi.coganhgame.Controller;
 
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
+import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
 import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Game.Game;
@@ -59,9 +60,6 @@ public class GameController {
 
     public GameController(Game game) {
         this.game = game;
-        if (game instanceof GameWithBot) {
-            System.out.println("Game with bot");
-        }
     }
 
     @FXML
@@ -72,8 +70,8 @@ public class GameController {
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
         // set the outline of the board
         boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
-        game.getCurrentPlayer().getTimeLeft().addListener(timeLeftListener);
-        game.getCurrentPlayer().setTurn();
+        ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
+        game.getCurrentPlayer().playTimer();
     }
 
     public void initViewBoard() {
@@ -212,10 +210,6 @@ public class GameController {
                         capturedPieceComp.flipSide();
                     }
                 }
-                if (game.isGameOver()) {
-                    endGame();
-                    return;
-                }
                 switchPlayer();
                 botMakeMove();
             } else {
@@ -231,13 +225,20 @@ public class GameController {
     }
 
     private void switchPlayer() {
-        game.getCurrentPlayer().makeMove();
-        game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
-        game.getCurrentPlayer().setTimeLeft(game.getTimeLimit() * 1000);
+        if (game.isGameOver()) {
+            endGame();
+            return;
+        }
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            game.getCurrentPlayer().pauseTimer();
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
+            ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
+        }
         game.switchPlayer();
-        game.getCurrentPlayer().getTimeLeft().addListener(timeLeftListener);
-        game.getCurrentPlayer().setTurn();
-
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
+            game.getCurrentPlayer().playTimer();
+        }
         for (PieceComp piece : pieceMap.values()) {
             if (piece.getSide() == game.getCurrentPlayer().getSide()) {
                 piece.setEnablePiece();
@@ -249,16 +250,20 @@ public class GameController {
 
     private void botMakeMove() {
         // if the game is played with the bot, we make the bot player make a move
-        if (!(game instanceof GameWithBot)) {
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
             return;
         }
+        BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
+        botPlayer.playTimer();
+        Move botMove = botPlayer.getBestMove((GameWithBot) game);
+        PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
+        MoveResult botMoveResult = game.processMove(botMove);
+        botPlayer.pauseTimer();
+        botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
+
         PauseTransition pause = new PauseTransition(Duration.seconds(Utilities.BOT_MOVE_DELAY));
+
         pause.setOnFinished(event -> {
-            BotPlayer botPlayer = (BotPlayer) game.getCurrentPlayer();
-            Move botMove = botPlayer.getBestMove((GameWithBot) game);
-            PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
-            MoveResult botMoveResult = game.processMove(botMove);
-            botPieceComp.move(botMove.toTile().getRow(), botMove.toTile().getCol());
             if (botMoveResult.capturedPieces() != null) {
                 // if the move is a capture move, we flip the side of the captured pieces
                 for (Piece capturedModelPiece : botMoveResult.capturedPieces()) {
@@ -266,20 +271,21 @@ public class GameController {
                     capturedPieceComp.flipSide();
                 }
             }
-            if (game.isGameOver()) {
-                endGame();
-                return;
-            }
             System.out.println("Position count: " + BotPlayer.positionCount);
+            // TODO: Delete these lines after finished the UI,
+            //  display the time and position count of the bot on the UI
             BotPlayer.positionCount = 0;
             switchPlayer();
         });
+
         pause.play();
     }
 
     private void endGame() {
-        game.getCurrentPlayer().getTimeLeft().removeListener(timeLeftListener);
-        game.getCurrentPlayer().pauseTimer();
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
+            ((HumanPlayer) game.getCurrentPlayer()).pauseTimer();
+        }
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
@@ -291,7 +297,9 @@ public class GameController {
 
     @FXML
     public void onBtnExitClick(ActionEvent actionEvent) {
-        game.getCurrentPlayer().pauseTimer();
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            ((HumanPlayer) game.getCurrentPlayer()).pauseTimer();
+        }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Exit Confirmation");
@@ -318,7 +326,9 @@ public class GameController {
                 currentStage.hide();
             } else {
                 // User chose Cancel or closed the dialog -> play the timer again
-                game.getCurrentPlayer().playTimer();
+                if (game.getCurrentPlayer() instanceof HumanPlayer) {
+                    ((HumanPlayer) game.getCurrentPlayer()).playTimer();
+                }
             }
         } else {
             alert.getButtonTypes().setAll(yesButton, noButton);

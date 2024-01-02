@@ -1,5 +1,6 @@
 package hust.hedspi.coganhgame.Model.Game;
 
+import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
 import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.Model.*;
@@ -21,16 +22,16 @@ public class Game implements Serializable {
     private final int timeLimit;
 
     public Game(String name1, String name2, int timeLimit) {
-        this.player1 = new Player(name1, true, timeLimit); // player1 is red and turn first
-        this.player2 = new Player(name2, false, timeLimit); // player2 is blue and turn second
+        this.player1 = new HumanPlayer(name1, true, timeLimit); // player1 is red and turn first
+        this.player2 = new HumanPlayer(name2, false, timeLimit); // player2 is blue and turn second
         this.timeLimit = timeLimit;
         this.currentPlayer = this.player1;
         initBoard();
     }
 
     public Game(String playerName, int timeLimit, int botLevel) {
-        this.player1 = new Player(playerName, true, timeLimit); // player1 is red and turn first
-        this.player2 = new BotPlayer(timeLimit, botLevel); // player2 is blue and turn second
+        this.player1 = new HumanPlayer(playerName, true, timeLimit); // human player is red and turn first
+        this.player2 = new BotPlayer(botLevel); // bot player is blue and turn second
         this.timeLimit = timeLimit;
         this.currentPlayer = this.player1;
         initBoard();
