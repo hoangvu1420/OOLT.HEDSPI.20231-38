@@ -44,6 +44,9 @@ public abstract class Tile implements Serializable {
 
     public ArrayList<Tile> getAvailableMoves(Tile[][] board) {
         ArrayList<Tile> availableMoves = new ArrayList<>();
+        if (!hasPiece()) {
+            return availableMoves;
+        }
         ArrayList<Tile> connectedTiles = getConnectedTiles(board);
         for (Tile tile : connectedTiles) {
             if (!tile.hasPiece()) {

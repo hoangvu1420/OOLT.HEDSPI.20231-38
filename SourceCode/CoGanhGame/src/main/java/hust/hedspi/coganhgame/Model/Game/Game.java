@@ -135,7 +135,7 @@ public class Game implements Serializable {
             this.board[fromRow][fromCol].removePiece();
             this.board[toRow][toCol].setPiece(piece);
             ArrayList<Piece> capturedPieces = new ArrayList<>();
-            capturedPieces.addAll(getCarriedPieces(toRow, toCol, board[toRow][toCol].getConnectedTiles(this.board)));
+            capturedPieces.addAll(getCarriedPieces(move.toTile()));
             capturedPieces.addAll(getSurroundedPieces());
             if (!capturedPieces.isEmpty()) {
                 // if the captured pieces are not empty, return a capture move
@@ -150,15 +150,18 @@ public class Game implements Serializable {
         return new MoveResult(false, null);
     }
 
-    private ArrayList<Piece> getCarriedPieces(int row, int col, ArrayList<Tile> connectedTiles) {
+    private ArrayList<Piece> getCarriedPieces(Tile toTile) {
         ArrayList<Piece> carriedPieces = new ArrayList<>();
+        int row = toTile.getRow();
+        int col = toTile.getCol();
+        ArrayList<Tile> connectedTilesOfToTile = toTile.getConnectedTiles(this.board);
 
         Piece piece = this.board[row][col].getPiece();
         // loop through all the connected tiles, check each pair of connected tiles
-        for (int i = 0; i < connectedTiles.size(); i++) {
-            Tile tile1 = connectedTiles.get(i);
-            for (int j = i + 1; j < connectedTiles.size(); j++) {
-                Tile tile2 = connectedTiles.get(j);
+        for (int i = 0; i < connectedTilesOfToTile.size(); i++) {
+            Tile tile1 = connectedTilesOfToTile.get(i);
+            for (int j = i + 1; j < connectedTilesOfToTile.size(); j++) {
+                Tile tile2 = connectedTilesOfToTile.get(j);
 
                 if (tile1.getRow() + tile2.getRow() != 2 * row || tile1.getCol() + tile2.getCol() != 2 * col) {
                     continue;

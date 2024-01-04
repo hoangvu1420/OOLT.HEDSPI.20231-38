@@ -28,7 +28,13 @@ import javafx.util.Duration;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
+import static hust.hedspi.coganhgame.Utilities.WIDTH;
+import static hust.hedspi.coganhgame.Utilities.HEIGHT;
 
 public class GameController {
     private final Game game;
@@ -40,15 +46,16 @@ public class GameController {
     private Tile currentTile;
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
-    private final TileComp[][] viewBoard = new TileComp[Utilities.WIDTH][Utilities.HEIGHT];
+    private final TileComp[][] viewBoard = new TileComp[WIDTH][HEIGHT];
     private final Map<Piece, PieceComp> pieceMap = new HashMap<>();
     private final ChangeListener<Number> timeLeftListener = (observable, oldValue, newValue) -> {
         if (newValue.intValue() <= 0) {
             System.out.println("Time out");
-            // TODO: Delete this line after finished the UI
+            // TODO: Delete this line after finished the UI, display the time out message on the UI
             switchPlayer();
         }
     };
+    private final ExecutorService executor = Executors.newSingleThreadExecutor(); // this executor is used to run the botMoveTask
 
     public GameController(String player1Name, String player2Name, int timeLimit) {
         this.game = new Game(player1Name, player2Name, timeLimit);
@@ -74,27 +81,29 @@ public class GameController {
         game.getCurrentPlayer().playTimer();
     }
 
-    public void initViewBoard() {
+    private void initViewBoard() {
         Tile[][] modelBoard = game.getBoard();
 
-        for (int row = 0; row < Utilities.HEIGHT; row++) {
-            for (int col = 0; col < Utilities.WIDTH; col++) {
+        for (int row = 0; row < HEIGHT; row++) {
+            for (int col = 0; col < WIDTH; col++) {
                 TileComp tileComp = new TileComp(row, col);
                 viewBoard[row][col] = tileComp;
 
                 // we use numbers from 1-5 to represent the rows of the board
                 // and letters from A-E to represent the columns of the board
-                if (col == 0 || col == Utilities.WIDTH - 1) {
-                    Label label = new Label(String.valueOf(Utilities.HEIGHT - row));
-                    label.setLayoutX((double) Utilities.TILE_SIZE / 2 + (col == 0 ? -65 : +50));
-                    label.setLayoutY((double) Utilities.TILE_SIZE / 2 - 10);
+                if (col == 0 || col == WIDTH - 1) {
+                    Label label = new Label(String.valueOf(HEIGHT - row));
+//                    label.setLayoutX((double) TILE_SIZE / 2 + (col == 0 ? -65 : +50));
+                    label.setLayoutX((double) TILE_SIZE / 2 + (col == 0 ? -(TILE_SIZE * 0.35) : (TILE_SIZE * 0.3)));
+//                    label.setLayoutY((double) TILE_SIZE / 2 - 10);
+                    label.setLayoutY((double) TILE_SIZE / 2 - 9);
                     label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
-                if (row == 0 || row == Utilities.HEIGHT - 1) {
+                if (row == 0 || row == HEIGHT - 1) {
                     Label label = new Label(String.valueOf((char) (col + 65)));
-                    label.setLayoutX((double) Utilities.TILE_SIZE / 2 - 5);
-                    label.setLayoutY((double) Utilities.TILE_SIZE / 2 + (row == 0 ? -65 : +45));
+                    label.setLayoutX((double) TILE_SIZE / 2 - 6);
+                    label.setLayoutY((double) TILE_SIZE / 2 + (row == 0 ? -(TILE_SIZE * 0.35 + 5) : (TILE_SIZE * 0.3 - 5)));
                     label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
@@ -113,25 +122,25 @@ public class GameController {
             }
         }
         // draw a line from the top left tileComp to the bottom right tileComp
-        drawLine(viewBoard[0][0], viewBoard[Utilities.HEIGHT - 1][Utilities.WIDTH - 1]);
+        drawLine(viewBoard[0][0], viewBoard[HEIGHT - 1][WIDTH - 1]);
         // draw a line from the top right tileComp to the bottom left tileComp
-        drawLine(viewBoard[0][Utilities.WIDTH - 1], viewBoard[Utilities.HEIGHT - 1][0]);
+        drawLine(viewBoard[0][WIDTH - 1], viewBoard[HEIGHT - 1][0]);
         // for each tileComp in the first row, draw a line from that tileComp to the tileComp in the last row
-        for (int i = 0; i < Utilities.WIDTH; i++) {
-            drawLine(viewBoard[0][i], viewBoard[Utilities.HEIGHT - 1][i]);
+        for (int i = 0; i < WIDTH; i++) {
+            drawLine(viewBoard[0][i], viewBoard[HEIGHT - 1][i]);
         }
         // for each tileComp in the first column, draw a line from that tileComp to the tileComp in the last column
-        for (int i = 0; i < Utilities.HEIGHT; i++) {
-            drawLine(viewBoard[i][0], viewBoard[i][Utilities.WIDTH - 1]);
+        for (int i = 0; i < HEIGHT; i++) {
+            drawLine(viewBoard[i][0], viewBoard[i][WIDTH - 1]);
         }
         // draw a line from the center tileComp of the first row to the center tileComp of the last column
-        drawLine(viewBoard[0][Utilities.WIDTH / 2], viewBoard[Utilities.HEIGHT / 2][Utilities.WIDTH - 1]);
+        drawLine(viewBoard[0][WIDTH / 2], viewBoard[HEIGHT / 2][WIDTH - 1]);
         // draw a line from the center tileComp of the last column to the center tileComp of the last row
-        drawLine(viewBoard[Utilities.HEIGHT / 2][Utilities.WIDTH - 1], viewBoard[Utilities.HEIGHT - 1][Utilities.WIDTH / 2]);
+        drawLine(viewBoard[HEIGHT / 2][WIDTH - 1], viewBoard[HEIGHT - 1][WIDTH / 2]);
         // draw a line from the center tileComp of the last row to the center tileComp of the first column
-        drawLine(viewBoard[Utilities.HEIGHT - 1][Utilities.WIDTH / 2], viewBoard[Utilities.HEIGHT / 2][0]);
+        drawLine(viewBoard[HEIGHT - 1][WIDTH / 2], viewBoard[HEIGHT / 2][0]);
         // draw a line from the center tileComp of the first column to the center tileComp of the first row
-        drawLine(viewBoard[Utilities.HEIGHT / 2][0], viewBoard[0][Utilities.WIDTH / 2]);
+        drawLine(viewBoard[HEIGHT / 2][0], viewBoard[0][WIDTH / 2]);
     }
 
     private void drawLine(TileComp firstTile, TileComp lastTile) {
@@ -220,7 +229,7 @@ public class GameController {
 
     private int toBoardPos(double pixel) {
         // this method is used to convert the pixel position on the screen to the position on the board
-        return (int) (pixel + Utilities.TILE_SIZE / 2) / Utilities.TILE_SIZE;
+        return (int) (pixel + TILE_SIZE / 2) / TILE_SIZE;
     }
 
     private void switchPlayer() {
@@ -234,6 +243,10 @@ public class GameController {
             ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
         }
         game.switchPlayer();
+
+        System.out.println("Current player: " + game.getCurrentPlayer().getName());
+        // TODO: Delete this line after finished the UI, display the name of the current player on the UI
+
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
             game.getCurrentPlayer().playTimer();
@@ -292,11 +305,12 @@ public class GameController {
             pause.play();
         });
 
-        // Start the Task on a new Thread
-        new Thread(botMoveTask).start();
+        // get the executor to run the task
+        executor.execute(botMoveTask);
     }
 
     private void endGame() {
+        executor.shutdown(); // shutdown the executor to avoid memory leak
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
             game.getCurrentPlayer().pauseTimer();
