@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 public abstract class Player implements Serializable{
     private final String name;
-    private final boolean side; // true: red, false: black
+    private final boolean side; // true: red, false: blue
     private int totalPiece;
     protected int totalTime = 0; // in milliseconds
 

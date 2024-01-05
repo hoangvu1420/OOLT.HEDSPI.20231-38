@@ -14,8 +14,8 @@ public class HumanPlayer extends Player{
     @Serial
     private static final long serialVersionUID = 6171647155107564395L;
     private final int timeLimit;
-    private transient IntegerProperty timeLeft;
-    private transient Timeline timeline; // in seconds
+    private transient IntegerProperty timeLeft; // in seconds
+    private transient Timeline timeline;
 
     public HumanPlayer(String name, boolean side, int timeLimit) {
         super(name, side);

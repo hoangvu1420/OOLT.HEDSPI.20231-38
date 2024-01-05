@@ -19,7 +19,6 @@
 - Phần View trong ứng dụng này sẽ chứa các thành phần giao diện như bàn cờ, bảng số, tên người chơi,... Các thành phần giao diện này sẽ được lưu trữ trong các file `.fxml` riêng biệt.
 - Phần Controller trong ứng dụng này sẽ chứa các phương thức điều khiển các thành phần giao diện và các phương thức xử lý dữ liệu. Bao gồm các hàm xử lí sự kiện như click chuột, nhập dữ liệu, các hàm để binding dữ liệu, các hàm để hiển thị dữ liệu,... Các phương thức này sẽ được lưu trữ trong các file .java riêng biệt.
 - **Chi tiết hơn về kiến trúc MVC ở phần Link tài liệu tham khảo**
-![Alt text](image.png)
 
 # Link tài liệu tham khảo
 - [Luật chơi cờ gánh](https://thuthuatchoi.com/huong-dan-cach-choi-co-ganh.html), trên mạng có một số luật chơi khác nhau, nhóm mình sẽ chọn luật chơi này do đây là luật chơi được yêu cầu.

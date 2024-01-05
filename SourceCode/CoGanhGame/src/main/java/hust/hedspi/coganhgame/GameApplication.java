@@ -15,7 +15,7 @@ public class GameApplication extends Application {
     public void start(Stage stage) {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double screenHeight = screenBounds.getHeight();
-        Utilities.TILE_SIZE = (int) (screenHeight / 6.5);
+        Utilities.TILE_SIZE = (int) (screenHeight / 7);
         Utilities.BOARD_WIDTH = Utilities.TILE_SIZE * Utilities.WIDTH;
         Utilities.BOARD_HEIGHT = Utilities.TILE_SIZE * Utilities.HEIGHT;
         Utilities.PIECE_SIZE = Utilities.TILE_SIZE * 0.22;

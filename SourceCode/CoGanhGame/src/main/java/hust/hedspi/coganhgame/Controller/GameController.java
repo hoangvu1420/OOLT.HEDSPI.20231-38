@@ -93,9 +93,7 @@ public class GameController {
                 // and letters from A-E to represent the columns of the board
                 if (col == 0 || col == WIDTH - 1) {
                     Label label = new Label(String.valueOf(HEIGHT - row));
-//                    label.setLayoutX((double) TILE_SIZE / 2 + (col == 0 ? -65 : +50));
                     label.setLayoutX((double) TILE_SIZE / 2 + (col == 0 ? -(TILE_SIZE * 0.35) : (TILE_SIZE * 0.3)));
-//                    label.setLayoutY((double) TILE_SIZE / 2 - 10);
                     label.setLayoutY((double) TILE_SIZE / 2 - 9);
                     label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
