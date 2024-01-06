@@ -6,11 +6,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public final class Utilities {
-    public static int TILE_SIZE;
+    public static double TILE_SIZE;
     public static final int WIDTH = 5;
     public static final int HEIGHT = 5;
-    public static int BOARD_WIDTH;
-    public static int BOARD_HEIGHT;
+    public static double BOARD_WIDTH;
+    public static double BOARD_HEIGHT;
     public static double PIECE_SIZE;
     public static final int BOARD_STROKE_WIDTH = 3;
     public static final int TOTAL_PIECE = 16;
