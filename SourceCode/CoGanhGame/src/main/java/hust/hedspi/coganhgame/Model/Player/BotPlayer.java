@@ -59,7 +59,7 @@ public class BotPlayer extends Player {
     private int minimax(GameWithBot game, int depth, int alpha, int beta, boolean maximizingPlayer) {
         positionCount++;
         if (depth == 0 || game.isGameOver()) {
-            return -evaluateBoard(game.getBoard());
+            return evaluateBoard(game.getBoard());
         }
         if (maximizingPlayer) {
             int maxEval = -9999;
@@ -109,11 +109,11 @@ public class BotPlayer extends Player {
                 }
                 Piece piece = board[row][col].getPiece();
                 if (piece.getSide() == Utilities.RED_SIDE) {
-                    totalValue += 10;
-                    totalValue += favourablePosition[row][col];
-                } else {
                     totalValue -= 10;
                     totalValue -= favourablePosition[row][col];
+                } else {
+                    totalValue += 10;
+                    totalValue += favourablePosition[row][col];
                 }
             }
         }
