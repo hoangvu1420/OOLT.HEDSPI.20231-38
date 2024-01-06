@@ -99,7 +99,6 @@ public final class Utilities {
         // Scene
         Scene scene = new Scene(layout, 450, 250); // Adjusted width and height
 
-
         // Stage setup
         stage.setScene(scene);
 

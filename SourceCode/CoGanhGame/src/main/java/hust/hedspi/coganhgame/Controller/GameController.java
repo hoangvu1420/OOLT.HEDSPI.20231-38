@@ -68,8 +68,6 @@ public class GameController {
     private final Map<Piece, PieceComp> pieceMap = new HashMap<>();
     private final ChangeListener<Number> timeLeftListener = (observable, oldValue, newValue) -> {
         if (newValue.intValue() <= 0) {
-            System.out.println("Time out");
-            // TODO: Delete this line after finished the UI, display the time out message on the UI
             switchPlayer();
         }
     };
@@ -249,8 +247,6 @@ public class GameController {
         }
         game.switchPlayer();
 
-        System.out.println("Current player: " + game.getCurrentPlayer().getName());
-
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
             game.getCurrentPlayer().playTimer();
@@ -327,9 +323,6 @@ public class GameController {
                 }
                 botPositionCount = BotPlayer.positionCount;
                 updateBotPositionCountLabel();
-                System.out.println("Position count: " + BotPlayer.positionCount);
-                // TODO: Delete these lines after finished the UI,
-                //  display the time and position count of the bot on the UI
                 BotPlayer.positionCount = 0;
                 switchPlayer();
             });
@@ -347,10 +340,9 @@ public class GameController {
         }
     }
 
-
-
     private void endGame() {
         executor.shutdown(); // shutdown the executor to avoid memory leak
+        timeline.stop();
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
             game.getCurrentPlayer().pauseTimer();
@@ -359,18 +351,14 @@ public class GameController {
             piece.setDisablePiece();
         }
 
-        Platform.runLater(()->showWinnerPopup());
-        System.out.println("Game over");
-        System.out.println("Winner: " + game.getCurrentPlayer().getName());
-        System.out.println(game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime());
-        System.out.println(game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime());
+        Platform.runLater(this::showWinnerPopup);
     }
     private void showWinnerPopup() {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Game Over");
         alert.setHeaderText("Winner: " + game.getCurrentPlayer().getName() + "\n"
-                + game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime() + " seconds\n"
-                + game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime() + " seconds");
+                + game.getPlayer1().getName() + " total time: " + ((double) game.getPlayer1().getTotalTime() / 1000) + " seconds\n"
+                + game.getPlayer2().getName() + " total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + " seconds");
         alert.setContentText(null);
         alert.showAndWait();
     }

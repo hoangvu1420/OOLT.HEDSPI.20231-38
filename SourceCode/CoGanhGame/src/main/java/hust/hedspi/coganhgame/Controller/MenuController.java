@@ -3,6 +3,7 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
+import hust.hedspi.coganhgame.Model.Settings.GameSettings;
 import hust.hedspi.coganhgame.Utilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
