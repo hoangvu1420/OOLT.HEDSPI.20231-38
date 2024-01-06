@@ -19,8 +19,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.layout.Region;
 import javafx.scene.Node;
 import javafx.stage.Stage;
@@ -32,9 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static hust.hedspi.coganhgame.Utilities.TILE_SIZE;
-import static hust.hedspi.coganhgame.Utilities.WIDTH;
-import static hust.hedspi.coganhgame.Utilities.HEIGHT;
+import static hust.hedspi.coganhgame.Utilities.*;
 
 public class GameController {
     private final Game game;
@@ -44,6 +40,7 @@ public class GameController {
     public Button btnExit;
 
     private Tile currentTile;
+    private Tile draggedTile;
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
     private final TileComp[][] viewBoard = new TileComp[WIDTH][HEIGHT];
@@ -93,15 +90,13 @@ public class GameController {
                 // and letters from A-E to represent the columns of the board
                 if (col == 0 || col == WIDTH - 1) {
                     Label label = new Label(String.valueOf(HEIGHT - row));
-                    label.setLayoutX((double) TILE_SIZE / 2 + (col == 0 ? -(TILE_SIZE * 0.35) : (TILE_SIZE * 0.3)));
-                    label.setLayoutY((double) TILE_SIZE / 2 - 9);
+                    label.setTranslateX(col == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5));
                     label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
                 if (row == 0 || row == HEIGHT - 1) {
                     Label label = new Label(String.valueOf((char) (col + 65)));
-                    label.setLayoutX((double) TILE_SIZE / 2 - 6);
-                    label.setLayoutY((double) TILE_SIZE / 2 + (row == 0 ? -(TILE_SIZE * 0.35 + 5) : (TILE_SIZE * 0.3 - 5)));
+                    label.setTranslateY(row == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5 + 2));
                     label.setFont(Utilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
@@ -119,39 +114,6 @@ public class GameController {
                 tileCompGroup.getChildren().add(tileComp);
             }
         }
-        // draw a line from the top left tileComp to the bottom right tileComp
-        drawLine(viewBoard[0][0], viewBoard[HEIGHT - 1][WIDTH - 1]);
-        // draw a line from the top right tileComp to the bottom left tileComp
-        drawLine(viewBoard[0][WIDTH - 1], viewBoard[HEIGHT - 1][0]);
-        // for each tileComp in the first row, draw a line from that tileComp to the tileComp in the last row
-        for (int i = 0; i < WIDTH; i++) {
-            drawLine(viewBoard[0][i], viewBoard[HEIGHT - 1][i]);
-        }
-        // for each tileComp in the first column, draw a line from that tileComp to the tileComp in the last column
-        for (int i = 0; i < HEIGHT; i++) {
-            drawLine(viewBoard[i][0], viewBoard[i][WIDTH - 1]);
-        }
-        // draw a line from the center tileComp of the first row to the center tileComp of the last column
-        drawLine(viewBoard[0][WIDTH / 2], viewBoard[HEIGHT / 2][WIDTH - 1]);
-        // draw a line from the center tileComp of the last column to the center tileComp of the last row
-        drawLine(viewBoard[HEIGHT / 2][WIDTH - 1], viewBoard[HEIGHT - 1][WIDTH / 2]);
-        // draw a line from the center tileComp of the last row to the center tileComp of the first column
-        drawLine(viewBoard[HEIGHT - 1][WIDTH / 2], viewBoard[HEIGHT / 2][0]);
-        // draw a line from the center tileComp of the first column to the center tileComp of the first row
-        drawLine(viewBoard[HEIGHT / 2][0], viewBoard[0][WIDTH / 2]);
-    }
-
-    private void drawLine(TileComp firstTile, TileComp lastTile) {
-        double startX = firstTile.getCenterX();
-        double startY = firstTile.getCenterY();
-        double endX = lastTile.getCenterX();
-        double endY = lastTile.getCenterY();
-        Line line = new Line(startX, startY, endX, endY);
-        line.setStroke(Utilities.BOARD_STROKE_COLOR);
-        line.setStrokeWidth(Utilities.BOARD_STROKE_WIDTH);
-        // make the tip of the line rounded
-        line.setStrokeLineCap(StrokeLineCap.ROUND);
-        tileCompGroup.getChildren().add(line);
     }
 
     private PieceComp makePieceComp(boolean side, int row, int col) {
@@ -166,15 +128,16 @@ public class GameController {
             int colPressed = toBoardPos(pieceComp.getLayoutX());
             if (currentTile == null) {
                 currentTile = game.getBoard()[rowPressed][colPressed];
-            } else if (rowPressed == currentTile.getRow() && colPressed == currentTile.getCol()) {
-                return;
             }
+            if (rowPressed != currentTile.getRow() && colPressed != currentTile.getCol()) {
+                for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
+                    viewBoard[move.getRow()][move.getCol()].removeHighlight();
+                }
+            }
+
             currentTile = game.getBoard()[rowPressed][colPressed];
             for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
-                System.out.println(move.getRow() + "-" + move.getCol());
-                // TODO: Delete this line after finished the UI,
-                //  replace it with a method to highlight the valid moves on the UI
-                // set the tileComp of the valid moves to be highlighted
+                viewBoard[move.getRow()][move.getCol()].highlight(currentTile.getPiece().getSide());
             }
             // bring the piece to the front
             pieceComp.toFront();
@@ -184,26 +147,36 @@ public class GameController {
             pieceComp.relocate(e.getSceneX() - mouseX.get() + pieceComp.getOldX(), e.getSceneY() - mouseY.get() + pieceComp.getOldY());
             int rowDragged = toBoardPos(pieceComp.getLayoutY());
             int colDragged = toBoardPos(pieceComp.getLayoutX());
-            if (rowDragged != currentTile.getRow() || colDragged != currentTile.getCol()) {
-                Tile draggedTile = game.getBoard()[rowDragged][colDragged];
-                if (currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
-                    System.out.println("To: " + draggedTile.getRow() + "-" + draggedTile.getCol());
-                    // TODO: Delete this line after finished the UI,
-                    //  replace it with a method to highlight the tileComp that the piece is being dragged to on the UI
-                    // set the tileComp that the piece is being dragged to be highlighted
-                }
+            if (draggedTile == null) {
+                draggedTile = game.getBoard()[rowDragged][colDragged];
+            } else if (rowDragged == draggedTile.getRow() && colDragged == draggedTile.getCol()) {
+                return;
+            }
+            viewBoard[draggedTile.getRow()][draggedTile.getCol()].unfillHighlighter();
+            draggedTile = game.getBoard()[rowDragged][colDragged];
+            if (currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
+                viewBoard[draggedTile.getRow()][draggedTile.getCol()].fillHighlighter();
             }
         });
 
         pieceComp.getEllipse().setOnMouseReleased(e -> {
             // when the piece is released, that means the player has finished moving the piece
             // then we process the move
+            for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
+                viewBoard[move.getRow()][move.getCol()].removeHighlight();
+            }
 
             int newRow = toBoardPos(pieceComp.getLayoutY());
             int newCol = toBoardPos(pieceComp.getLayoutX());
 
             int oldRow = toBoardPos(pieceComp.getOldY());
             int oldCol = toBoardPos(pieceComp.getOldX());
+
+            if (oldRow == newRow && oldCol == newCol) {
+                // if the piece is not moved, we abort the move
+                pieceComp.abortMove();
+                return;
+            }
 
             Move move = new Move(game.getBoard()[oldRow][oldCol], game.getBoard()[newRow][newCol]);
             MoveResult moveResult = game.processMove(move);
@@ -227,7 +200,7 @@ public class GameController {
 
     private int toBoardPos(double pixel) {
         // this method is used to convert the pixel position on the screen to the position on the board
-        return (int) (pixel + TILE_SIZE / 2) / TILE_SIZE;
+        return (int) ((int) (pixel + TILE_SIZE / 2) / TILE_SIZE);
     }
 
     private void switchPlayer() {

@@ -25,12 +25,12 @@ public class PieceComp extends StackPane {
         move(row, col);
 
         // make a black background
-        Ellipse bg = new Ellipse(PIECE_SIZE, PIECE_SIZE * 0.832);
-        bg.setFill(Color.BLACK);
-        bg.setStroke(Color.BLACK);
-        bg.setStrokeWidth(PIECE_STROKE_WIDTH);
-        bg.setTranslateX((TILE_SIZE - PIECE_SIZE * 2) / 2);
-        bg.setTranslateY((TILE_SIZE - PIECE_SIZE * 0.832 * 2) / 2 + PIECE_SIZE * 0.18);
+        Ellipse background = new Ellipse(PIECE_SIZE, PIECE_SIZE * 0.832);
+        background.setFill(Color.BLACK);
+        background.setStroke(Color.BLACK);
+        background.setStrokeWidth(PIECE_STROKE_WIDTH);
+        background.setTranslateX((TILE_SIZE - PIECE_SIZE * 2) / 2);
+        background.setTranslateY((TILE_SIZE - PIECE_SIZE * 0.832 * 2) / 2 + PIECE_SIZE * 0.18);
 
         // make a red or blue piece
         ellipse = new Ellipse(PIECE_SIZE, PIECE_SIZE * 0.832);
@@ -41,7 +41,7 @@ public class PieceComp extends StackPane {
         ellipse.setTranslateY((TILE_SIZE - PIECE_SIZE * 0.832 * 2) / 2);
         ellipse.setCursor(Cursor.HAND);
 
-        getChildren().addAll(bg, ellipse);
+        getChildren().addAll(background, ellipse);
     }
 
     public double getOldY() {
