@@ -356,18 +356,21 @@ public class GameController {
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText("Winner: " + game.getCurrentPlayer().getName() + "\n"
-        + game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime() + " seconds\n"
-        + game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime() + " seconds");
-        alert.setContentText(null);
-        alert.showAndWait();
 
+        Platform.runLater(()->showWinnerPopup());
         System.out.println("Game over");
         System.out.println("Winner: " + game.getCurrentPlayer().getName());
         System.out.println(game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime());
         System.out.println(game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime());
+    }
+    private void showWinnerPopup() {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("Winner: " + game.getCurrentPlayer().getName() + "\n"
+                + game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime() + " seconds\n"
+                + game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime() + " seconds");
+        alert.setContentText(null);
+        alert.showAndWait();
     }
 
     @FXML
