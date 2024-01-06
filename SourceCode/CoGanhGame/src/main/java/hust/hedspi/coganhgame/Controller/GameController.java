@@ -107,8 +107,8 @@ public class GameController {
         updateCurrentPlayerLabel();
         player1NameLabel.setText("Player 1: " + game.getPlayer1().getName());
         player2NameLabel.setText("Player 2: " + game.getPlayer2().getName());
-        player1NameLabel.setFont(new Font("Arial", 15));
-        player2NameLabel.setFont(new Font("Arial", 15));
+        player1NameLabel.setFont(new Font("Arial", 20));
+        player2NameLabel.setFont(new Font("Arial", 20));
         runTimer();
     }
 
@@ -273,7 +273,7 @@ public class GameController {
     private void updateCurrentPlayerLabel() {
         if (currentPlayerLabel != null && game != null && game.getCurrentPlayer() != null) {
             currentPlayerLabel.setText("Current Player: " + game.getCurrentPlayer().getName());
-            currentPlayerLabel.setFont(new Font("Arial", 20));
+            currentPlayerLabel.setFont(new Font("Arial", 25));
         }
     }
 
@@ -341,7 +341,7 @@ public class GameController {
     private void updateBotPositionCountLabel() {
         if (botPositionCount != -1 ) {
             botPositionCountLabel.setText("Position count: " + botPositionCount);
-            botPositionCountLabel.setFont(new Font("Arial", 15));
+            botPositionCountLabel.setFont(new Font("Arial", 20));
         }
     }
 

@@ -49,7 +49,7 @@ public class MenuController {
                 if(gameSettings == null){
                     return;
                 }
-                controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getGameTime(), Utilities.BOT_LEVEL_HARD);
+                controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getGameTime(), gameSettings.getBotLevel());
             }
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/game-view.fxml"));
 
