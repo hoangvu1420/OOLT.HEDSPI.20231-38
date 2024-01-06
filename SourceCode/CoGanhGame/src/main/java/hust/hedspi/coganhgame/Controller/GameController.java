@@ -11,7 +11,10 @@ import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
+import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -38,6 +41,8 @@ public class GameController {
     public Pane boardPane;
     @FXML
     public Button btnExit;
+    @FXML
+    public ProgressBar prbTimeLeft;
 
     private Tile currentTile;
     private Tile draggedTile;
@@ -52,6 +57,7 @@ public class GameController {
             switchPlayer();
         }
     };
+    private final Timeline timeline = new Timeline();
     private final ExecutorService executor = Executors.newSingleThreadExecutor(); // this executor is used to run the botMoveTask
 
     public GameController(String player1Name, String player2Name, int timeLimit) {
@@ -74,8 +80,15 @@ public class GameController {
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
         // set the outline of the board
         boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
+
+        timeline.getKeyFrames().addAll(
+                new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeft.progressProperty(), 1)),
+                new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
+        );
+
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
+        runTimer();
     }
 
     private void initViewBoard() {
@@ -228,12 +241,28 @@ public class GameController {
                     piece.setDisablePiece();
                 }
             }
+            runTimer();
         } else {
             for (PieceComp piece : pieceMap.values()) {
                 piece.setDisablePiece();
             }
             botMakeMove();
         }
+    }
+
+    public void runTimer() {
+        timeline.stop();
+        prbTimeLeft.setPrefWidth(Utilities.BOARD_WIDTH);
+        prbTimeLeft.setProgress(1);
+
+        if (game.getCurrentPlayer().getSide() == RED_SIDE) {
+            prbTimeLeft.setRotate(180);
+            prbTimeLeft.setStyle("-fx-accent: #E21818;");
+        } else {
+            prbTimeLeft.setRotate(0);
+            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+        }
+        timeline.playFromStart();
     }
 
     private void botMakeMove() {
