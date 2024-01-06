@@ -247,6 +247,8 @@ public class GameController {
                 piece.setDisablePiece();
             }
             botMakeMove();
+            timeline.stop();
+            prbTimeLeft.setProgress(1);
         }
     }
 
