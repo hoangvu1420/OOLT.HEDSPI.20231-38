@@ -3,6 +3,7 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
+import hust.hedspi.coganhgame.Model.Settings.GameSettings;
 import hust.hedspi.coganhgame.Utilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,16 +30,30 @@ public class MenuController {
         try {
             Node source = (Node) actionEvent.getSource();
             Stage currentStage = (Stage) source.getScene().getWindow();
+            String gameMode = Utilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
+            if (gameMode == null || gameMode.isEmpty()) {
+                // User closed the game options box, return to the menu
+                return;
+            }
 
+            final GameController[] controller = {null};
+            if(gameMode.equals("2 Players")){
+                GameSettings gameSettings = Utilities.get2PlayersSettings();
+                if (gameSettings == null) {
+                    // User canceled the input
+                    return;
+                }
+                controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getPlayer2Name(), gameSettings.getGameTime());
+            } else if (gameMode.equals("Play With Bot")) {
+                GameSettings  gameSettings = Utilities.getPlayWithBotSettings();
+                if(gameSettings == null){
+                    return;
+                }
+                controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getGameTime(), Utilities.BOT_LEVEL_HARD);
+            }
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/game-view.fxml"));
-            // TODO:
-            //  - Add a method to allow user to choose game mode: 1 player or 2 players
-            //  - Add a method to allow user to choose time limit and player name
-            //  - Add a method to allow user to choose bot level if they choose to play with bot
-            //  - Call the constructor of GameController accordingly to the user's choices
-            GameController controller = new GameController("Player 1", "Player 2", 10); // constructor for 2 players
-//            GameController controller = new GameController("Player 1", 100, Utilities.BOT_LEVEL_HARD); // constructor for 1 player
-            fxmlLoader.setControllerFactory(c -> controller);
+
+            fxmlLoader.setControllerFactory(c -> controller[0]);
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");
             newStage.setScene(new Scene(fxmlLoader.load()));

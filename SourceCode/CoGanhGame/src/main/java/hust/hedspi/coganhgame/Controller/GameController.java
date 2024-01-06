@@ -1,5 +1,7 @@
 package hust.hedspi.coganhgame.Controller;
 
+import hust.hedspi.coganhgame.Model.Player.Player;
+import javafx.scene.text.Font;
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
 import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
@@ -19,6 +21,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.application.Platform;
+import javafx.scene.control.Label;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
@@ -43,9 +48,20 @@ public class GameController {
     public Button btnExit;
     @FXML
     public ProgressBar prbTimeLeft;
+    @FXML
+    private Label currentPlayerLabel;
+    @FXML
+    private  Label player1NameLabel;
+    @FXML
+    private Label player2NameLabel ;
+    @FXML
+    private Label botPositionCountLabel;
+    private int botPositionCount = -1;
+
 
     private Tile currentTile;
     private Tile draggedTile;
+
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
     private final TileComp[][] viewBoard = new TileComp[WIDTH][HEIGHT];
@@ -88,6 +104,11 @@ public class GameController {
 
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
+        updateCurrentPlayerLabel();
+        player1NameLabel.setText("Player 1: " + game.getPlayer1().getName());
+        player2NameLabel.setText("Player 2: " + game.getPlayer2().getName());
+        player1NameLabel.setFont(new Font("Arial", 15));
+        player2NameLabel.setFont(new Font("Arial", 15));
         runTimer();
     }
 
@@ -229,7 +250,6 @@ public class GameController {
         game.switchPlayer();
 
         System.out.println("Current player: " + game.getCurrentPlayer().getName());
-        // TODO: Delete this line after finished the UI, display the name of the current player on the UI
 
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
@@ -247,6 +267,13 @@ public class GameController {
                 piece.setDisablePiece();
             }
             botMakeMove();
+        }
+        updateCurrentPlayerLabel();
+    }
+    private void updateCurrentPlayerLabel() {
+        if (currentPlayerLabel != null && game != null && game.getCurrentPlayer() != null) {
+            currentPlayerLabel.setText("Current Player: " + game.getCurrentPlayer().getName());
+            currentPlayerLabel.setFont(new Font("Arial", 20));
         }
     }
 
@@ -296,6 +323,8 @@ public class GameController {
                         capturedPieceComp.flipSide();
                     }
                 }
+                botPositionCount = BotPlayer.positionCount;
+                updateBotPositionCountLabel();
                 System.out.println("Position count: " + BotPlayer.positionCount);
                 // TODO: Delete these lines after finished the UI,
                 //  display the time and position count of the bot on the UI
@@ -309,6 +338,15 @@ public class GameController {
         executor.execute(botMoveTask);
     }
 
+    private void updateBotPositionCountLabel() {
+        if (botPositionCount != -1 ) {
+            botPositionCountLabel.setText("Position count: " + botPositionCount);
+            botPositionCountLabel.setFont(new Font("Arial", 15));
+        }
+    }
+
+
+
     private void endGame() {
         executor.shutdown(); // shutdown the executor to avoid memory leak
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
@@ -318,12 +356,18 @@ public class GameController {
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("Winner: " + game.getCurrentPlayer().getName() + "\n"
+        + game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime() + " seconds\n"
+        + game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime() + " seconds");
+        alert.setContentText(null);
+        alert.showAndWait();
 
         System.out.println("Game over");
         System.out.println("Winner: " + game.getCurrentPlayer().getName());
         System.out.println(game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime());
         System.out.println(game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime());
-        // TODO: Delete these lines after finished the UI, display the winner and total time of each player on the UI
     }
 
     @FXML
