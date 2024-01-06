@@ -192,19 +192,19 @@ public final class Utilities {
         botDifficultyDialog.setContentText("Choose Bot Difficulty:");
         Optional<String> botDifficulty= botDifficultyDialog.showAndWait();
         int botDifficultyValue = Utilities.BOT_LEVEL_EASY;
-
-        if(botDifficulty.equals("Easy")){
-            botDifficultyValue = Utilities.BOT_LEVEL_EASY;
-        }
-        if(botDifficulty.equals("Medium")){
-            botDifficultyValue = Utilities.BOT_LEVEL_MEDIUM;
-        }
-        if(botDifficulty.equals("Hard")){
-            botDifficultyValue = Utilities.BOT_LEVEL_HARD;
-        }
         if (!botDifficulty.isPresent()) {
             return null;
         }
+        if(botDifficulty.get().equals("Easy")){
+            botDifficultyValue = Utilities.BOT_LEVEL_EASY;
+        }
+        if(botDifficulty.get().equals("Medium")){
+            botDifficultyValue = Utilities.BOT_LEVEL_MEDIUM;
+        }
+        if(botDifficulty.get().equals("Hard")){
+            botDifficultyValue = Utilities.BOT_LEVEL_HARD;
+        }
+
         gameSettings.setBotLevel(botDifficultyValue);
 
         return gameSettings;
