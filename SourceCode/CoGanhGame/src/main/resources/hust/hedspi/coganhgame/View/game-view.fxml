@@ -9,11 +9,21 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.HBox?>
 
+
+<?import javafx.scene.control.Label?>
 <StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
     <BorderPane>
         <center>
-            <Pane fx:id="boardPane" prefHeight="800.0" prefWidth="800.0" />
+            <VBox>
+                <Label fx:id="currentPlayerLabel" text="Current Player: " />
+                <Label fx:id="player1NameLabel" text="Player 1: "/>
+                <Pane fx:id="boardPane" prefHeight="800.0" prefWidth="800.0" />
+                <Label fx:id="player2NameLabel" text="Player 2: "/>
+                <Label fx:id="botPositionCountLabel"/>
+            </VBox>
         </center>
         <top>
             <ToolBar nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
