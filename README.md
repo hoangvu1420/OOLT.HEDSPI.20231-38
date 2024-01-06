@@ -6,4 +6,5 @@
   - Lê Đàm Quân - 2023T051 - Code phần giao diện người dùng của ứng dụng - Kiểm thử, sửa lỗi
 ## Topic
   - Thiết kế ứng dụng trò chơi dân gian Cờ Gánh sử dụng JavaFX
-
+## Demonstration
+  - [Video demo](https://www.youtube.com/watch?v=9Z3Z4Z3Z4Z4)
