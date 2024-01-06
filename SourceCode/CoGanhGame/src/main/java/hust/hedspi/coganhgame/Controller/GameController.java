@@ -367,6 +367,7 @@ public class GameController {
     public void onBtnExitClick(ActionEvent actionEvent) {
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             game.getCurrentPlayer().pauseTimer();
+            timeline.pause();
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -396,6 +397,7 @@ public class GameController {
                 // User chose Cancel or closed the dialog -> play the timer again
                 if (game.getCurrentPlayer() instanceof HumanPlayer) {
                     game.getCurrentPlayer().playTimer();
+                    timeline.play();
                 }
             }
         } else {
