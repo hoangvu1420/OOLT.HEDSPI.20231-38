@@ -199,9 +199,6 @@ public class Game implements Serializable {
                     if (floodFill(row, col, group, visited)) {
                         flipGroup(group);
                         surroundedPieces.addAll(group);
-                        break;
-                        // theoretically, for each move, there is only one group of pieces that is surrounded,
-                        // so we can break the loop after we find the first group of pieces that is surrounded
                     }
                 }
             }
