@@ -52,6 +52,8 @@ public class GameController {
     @FXML
     public VBox mainVBox;
     @FXML
+    public Label currentLabel;
+    @FXML
     private  Label player1NameLabel;
     @FXML
     private Label player2NameLabel ;
@@ -104,6 +106,7 @@ public class GameController {
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
         updateCurrentPlayerLabel();
+        currentLabel.setText("Current Player: ");
         player1NameLabel.setText(game.getPlayer1().getName());
         player1NameLabel.setTextFill(RED_PIECE_COLOR);
         player2NameLabel.setText(game.getPlayer2().getName());
@@ -350,6 +353,7 @@ public class GameController {
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
+        currentLabel.setText("Winner: ");
 
         Platform.runLater(this::showWinnerPopup);
     }

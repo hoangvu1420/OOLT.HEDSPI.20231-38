@@ -20,7 +20,7 @@
         <center>
             <VBox fx:id="mainVBox">
                 <HBox alignment="CENTER">
-                    <Label style="-fx-font-weight: bold;" text="Current player: ">
+                    <Label fx:id="currentLabel" style="-fx-font-weight: bold;" text="Current player: ">
                         <font>
                             <Font name="Arial" size="30.0"/>
                         </font>
@@ -54,7 +54,7 @@
                             <Font name="Arial" size="20.0"/>
                         </font>
                         <HBox.margin>
-                            <Insets bottom="10.0" left="10.0"/>
+                            <Insets left="10.0"/>
                         </HBox.margin>
                     </Label>
                     <Label style="-fx-font-weight: bold;" fx:id="player2NameLabel">
