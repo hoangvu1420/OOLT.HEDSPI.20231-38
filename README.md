@@ -7,4 +7,4 @@
 ## Topic
   - Thiết kế ứng dụng trò chơi dân gian Cờ Gánh sử dụng JavaFX
 ## Demonstration
-  - [Video demo](https://www.youtube.com/watch?v=9Z3Z4Z3Z4Z4)
+  - [Video demo](https://www.youtube.com/watch?v=DlnxOi1VFT0&ab_channel=V%C5%A9Ho%C3%A0ng)
