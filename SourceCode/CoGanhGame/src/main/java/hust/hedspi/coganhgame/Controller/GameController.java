@@ -1,7 +1,5 @@
 package hust.hedspi.coganhgame.Controller;
 
-import hust.hedspi.coganhgame.Model.Player.Player;
-import javafx.scene.text.Font;
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
 import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
@@ -29,6 +27,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.Node;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -49,7 +48,9 @@ public class GameController {
     @FXML
     public ProgressBar prbTimeLeft;
     @FXML
-    private Label currentPlayerLabel;
+    public Label currentNameLabel;
+    @FXML
+    public VBox mainVBox;
     @FXML
     private  Label player1NameLabel;
     @FXML
@@ -103,10 +104,10 @@ public class GameController {
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
         updateCurrentPlayerLabel();
-        player1NameLabel.setText("Player 1: " + game.getPlayer1().getName());
-        player2NameLabel.setText("Player 2: " + game.getPlayer2().getName());
-        player1NameLabel.setFont(new Font("Arial", 20));
-        player2NameLabel.setFont(new Font("Arial", 20));
+        player1NameLabel.setText(game.getPlayer1().getName());
+        player1NameLabel.setTextFill(RED_PIECE_COLOR);
+        player2NameLabel.setText(game.getPlayer2().getName());
+        player2NameLabel.setTextFill(BUE_PIECE_COLOR);
         runTimer();
     }
 
@@ -269,9 +270,9 @@ public class GameController {
         updateCurrentPlayerLabel();
     }
     private void updateCurrentPlayerLabel() {
-        if (currentPlayerLabel != null && game != null && game.getCurrentPlayer() != null) {
-            currentPlayerLabel.setText("Current Player: " + game.getCurrentPlayer().getName());
-            currentPlayerLabel.setFont(new Font("Arial", 25));
+        if (currentNameLabel != null && game != null && game.getCurrentPlayer() != null) {
+            currentNameLabel.setText(game.getCurrentPlayer().getName());
+            currentNameLabel.setTextFill(game.getCurrentPlayer().getSide() == RED_SIDE ? RED_PIECE_COLOR : BUE_PIECE_COLOR);
         }
     }
 
@@ -336,7 +337,6 @@ public class GameController {
     private void updateBotPositionCountLabel() {
         if (botPositionCount != -1 ) {
             botPositionCountLabel.setText("Position count: " + botPositionCount);
-            botPositionCountLabel.setFont(new Font("Arial", 20));
         }
     }
 

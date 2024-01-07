@@ -38,7 +38,7 @@ public final class Utilities {
     public static final Color BOARD_STROKE_COLOR = Color.valueOf("#222831");
     public static final Color RED_PIECE_COLOR = Color.valueOf("#E21818");
     public static final Color BUE_PIECE_COLOR = Color.valueOf("#2666CF");
-    public static final Font COOR_FONT = new Font("Arial", 18);
+    public static final Font COOR_FONT = new Font("Arial", 20);
 
     public static void showAlert(String title, String content, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
@@ -194,9 +194,7 @@ public final class Utilities {
         if (!botDifficulty.isPresent()) {
             return null;
         }
-        if(botDifficulty.get().equals("Easy")){
-            botDifficultyValue = Utilities.BOT_LEVEL_EASY;
-        }
+
         if(botDifficulty.get().equals("Medium")){
             botDifficultyValue = Utilities.BOT_LEVEL_MEDIUM;
         }
