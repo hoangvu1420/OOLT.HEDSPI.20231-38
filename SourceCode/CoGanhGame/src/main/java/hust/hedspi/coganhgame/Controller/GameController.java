@@ -99,7 +99,6 @@ public class GameController {
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
         // set the outline of the board
         boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
-        mainVBox.setStyle("-fx-border-color: #E21818; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
         timeline.getKeyFrames().addAll(
                 new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeft.progressProperty(), 1)),
                 new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
@@ -277,11 +276,6 @@ public class GameController {
             timeline.stop();
             prbTimeLeft.setProgress(1);
         }
-        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
-            mainVBox.setStyle("-fx-border-color: #E21818; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
-        } else {
-            mainVBox.setStyle("-fx-border-color: #2666CF; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
-        }
         updateCurrentPlayerLabel();
     }
     private void updateCurrentPlayerLabel() {
@@ -369,6 +363,7 @@ public class GameController {
 
         Platform.runLater(this::showWinnerPopup);
     }
+
     private void showWinnerPopup() {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Game Over");

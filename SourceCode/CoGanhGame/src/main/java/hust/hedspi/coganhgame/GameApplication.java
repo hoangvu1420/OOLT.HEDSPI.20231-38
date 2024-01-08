@@ -1,7 +1,6 @@
 package hust.hedspi.coganhgame;
 
 import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
-import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +21,14 @@ public class GameApplication extends Application {
         try{
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/menu-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+            stage.setOnCloseRequest(e -> {
+                e.consume();
+                boolean confirm = ViewUtilities.showConfirm("Exit", "Are you sure you want to exit?");
+                if (confirm) {
+                    stage.close();
+                }
+            });
+
             // set the scene size to match the size of the root layout.
             stage.setResizable(false);
             stage.setTitle("Co Ganh Game");
