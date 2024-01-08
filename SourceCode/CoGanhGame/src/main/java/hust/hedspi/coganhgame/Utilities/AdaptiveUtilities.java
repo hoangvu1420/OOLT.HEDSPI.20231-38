@@ -1,10 +1,8 @@
-package hust.hedspi.coganhgame;
+package hust.hedspi.coganhgame.Utilities;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -12,57 +10,24 @@ import javafx.stage.StageStyle;
 import java.util.List;
 import java.util.Optional;
 import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import hust.hedspi.coganhgame.Model.Settings.GameSettings;
 
-public final class Utilities {
+public final class AdaptiveUtilities {
     public static double TILE_SIZE;
-    public static final int WIDTH = 5;
-    public static final int HEIGHT = 5;
     public static double BOARD_WIDTH;
     public static double BOARD_HEIGHT;
     public static double PIECE_SIZE;
-    public static final int BOARD_STROKE_WIDTH = 3;
-    public static final int TOTAL_PIECE = 16;
-    public static final boolean RED_SIDE = true;
-    public static final boolean BLUE_SIDE = false;
-    public static final double BOT_MOVE_DELAY = 0.5;
-    public static final int BOT_LEVEL_EASY = 3;
-    public static final int BOT_LEVEL_MEDIUM = 5;
-    public static final int BOT_LEVEL_HARD = 7;
 
-    public static final Color BOARD_STROKE_COLOR = Color.valueOf("#222831");
-    public static final Color RED_PIECE_COLOR = Color.valueOf("#E21818");
-    public static final Color BUE_PIECE_COLOR = Color.valueOf("#2666CF");
-    public static final Font COOR_FONT = new Font("Arial", 20);
-
-    public static void showAlert(String title, String content, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    public static void setProperties(double screenHeight) {
+        TILE_SIZE = screenHeight / 7;
+        BOARD_WIDTH = TILE_SIZE * Constants.WIDTH;
+        BOARD_HEIGHT = TILE_SIZE * Constants.HEIGHT;
+        PIECE_SIZE = TILE_SIZE * 0.22;
     }
 
-    public static void showAlert(String title, String header, String content, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
-
-    public static boolean showConfirm(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        return alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
-    }
     public static String showGameOptions(String title, String prompt, String buttonText1, String buttonText2) {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -107,6 +72,7 @@ public final class Utilities {
         // Return the text of the selected button
         return result[0];
     }
+
     public static GameSettings get2PlayersSettings() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Game's settings");
@@ -190,16 +156,16 @@ public final class Utilities {
         botDifficultyDialog.setHeaderText(null);
         botDifficultyDialog.setContentText("Choose Bot Difficulty:");
         Optional<String> botDifficulty= botDifficultyDialog.showAndWait();
-        int botDifficultyValue = Utilities.BOT_LEVEL_EASY;
+        int botDifficultyValue = Constants.BOT_LEVEL_EASY;
         if (!botDifficulty.isPresent()) {
             return null;
         }
 
         if(botDifficulty.get().equals("Medium")){
-            botDifficultyValue = Utilities.BOT_LEVEL_MEDIUM;
+            botDifficultyValue = Constants.BOT_LEVEL_MEDIUM;
         }
         if(botDifficulty.get().equals("Hard")){
-            botDifficultyValue = Utilities.BOT_LEVEL_HARD;
+            botDifficultyValue = Constants.BOT_LEVEL_HARD;
         }
 
         gameSettings.setBotLevel(botDifficultyValue);

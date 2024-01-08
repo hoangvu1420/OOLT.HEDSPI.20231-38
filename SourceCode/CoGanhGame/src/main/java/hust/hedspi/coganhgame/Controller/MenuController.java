@@ -4,7 +4,8 @@ import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Settings.GameSettings;
-import hust.hedspi.coganhgame.Utilities;
+import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
+import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +31,7 @@ public class MenuController {
         try {
             Node source = (Node) actionEvent.getSource();
             Stage currentStage = (Stage) source.getScene().getWindow();
-            String gameMode = Utilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
+            String gameMode = AdaptiveUtilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
             if (gameMode == null || gameMode.isEmpty()) {
                 // User closed the game options box, return to the menu
                 return;
@@ -38,14 +39,14 @@ public class MenuController {
 
             final GameController[] controller = {null};
             if(gameMode.equals("2 Players")){
-                GameSettings gameSettings = Utilities.get2PlayersSettings();
+                GameSettings gameSettings = AdaptiveUtilities.get2PlayersSettings();
                 if (gameSettings == null) {
                     // User canceled the input
                     return;
                 }
                 controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getPlayer2Name(), gameSettings.getGameTime());
             } else if (gameMode.equals("Play With Bot")) {
-                GameSettings  gameSettings = Utilities.getPlayWithBotSettings();
+                GameSettings  gameSettings = AdaptiveUtilities.getPlayWithBotSettings();
                 if(gameSettings == null){
                     return;
                 }
@@ -64,7 +65,7 @@ public class MenuController {
 
             newStage.show();
         } catch (Exception e) {
-            Utilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
         }
     }
 
@@ -75,7 +76,7 @@ public class MenuController {
             try {
                 game = Game.loadGame();
             } catch (GameNotFoundException e) {
-                Utilities.showAlert("Error", "No saved game found!", AlertType.ERROR);
+                ViewUtilities.showAlert("Error", "No saved game found!", AlertType.ERROR);
                 return;
             }
 
@@ -94,7 +95,7 @@ public class MenuController {
 
             newStage.show();
         } catch (Exception e) {
-            Utilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
         }
     }
 
@@ -104,7 +105,7 @@ public class MenuController {
 
     @FXML
     public void onExitClick() {
-        if (Utilities.showConfirm("Exit", "Are you sure you want to exit?")) {
+        if (ViewUtilities.showConfirm("Exit", "Are you sure you want to exit?")) {
             System.exit(0);
         }
     }

@@ -3,7 +3,8 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
 import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
-import hust.hedspi.coganhgame.Utilities;
+import hust.hedspi.coganhgame.Utilities.Constants;
+import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
 import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
@@ -11,6 +12,7 @@ import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
@@ -39,7 +41,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static hust.hedspi.coganhgame.Utilities.*;
+import static hust.hedspi.coganhgame.Utilities.AdaptiveUtilities.*;
 
 public class GameController {
     private final Game game;
@@ -63,13 +65,12 @@ public class GameController {
     private Label botPositionCountLabel;
     private int botPositionCount = -1;
 
-
     private Tile currentTile;
     private Tile draggedTile;
 
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
-    private final TileComp[][] viewBoard = new TileComp[WIDTH][HEIGHT];
+    private final TileComp[][] viewBoard = new TileComp[Constants.WIDTH][Constants.HEIGHT];
     private final Map<Piece, PieceComp> pieceMap = new HashMap<>();
     private final ChangeListener<Number> timeLeftListener = (observable, oldValue, newValue) -> {
         if (newValue.intValue() <= 0) {
@@ -114,32 +115,32 @@ public class GameController {
         updateCurrentPlayerLabel();
         currentLabel.setText("Current Player: ");
         player1NameLabel.setText(game.getPlayer1().getName());
-        player1NameLabel.setTextFill(RED_PIECE_COLOR);
+        player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
         player2NameLabel.setText(game.getPlayer2().getName());
-        player2NameLabel.setTextFill(BUE_PIECE_COLOR);
+        player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
         runTimer();
     }
 
     private void initViewBoard() {
         Tile[][] modelBoard = game.getBoard();
 
-        for (int row = 0; row < HEIGHT; row++) {
-            for (int col = 0; col < WIDTH; col++) {
+        for (int row = 0; row < Constants.HEIGHT; row++) {
+            for (int col = 0; col < Constants.WIDTH; col++) {
                 TileComp tileComp = new TileComp(row, col);
                 viewBoard[row][col] = tileComp;
 
                 // we use numbers from 1-5 to represent the rows of the board
                 // and letters from A-E to represent the columns of the board
-                if (col == 0 || col == WIDTH - 1) {
-                    Label label = new Label(String.valueOf(HEIGHT - row));
+                if (col == 0 || col == Constants.WIDTH - 1) {
+                    Label label = new Label(String.valueOf(Constants.HEIGHT - row));
                     label.setTranslateX(col == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5));
-                    label.setFont(Utilities.COOR_FONT);
+                    label.setFont(ViewUtilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
-                if (row == 0 || row == HEIGHT - 1) {
+                if (row == 0 || row == Constants.HEIGHT - 1) {
                     Label label = new Label(String.valueOf((char) (col + 65)));
                     label.setTranslateY(row == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5 + 2));
-                    label.setFont(Utilities.COOR_FONT);
+                    label.setFont(ViewUtilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
 
@@ -276,7 +277,7 @@ public class GameController {
             timeline.stop();
             prbTimeLeft.setProgress(1);
         }
-        if (game.getCurrentPlayer().getSide() == RED_SIDE) {
+        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
             mainVBox.setStyle("-fx-border-color: #E21818; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
         } else {
             mainVBox.setStyle("-fx-border-color: #2666CF; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
@@ -286,16 +287,16 @@ public class GameController {
     private void updateCurrentPlayerLabel() {
         if (currentNameLabel != null && game != null && game.getCurrentPlayer() != null) {
             currentNameLabel.setText(game.getCurrentPlayer().getName());
-            currentNameLabel.setTextFill(game.getCurrentPlayer().getSide() == RED_SIDE ? RED_PIECE_COLOR : BUE_PIECE_COLOR);
+            currentNameLabel.setTextFill(game.getCurrentPlayer().getSide() == Constants.RED_SIDE ? ViewUtilities.RED_PIECE_COLOR : ViewUtilities.BUE_PIECE_COLOR);
         }
     }
 
     public void runTimer() {
         timeline.stop();
-        prbTimeLeft.setPrefWidth(Utilities.BOARD_WIDTH);
+        prbTimeLeft.setPrefWidth(AdaptiveUtilities.BOARD_WIDTH);
         prbTimeLeft.setProgress(1);
 
-        if (game.getCurrentPlayer().getSide() == RED_SIDE) {
+        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
             prbTimeLeft.setRotate(180);
             prbTimeLeft.setStyle("-fx-accent: #E21818;");
         } else {
@@ -327,7 +328,7 @@ public class GameController {
             MoveResult botMoveResult = game.processMove(botMove);
             botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
 
-            PauseTransition pause = new PauseTransition(Duration.seconds(Utilities.BOT_MOVE_DELAY));
+            PauseTransition pause = new PauseTransition(Duration.seconds(Constants.BOT_MOVE_DELAY));
             pause.setOnFinished(e -> {
                 if (botMoveResult.capturedPieces() != null) {
                     // if the move is a capture move, we flip the side of the captured pieces

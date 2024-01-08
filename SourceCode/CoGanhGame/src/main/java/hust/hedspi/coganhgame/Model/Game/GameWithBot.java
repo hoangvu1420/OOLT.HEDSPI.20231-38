@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Model.Game;
 
-import hust.hedspi.coganhgame.Utilities;
+import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Piece;
@@ -15,8 +15,8 @@ public class GameWithBot extends Game {
 
     public ArrayList<Move> generateMoves() {
         ArrayList<Move> moves = new ArrayList<>();
-        for (int row = 0; row < Utilities.HEIGHT; row++) {
-            for (int col = 0; col < Utilities.WIDTH; col++) {
+        for (int row = 0; row < Constants.HEIGHT; row++) {
+            for (int col = 0; col < Constants.WIDTH; col++) {
                 Piece piece = board[row][col].getPiece();
                 if (piece == null || piece.getSide() != getCurrentPlayer().getSide()) {
                     continue;
