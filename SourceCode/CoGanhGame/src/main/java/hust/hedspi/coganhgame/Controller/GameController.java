@@ -41,8 +41,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static hust.hedspi.coganhgame.Utilities.AdaptiveUtilities.*;
-
 public class GameController {
     private final Game game;
     @FXML
@@ -50,13 +48,19 @@ public class GameController {
     @FXML
     public Button btnExit;
     @FXML
-    public ProgressBar prbTimeLeft;
-    @FXML
     public Label currentNameLabel;
     @FXML
     public VBox mainVBox;
     @FXML
     public Label currentLabel;
+    @FXML
+    public ProgressBar prbTimeLeftRed;
+    @FXML
+    public ProgressBar prbTimeLeftBlue;
+    @FXML
+    public Label lblTotalPiecesRed;
+    @FXML
+    public Label lblTotalPiecesBlue;
     @FXML
     private  Label player1NameLabel;
     @FXML
@@ -96,17 +100,25 @@ public class GameController {
     public void initialize() {
         initViewBoard();
         boardPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // this line is used to make the boardPane fit the size of the board
+        boardPane.setPrefSize(AdaptiveUtilities.BOARD_WIDTH, AdaptiveUtilities.BOARD_HEIGHT);
+        prbTimeLeftRed.setPrefWidth(AdaptiveUtilities.BOARD_WIDTH);
+        prbTimeLeftBlue.setPrefWidth(AdaptiveUtilities.BOARD_WIDTH);
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
-        // set the outline of the board
-        boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
         timeline.getKeyFrames().addAll(
-                new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeft.progressProperty(), 1)),
-                new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
+                new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeftBlue.progressProperty(), 1)),
+                new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeftBlue.progressProperty(), 0))
         );
 
+        String botLevel = "";
         if (!(game instanceof GameWithBot)) {
             mainVBox.getChildren().remove(botPositionCountLabel);
             HBox.setMargin(player2NameLabel, new Insets(0, 0, 10, 0));
+        } else {
+            switch (((BotPlayer) game.getPlayer2()).getBotLevel()) {
+                case Constants.BOT_LEVEL_EASY -> botLevel = " - Easy";
+                case Constants.BOT_LEVEL_MEDIUM -> botLevel = " - Medium";
+                case Constants.BOT_LEVEL_HARD -> botLevel = " - Hard";
+            }
         }
 
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
@@ -115,8 +127,10 @@ public class GameController {
         currentLabel.setText("Current Player: ");
         player1NameLabel.setText(game.getPlayer1().getName());
         player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
-        player2NameLabel.setText(game.getPlayer2().getName());
+        player2NameLabel.setText(game.getPlayer2().getName() + botLevel);
         player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
+        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
+        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
         runTimer();
     }
 
@@ -132,13 +146,13 @@ public class GameController {
                 // and letters from A-E to represent the columns of the board
                 if (col == 0 || col == Constants.WIDTH - 1) {
                     Label label = new Label(String.valueOf(Constants.HEIGHT - row));
-                    label.setTranslateX(col == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5));
+                    label.setTranslateX(col == 0 ? -(AdaptiveUtilities.PIECE_SIZE * 1.5) : (AdaptiveUtilities.PIECE_SIZE * 1.5));
                     label.setFont(ViewUtilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
                 if (row == 0 || row == Constants.HEIGHT - 1) {
                     Label label = new Label(String.valueOf((char) (col + 65)));
-                    label.setTranslateY(row == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5 + 2));
+                    label.setTranslateY(row == 0 ? -(AdaptiveUtilities.PIECE_SIZE * 1.5) : (AdaptiveUtilities.PIECE_SIZE * 1.5 + 2));
                     label.setFont(ViewUtilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
@@ -189,6 +203,9 @@ public class GameController {
             pieceComp.relocate(e.getSceneX() - mouseX.get() + pieceComp.getOldX(), e.getSceneY() - mouseY.get() + pieceComp.getOldY());
             int rowDragged = toBoardPos(pieceComp.getLayoutY());
             int colDragged = toBoardPos(pieceComp.getLayoutX());
+            if (rowDragged < 0 || rowDragged >= Constants.HEIGHT || colDragged < 0 || colDragged >= Constants.WIDTH) {
+                return;
+            }
             if (draggedTile == null) {
                 draggedTile = game.getBoard()[rowDragged][colDragged];
             } else if (rowDragged == draggedTile.getRow() && colDragged == draggedTile.getCol()) {
@@ -219,6 +236,11 @@ public class GameController {
                 pieceComp.abortMove();
                 return;
             }
+            if (newRow < 0 || newRow >= Constants.HEIGHT || newCol < 0 || newCol >= Constants.WIDTH) {
+                // if the piece is moved out of the board, we abort the move
+                pieceComp.abortMove();
+                return;
+            }
 
             Move move = new Move(game.getBoard()[oldRow][oldCol], game.getBoard()[newRow][newCol]);
             MoveResult moveResult = game.processMove(move);
@@ -242,10 +264,12 @@ public class GameController {
 
     private int toBoardPos(double pixel) {
         // this method is used to convert the pixel position on the screen to the position on the board
-        return (int) ((int) (pixel + TILE_SIZE / 2) / TILE_SIZE);
+        return (int) ((int) (pixel + AdaptiveUtilities.TILE_SIZE / 2) / AdaptiveUtilities.TILE_SIZE);
     }
 
     private void switchPlayer() {
+        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
+        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
         if (game.isGameOver()) {
             endGame();
             return;
@@ -256,7 +280,6 @@ public class GameController {
             ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
         }
         game.switchPlayer();
-
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
             game.getCurrentPlayer().playTimer();
@@ -274,7 +297,7 @@ public class GameController {
             }
             botMakeMove();
             timeline.stop();
-            prbTimeLeft.setProgress(1);
+            prbTimeLeftRed.setProgress(1);
         }
         updateCurrentPlayerLabel();
     }
@@ -287,16 +310,21 @@ public class GameController {
 
     public void runTimer() {
         timeline.stop();
-        prbTimeLeft.setPrefWidth(AdaptiveUtilities.BOARD_WIDTH);
-        prbTimeLeft.setProgress(1);
-
+        prbTimeLeftRed.setProgress(1);
+        prbTimeLeftBlue.setProgress(1);
+        timeline.getKeyFrames().clear();
         if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
-            prbTimeLeft.setRotate(180);
-            prbTimeLeft.setStyle("-fx-accent: #E21818;");
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeftRed.progressProperty(), 1)),
+                    new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeftRed.progressProperty(), 0))
+            );
         } else {
-            prbTimeLeft.setRotate(0);
-            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeftBlue.progressProperty(), 1)),
+                    new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeftBlue.progressProperty(), 0))
+            );
         }
+
         timeline.playFromStart();
     }
 

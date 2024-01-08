@@ -19,6 +19,10 @@ public class BotPlayer extends Player {
         this.botLevel = botLevel;
     }
 
+    public int getBotLevel() {
+        return botLevel;
+    }
+
     public static int positionCount = 0;
 
     public Move getBestMove(GameWithBot game) {

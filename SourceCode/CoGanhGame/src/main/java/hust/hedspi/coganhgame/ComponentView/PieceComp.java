@@ -19,7 +19,7 @@ public class PieceComp extends StackPane {
     private double oldX, oldY;
     private final Ellipse ellipse;
 
-    private static final double PIECE_STROKE_WIDTH = PIECE_SIZE * 0.05;
+    private static final double PIECE_STROKE_WIDTH = PIECE_SIZE * 0.08;
 
     public PieceComp(boolean side, int row, int col) {
         this.side = side;
