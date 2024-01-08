@@ -15,7 +15,7 @@
 <?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
+<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
     <BorderPane style="-fx-background-color: #EFEFEFEF;">
         <center>
             <VBox fx:id="mainVBox" alignment="CENTER">
@@ -69,8 +69,8 @@
             </ToolBar>
         </top>
         <left>
-            <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0" BorderPane.alignment="CENTER">
-                <Label fx:id="player2NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #2666CF;" text="Player 2">
+            <VBox fx:id="vbBlue" alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0" BorderPane.alignment="CENTER">
+                <Label fx:id="player2NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #2666CF;" text="Blue">
                     <font>
                         <Font name="Arial Bold Italic" size="25.0" />
                     </font>
@@ -94,6 +94,11 @@
                         <Font name="Arial" size="20.0" />
                     </font>
                 </Label>
+            <Label fx:id="lblTotalTimeBlue" layoutX="70.0" layoutY="195.0" text="Total time:">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
             <padding>
                <Insets top="100.0" />
             </padding>
@@ -101,7 +106,7 @@
         </left>
         <right>
             <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0" BorderPane.alignment="CENTER">
-                <Label fx:id="player1NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #E21818;" text="Player 1">
+                <Label fx:id="player1NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #E21818;" text="Red">
                     <font>
                         <Font name="Arial Bold Italic" size="25.0" />
                     </font>
@@ -120,6 +125,11 @@
                         <Font name="Arial" size="18.0" />
                     </font>
                 </Label>
+            <Label fx:id="lblTotalTimeRed" text="Total time:">
+               <font>
+                  <Font name="Arial" size="20.0" />
+               </font>
+            </Label>
             <padding>
                <Insets top="100.0" />
             </padding>

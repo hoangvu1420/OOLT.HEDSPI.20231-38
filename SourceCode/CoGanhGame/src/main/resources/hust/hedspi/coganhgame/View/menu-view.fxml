@@ -68,13 +68,12 @@
    </center>
    <top>
       <ToolBar nodeOrientation="RIGHT_TO_LEFT">
-         <items>
-            <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onExitClick" style="-fx-background-color: #E74646; -fx-text-fill: white;" text="Exit">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
-         </items>
+         <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onExitClick"
+                 style="-fx-background-color: #E74646; -fx-text-fill: white;" text="Exit">
+            <cursor>
+               <Cursor fx:constant="HAND"/>
+            </cursor>
+         </Button>
       </ToolBar>
    </top>
 </BorderPane>

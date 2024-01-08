@@ -22,8 +22,6 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert.AlertType;
-import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.Group;
 import javafx.scene.control.*;
@@ -61,6 +59,12 @@ public class GameController {
     public Label lblTotalPiecesRed;
     @FXML
     public Label lblTotalPiecesBlue;
+    @FXML
+    public Label lblTotalTimeBlue;
+    @FXML
+    public Label lblTotalTimeRed;
+    @FXML
+    public VBox vbBlue;
     @FXML
     private  Label player1NameLabel;
     @FXML
@@ -111,7 +115,7 @@ public class GameController {
 
         String botLevel = "";
         if (!(game instanceof GameWithBot)) {
-            mainVBox.getChildren().remove(botPositionCountLabel);
+            vbBlue.getChildren().remove(botPositionCountLabel);
             HBox.setMargin(player2NameLabel, new Insets(0, 0, 10, 0));
         } else {
             switch (((BotPlayer) game.getPlayer2()).getBotLevel()) {
@@ -132,6 +136,8 @@ public class GameController {
         player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
         lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
         lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
+        lblTotalTimeRed.setText("Total time: " + ((double) game.getPlayer1().getTotalTime() / 1000) + "s");
+        lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
         runTimer();
     }
 
@@ -279,6 +285,14 @@ public class GameController {
             game.getCurrentPlayer().pauseTimer();
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
             ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
+
+            if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
+                lblTotalTimeRed.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
+                prbTimeLeftBlue.setProgress(1);
+            } else {
+                lblTotalTimeBlue.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
+                prbTimeLeftRed.setProgress(1);
+            }
         }
         game.switchPlayer();
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
@@ -362,6 +376,7 @@ public class GameController {
                 }
                 botPositionCount = BotPlayer.positionCount;
                 updateBotPositionCountLabel();
+                lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
                 BotPlayer.positionCount = 0;
                 switchPlayer();
             });
@@ -380,6 +395,8 @@ public class GameController {
 
     private void endGame() {
         executor.shutdown(); // shutdown the executor to avoid memory leak
+        prbTimeLeftRed.setProgress(1);
+        prbTimeLeftBlue.setProgress(1);
         timeline.stop();
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
@@ -389,18 +406,6 @@ public class GameController {
             piece.setDisablePiece();
         }
         currentLabel.setText("Winner: ");
-
-        Platform.runLater(this::showWinnerPopup);
-    }
-
-    private void showWinnerPopup() {
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Game Over");
-        alert.setHeaderText("Winner: " + game.getCurrentPlayer().getName() + "\n"
-                + game.getPlayer1().getName() + " total time: " + ((double) game.getPlayer1().getTotalTime() / 1000) + " seconds\n"
-                + game.getPlayer2().getName() + " total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + " seconds");
-        alert.setContentText(null);
-        alert.showAndWait();
     }
 
     @FXML
