@@ -119,6 +119,7 @@ public class GameController {
                 case Constants.BOT_LEVEL_MEDIUM -> botLevel = " - Medium";
                 case Constants.BOT_LEVEL_HARD -> botLevel = " - Hard";
             }
+            botPositionCountLabel.setText("Position count: " + (BotPlayer.positionCount));
         }
 
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);

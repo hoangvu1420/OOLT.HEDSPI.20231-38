@@ -15,19 +15,19 @@
 <?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.text.Font?>
 
-<StackPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
-    <BorderPane>
+<StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
+    <BorderPane style="-fx-background-color: #EFEFEFEF;">
         <center>
-            <VBox fx:id="mainVBox" alignment="CENTER" style="-fx-background-color: #EFEFEFEF;">
+            <VBox fx:id="mainVBox" alignment="CENTER">
                 <HBox alignment="CENTER">
                     <Label fx:id="currentLabel" style="-fx-font-weight: bold;" text="Current player: ">
                         <font>
-                            <Font name="Calibri" size="25.0" />
+                            <Font name="Calibri" size="35.0" />
                         </font>
                     </Label>
                     <Label fx:id="currentNameLabel" style="-fx-font-weight: bold;">
                         <font>
-                            <Font name="Arial" size="30.0" />
+                            <Font name="Calibri" size="35.0" />
                         </font>
                     </Label>
                 </HBox>
@@ -36,28 +36,6 @@
                         <Insets bottom="5.0" top="5.0" />
                     </VBox.margin>
                 </Separator>
-                <Label fx:id="player1NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #E21818;" text="Player 1">
-                    <font>
-                        <Font name="Arial Bold Italic" size="20.0" />
-                    </font>
-                    <VBox.margin>
-                        <Insets bottom="5.0" />
-                    </VBox.margin>
-                </Label>
-                <Label fx:id="lblTotalPiecesRed" text="x 10">
-                    <graphic>
-                        <StackPane>
-                            <padding>
-                                <Insets right="3.0" />
-                            </padding>
-                            <Ellipse layoutX="124.0" layoutY="27.0" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" translateY="3.6" />
-                            <Ellipse fill="#e21818" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" />
-                        </StackPane>
-                    </graphic>
-                    <font>
-                        <Font name="Arial" size="18.0" />
-                    </font>
-                </Label>
                 <ProgressBar fx:id="prbTimeLeftRed" prefHeight="15.0" progress="1.0" rotate="180.0" style="-fx-accent: #E21818;">
                     <VBox.margin>
                         <Insets top="10.0" />
@@ -73,14 +51,29 @@
                         <Insets bottom="5.0" />
                     </VBox.margin>
                 </ProgressBar>
-                <StackPane layoutX="10.0" layoutY="95.0" />
+                <padding>
+                    <Insets bottom="10.0" left="5.0" right="5.0" />
+                </padding>
+                <BorderPane.margin>
+                    <Insets />
+                </BorderPane.margin>
+            </VBox>
+        </center>
+        <top>
+            <ToolBar nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
+                <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onBtnExitClick" style="-fx-background-color: #CB3B3B;" text="Exit" textFill="WHITE">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </ToolBar>
+        </top>
+        <left>
+            <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0" BorderPane.alignment="CENTER">
                 <Label fx:id="player2NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #2666CF;" text="Player 2">
                     <font>
-                        <Font name="Arial Bold Italic" size="20.0" />
+                        <Font name="Arial Bold Italic" size="25.0" />
                     </font>
-                    <VBox.margin>
-                        <Insets bottom="5.0" />
-                    </VBox.margin>
                 </Label>
                 <Label fx:id="lblTotalPiecesBlue" text="x 10">
                     <graphic>
@@ -93,33 +86,44 @@
                         </StackPane>
                     </graphic>
                     <font>
-                        <Font name="Arial" size="18.0" />
+                        <Font name="Arial" size="20.0" />
                     </font>
                 </Label>
                 <Label fx:id="botPositionCountLabel" text="Position count:">
                     <font>
+                        <Font name="Arial" size="20.0" />
+                    </font>
+                </Label>
+            <padding>
+               <Insets top="100.0" />
+            </padding>
+            </VBox>
+        </left>
+        <right>
+            <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0" BorderPane.alignment="CENTER">
+                <Label fx:id="player1NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #E21818;" text="Player 1">
+                    <font>
+                        <Font name="Arial Bold Italic" size="25.0" />
+                    </font>
+                </Label>
+                <Label fx:id="lblTotalPiecesRed" text="x 10">
+                    <graphic>
+                        <StackPane>
+                            <padding>
+                                <Insets right="3.0" />
+                            </padding>
+                            <Ellipse layoutX="124.0" layoutY="27.0" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" translateY="3.6" />
+                            <Ellipse fill="#e21818" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" />
+                        </StackPane>
+                    </graphic>
+                    <font>
                         <Font name="Arial" size="18.0" />
                     </font>
-                    <VBox.margin>
-                        <Insets left="10.0" top="10.0" />
-                    </VBox.margin>
                 </Label>
-                <padding>
-                    <Insets bottom="10.0" left="20.0" right="20.0" />
-                </padding>
-            <BorderPane.margin>
-               <Insets />
-            </BorderPane.margin>
+            <padding>
+               <Insets top="100.0" />
+            </padding>
             </VBox>
-        </center>
-        <top>
-            <ToolBar nodeOrientation="RIGHT_TO_LEFT" BorderPane.alignment="CENTER">
-                <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onBtnExitClick" style="-fx-background-color: #CB3B3B;" text="Exit" textFill="WHITE">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-            </ToolBar>
-        </top>
+        </right>
     </BorderPane>
 </StackPane>
