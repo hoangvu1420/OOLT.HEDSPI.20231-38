@@ -19,11 +19,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert.AlertType;
 import javafx.application.Platform;
 import javafx.scene.control.Label;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.Node;
@@ -91,17 +93,21 @@ public class GameController {
 
     @FXML
     public void initialize() {
-        boardPane.setPrefSize(Utilities.BOARD_WIDTH, Utilities.BOARD_HEIGHT);
         initViewBoard();
         boardPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // this line is used to make the boardPane fit the size of the board
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
         // set the outline of the board
         boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
-
+        mainVBox.setStyle("-fx-border-color: #E21818; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
         timeline.getKeyFrames().addAll(
                 new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeft.progressProperty(), 1)),
                 new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
         );
+
+        if (!(game instanceof GameWithBot)) {
+            mainVBox.getChildren().remove(botPositionCountLabel);
+            HBox.setMargin(player2NameLabel, new Insets(0, 0, 10, 0));
+        }
 
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
@@ -269,6 +275,11 @@ public class GameController {
             botMakeMove();
             timeline.stop();
             prbTimeLeft.setProgress(1);
+        }
+        if (game.getCurrentPlayer().getSide() == RED_SIDE) {
+            mainVBox.setStyle("-fx-border-color: #E21818; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
+        } else {
+            mainVBox.setStyle("-fx-border-color: #2666CF; -fx-border-width: 3px; -fx-background-color: #EFEFEF;");
         }
         updateCurrentPlayerLabel();
     }
