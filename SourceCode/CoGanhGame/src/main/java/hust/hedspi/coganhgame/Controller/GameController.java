@@ -52,9 +52,7 @@ public class GameController {
     @FXML
     public Label currentLabel;
     @FXML
-    public ProgressBar prbTimeLeftRed;
-    @FXML
-    public ProgressBar prbTimeLeftBlue;
+    public ProgressBar prbTimeLeft;
     @FXML
     public Label lblTotalPiecesRed;
     @FXML
@@ -105,12 +103,10 @@ public class GameController {
         initViewBoard();
         boardPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // this line is used to make the boardPane fit the size of the board
         boardPane.setPrefSize(AdaptiveUtilities.BOARD_WIDTH, AdaptiveUtilities.BOARD_HEIGHT);
-        prbTimeLeftRed.setPrefWidth(AdaptiveUtilities.BOARD_WIDTH);
-        prbTimeLeftBlue.setPrefWidth(AdaptiveUtilities.BOARD_WIDTH);
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
         timeline.getKeyFrames().addAll(
-                new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeftBlue.progressProperty(), 1)),
-                new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeftBlue.progressProperty(), 0))
+                new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeft.progressProperty(), 1)),
+                new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
         );
 
         String botLevel = "";
@@ -129,7 +125,6 @@ public class GameController {
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
         updateCurrentPlayerLabel();
-        currentLabel.setText("Current Player: ");
         player1NameLabel.setText(game.getPlayer1().getName());
         player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
         player2NameLabel.setText(game.getPlayer2().getName() + botLevel);
@@ -277,22 +272,19 @@ public class GameController {
     private void switchPlayer() {
         lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
         lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
-        if (game.isGameOver()) {
-            endGame();
-            return;
-        }
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             game.getCurrentPlayer().pauseTimer();
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
             ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
-
             if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
                 lblTotalTimeRed.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
-                prbTimeLeftBlue.setProgress(1);
             } else {
                 lblTotalTimeBlue.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
-                prbTimeLeftRed.setProgress(1);
             }
+        }
+        if (game.isGameOver()) {
+            endGame();
+            return;
         }
         game.switchPlayer();
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
@@ -312,10 +304,11 @@ public class GameController {
             }
             botMakeMove();
             timeline.stop();
-            prbTimeLeftRed.setProgress(1);
+            prbTimeLeft.setProgress(1);
         }
         updateCurrentPlayerLabel();
     }
+
     private void updateCurrentPlayerLabel() {
         if (currentNameLabel != null && game != null && game.getCurrentPlayer() != null) {
             currentNameLabel.setText(game.getCurrentPlayer().getName());
@@ -325,19 +318,13 @@ public class GameController {
 
     public void runTimer() {
         timeline.stop();
-        prbTimeLeftRed.setProgress(1);
-        prbTimeLeftBlue.setProgress(1);
-        timeline.getKeyFrames().clear();
+        prbTimeLeft.setProgress(1);
         if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
-            timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeftRed.progressProperty(), 1)),
-                    new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeftRed.progressProperty(), 0))
-            );
+            prbTimeLeft.setRotate(180);
+            prbTimeLeft.setStyle("-fx-accent: #E21818;");
         } else {
-            timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeftBlue.progressProperty(), 1)),
-                    new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeftBlue.progressProperty(), 0))
-            );
+            prbTimeLeft.setRotate(0);
+            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
         }
 
         timeline.playFromStart();
@@ -395,17 +382,17 @@ public class GameController {
 
     private void endGame() {
         executor.shutdown(); // shutdown the executor to avoid memory leak
-        prbTimeLeftRed.setProgress(1);
-        prbTimeLeftBlue.setProgress(1);
+        prbTimeLeft.setProgress(1);
         timeline.stop();
-        if (game.getCurrentPlayer() instanceof HumanPlayer) {
-            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
-            game.getCurrentPlayer().pauseTimer();
-        }
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
-        currentLabel.setText("Winner: ");
+        currentLabel.setText(" win");
+        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
+            prbTimeLeft.setStyle("-fx-accent: #E21818;");
+        } else {
+            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+        }
     }
 
     @FXML

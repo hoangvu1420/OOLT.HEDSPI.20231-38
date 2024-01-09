@@ -58,6 +58,7 @@ public class MenuController {
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");
             newStage.setScene(new Scene(fxmlLoader.load()));
+            newStage.setResizable(false);
 
             newStage.setOnShown(event -> currentStage.hide());
             newStage.setOnHidden(event -> currentStage.show());
@@ -88,6 +89,7 @@ public class MenuController {
             Stage newStage = new Stage();
             newStage.setTitle("Co Ganh Game");
             newStage.setScene(new Scene(fxmlLoader.load()));
+            newStage.setResizable(false);
 
             newStage.setOnShown(event -> currentStage.hide());
             newStage.setOnHidden(event -> currentStage.show());
