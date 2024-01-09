@@ -30,6 +30,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -63,6 +64,10 @@ public class GameController {
     public Label lblTotalTimeRed;
     @FXML
     public VBox vbBlue;
+    @FXML
+    public Label lblBotLevel;
+    @FXML
+    public HBox hbBotLevel;
     @FXML
     private  Label player1NameLabel;
     @FXML
@@ -109,15 +114,24 @@ public class GameController {
                 new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
         );
 
-        String botLevel = "";
         if (!(game instanceof GameWithBot)) {
             vbBlue.getChildren().remove(botPositionCountLabel);
+            vbBlue.getChildren().remove(hbBotLevel);
             HBox.setMargin(player2NameLabel, new Insets(0, 0, 10, 0));
         } else {
             switch (((BotPlayer) game.getPlayer2()).getBotLevel()) {
-                case Constants.BOT_LEVEL_EASY -> botLevel = " - Easy";
-                case Constants.BOT_LEVEL_MEDIUM -> botLevel = " - Medium";
-                case Constants.BOT_LEVEL_HARD -> botLevel = " - Hard";
+                case Constants.BOT_LEVEL_EASY -> {
+                    lblBotLevel.setText("Easy");
+                    lblBotLevel.setTextFill(Color.web("#5D9C59"));
+                }
+                case Constants.BOT_LEVEL_MEDIUM -> {
+                    lblBotLevel.setText("Medium");
+                    lblBotLevel.setTextFill(Color.web("#FFC436"));
+                }
+                case Constants.BOT_LEVEL_HARD -> {
+                    lblBotLevel.setText("Hard");
+                    lblBotLevel.setTextFill(Color.web("#B31312"));
+                }
             }
             botPositionCountLabel.setText("Position count: " + (BotPlayer.positionCount));
         }
@@ -127,7 +141,7 @@ public class GameController {
         updateCurrentPlayerLabel();
         player1NameLabel.setText(game.getPlayer1().getName());
         player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
-        player2NameLabel.setText(game.getPlayer2().getName() + botLevel);
+        player2NameLabel.setText(game.getPlayer2().getName());
         player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
         lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
         lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());

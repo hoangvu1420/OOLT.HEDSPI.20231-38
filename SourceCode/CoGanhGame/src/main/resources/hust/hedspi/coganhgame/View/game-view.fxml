@@ -43,12 +43,12 @@
                 <HBox alignment="CENTER">
                     <Label fx:id="currentNameLabel" style="-fx-font-weight: bold;" text="Red" textFill="#e21818">
                         <font>
-                            <Font name="Calibri" size="35.0"/>
+                            <Font name="Calibri" size="40.0"/>
                         </font>
                     </Label>
                     <Label fx:id="currentLabel" style="-fx-font-weight: bold;" text="'s turn">
                         <font>
-                            <Font name="Calibri" size="35.0"/>
+                            <Font name="Calibri" size="40.0"/>
                         </font>
                     </Label>
                     <VBox.margin>
@@ -74,9 +74,21 @@
                 <VBox fx:id="vbBlue" alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0">
                     <Label fx:id="player2NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #2666CF;" text="Blue">
                         <font>
-                            <Font name="Calibri Bold Italic" size="25.0"/>
+                            <Font name="Calibri Bold Italic" size="30.0"/>
                         </font>
                     </Label>
+                    <HBox fx:id="hbBotLevel" alignment="CENTER">
+                        <Label text="Bot level: ">
+                            <font>
+                                <Font name="Calibri" size="20.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="lblBotLevel" layoutX="95.0" layoutY="10.0" text="Easy">
+                            <font>
+                                <Font name="Calibri Bold" size="20.0"/>
+                            </font>
+                        </Label>
+                    </HBox>
                     <Label fx:id="lblTotalPiecesBlue" text="x 8">
                         <graphic>
                             <StackPane>
@@ -94,24 +106,24 @@
                             </StackPane>
                         </graphic>
                         <font>
-                            <Font name="Consolas" size="22.0"/>
+                            <Font name="Consolas" size="20.0"/>
                         </font>
                     </Label>
                     <Label fx:id="botPositionCountLabel" text="Position count:">
                         <font>
-                            <Font name="Arial" size="20.0"/>
+                            <Font name="Calibri" size="20.0"/>
                         </font>
                     </Label>
                     <Label fx:id="lblTotalTimeBlue" layoutX="70.0" layoutY="195.0" text="Total time:">
                         <font>
-                            <Font name="Arial" size="20.0"/>
+                            <Font name="Calibri" size="20.0"/>
                         </font>
                     </Label>
                     <HBox.margin>
                         <Insets top="5.0"/>
                     </HBox.margin>
                 </VBox>
-                <Separator orientation="VERTICAL">
+                <Separator halignment="RIGHT" orientation="VERTICAL">
                     <HBox.margin>
                         <Insets bottom="10.0"/>
                     </HBox.margin>
@@ -128,7 +140,7 @@
                 <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0">
                     <Label fx:id="player1NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #E21818;" text="Red">
                         <font>
-                            <Font name="Calibri Bold Italic" size="25.0"/>
+                            <Font name="Calibri Bold Italic" size="30.0"/>
                         </font>
                     </Label>
                     <Label fx:id="lblTotalPiecesRed" text="x 8">
@@ -144,12 +156,12 @@
                             </StackPane>
                         </graphic>
                         <font>
-                            <Font name="Consolas" size="22.0"/>
+                            <Font name="Consolas" size="20.0"/>
                         </font>
                     </Label>
                     <Label fx:id="lblTotalTimeRed" text="Total time:">
                         <font>
-                            <Font name="Arial" size="20.0"/>
+                            <Font name="Calibri" size="20.0"/>
                         </font>
                     </Label>
                     <HBox.margin>
