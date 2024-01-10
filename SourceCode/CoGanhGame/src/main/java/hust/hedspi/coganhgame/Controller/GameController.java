@@ -69,11 +69,11 @@ public class GameController {
     @FXML
     public HBox hbBotLevel;
     @FXML
-    private  Label player1NameLabel;
+    public  Label player1NameLabel;
     @FXML
-    private Label player2NameLabel ;
+    public Label player2NameLabel ;
     @FXML
-    private Label botPositionCountLabel;
+    public Label botPositionCountLabel;
     private int botPositionCount = -1;
 
     private Tile currentTile;
