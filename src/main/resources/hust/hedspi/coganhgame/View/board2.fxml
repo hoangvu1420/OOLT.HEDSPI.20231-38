@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="897.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.PlayController">
+   <children>
+      <Text layoutX="64.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cờ gánh pieces include 16 pieces, divided into 2 colors (or 2 types). At the beginning of the game, the pieces are placed as follows: " wrappingWidth="688.6708984375">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Text layoutX="64.0" layoutY="166.0" strokeType="OUTSIDE" strokeWidth="0.0" text="5 pieces of one player are placed at the 5 intersections of the last row on their side of the board." wrappingWidth="679.89453125">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Text layoutX="64.0" layoutY="238.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2 pieces are placed at the outer edges of the second row." wrappingWidth="679.89453125">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <Text layoutX="64.0" layoutY="284.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1 piece is placed at the far left of the third row.">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="300.0" fitWidth="397.0" layoutX="202.0" layoutY="350.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/board.png" />
+         </image>
+      </ImageView>
+      <Button layoutX="744.0" layoutY="24.0" mnemonicParsing="false" onAction="#goBackToPlay" prefHeight="31.0" prefWidth="77.0" style="-fx-background-color: #E74646; -fx-text-fill: white;" text="Back">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+   </children>
+</AnchorPane>
