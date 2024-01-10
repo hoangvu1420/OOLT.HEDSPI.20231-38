@@ -13,7 +13,16 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.GridPane;
 import hust.hedspi.coganhgame.Model.Settings.GameSettings;
+
+import javafx.geometry.Insets;
+import javafx.util.Pair;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ButtonBar;
 
 public final class AdaptiveUtilities {
     public static double TILE_SIZE;
@@ -74,103 +83,164 @@ public final class AdaptiveUtilities {
     }
 
     public static GameSettings get2PlayersSettings() {
-        TextInputDialog dialog = new TextInputDialog();
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Game's settings");
         dialog.setHeaderText(null);
 
-        GameSettings gameSettings = new GameSettings();
-        Optional<String> player1Name;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Player 1 Name:");
-            player1Name = dialog.showAndWait();
-            if (!player1Name.isPresent()) {
-                return null; // User canceled the input for player 1 name
-            }
-        } while (player1Name.get().isEmpty());
-        gameSettings.setPlayer1Name(player1Name.orElse(""));
+        // Set the button types
+        ButtonType saveButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-        Optional<String> player2Name;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Player 2 Name:");
-            player2Name = dialog.showAndWait();
-            if (!player2Name.isPresent()) {
-                return null; // User canceled the input for player 2 name
-            }
-        } while (player2Name.get().isEmpty());
-        dialog.getEditor().clear();
-        gameSettings.setPlayer2Name(player2Name.orElse(""));
+        // Create the grid pane
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
 
-        Optional<String> gameTime;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Time Limit (in seconds):");
-            gameTime = dialog.showAndWait();
-            if (!gameTime.isPresent()) {
-                return null; // User canceled the input
-            }
-        } while (gameTime.get().isEmpty()|| !gameTime.get().matches("\\d+"));
-        int gameTimeValue = Integer.parseInt(gameTime.get());
-        gameSettings.setGameTime(gameTimeValue);
+        TextField player1NameField = new TextField();
+        TextField player2NameField = new TextField();
+        TextField gameTimeField = new TextField();
 
-        return gameSettings;
+        grid.add(new Label("Enter Player 1 Name:"), 0, 0);
+        grid.add(player1NameField, 1, 0);
+        grid.add(new Label("Enter Player 2 Name:"), 0, 1);
+        grid.add(player2NameField, 1, 1);
+        grid.add(new Label("Enter Time Limit (in seconds):"), 0, 2);
+        grid.add(gameTimeField, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Enable/Disable save button depending on whether a name was entered
+        Button saveButton = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
+        saveButton.setDisable(true);
+
+        // Do some validation (disable the save button if fields are empty)
+//        player1NameField.textProperty().addListener((observable, oldValue, newValue) -> {
+//            saveButton.setDisable(newValue.trim().isEmpty());
+//        });
+        // Do some validation (disable the save button if any field is empty)
+        player1NameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            saveButton.setDisable(newValue.trim().isEmpty() || player2NameField.getText().trim().isEmpty() || gameTimeField.getText().trim().isEmpty() || !gameTimeField.getText().matches("\\d+"));
+        });
+
+        player2NameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            saveButton.setDisable(newValue.trim().isEmpty() || player1NameField.getText().trim().isEmpty() || gameTimeField.getText().trim().isEmpty() || !gameTimeField.getText().matches("\\d+"));
+        });
+
+        gameTimeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            saveButton.setDisable(newValue.trim().isEmpty() || player1NameField.getText().trim().isEmpty() || player2NameField.getText().trim().isEmpty() || !gameTimeField.getText().matches("\\d+"));
+        });
+
+
+
+        // Set the result converter
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                return new Pair<>(player1NameField.getText(), player2NameField.getText() + " " + gameTimeField.getText());
+            }
+            return null;
+        });
+
+        // Show the dialog and wait for user input
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        // Process the result
+        if (result.isPresent()) {
+            if(result.get().getKey().isEmpty()){
+                ViewUtilities.showAlert("Player's name can not be empty");
+            }
+            GameSettings gameSettings = new GameSettings();
+            gameSettings.setPlayer1Name(result.get().getKey());
+            gameSettings.setPlayer2Name(result.get().getValue().split(" ")[0]);
+            gameSettings.setGameTime(Integer.parseInt(result.get().getValue().split(" ")[1]));
+            return gameSettings;
+        } else {
+            return null; // User canceled the input
+        }
     }
 
+
     public static GameSettings getPlayWithBotSettings() {
-        // Player 1 Name Input
-        TextInputDialog dialog = new TextInputDialog();
+        Dialog<GameSettings> dialog = new Dialog<>();
         dialog.setTitle("Game's settings");
         dialog.setHeaderText(null);
-        GameSettings gameSettings = new GameSettings();
-        Optional<String> player1Name;
 
-        // Check if the user canceled the input
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Player Name:");
-            player1Name = dialog.showAndWait();
-            if (!player1Name.isPresent()) {
-                return null; // User canceled the input for player 1 name
-            }
-        } while (player1Name.get().isEmpty());
-        gameSettings.setPlayer1Name(player1Name.orElse(""));
+        // Set the button types
+        ButtonType okButtonType = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButtonType, cancelButtonType);
 
-        // Game Time Input
-        Optional<String> gameTime;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Time Limit (in seconds):");
-            gameTime = dialog.showAndWait();
-            if (!gameTime.isPresent()) {
-                return null; // User canceled the input for player 1 name
-            }
-        } while (gameTime.get().isEmpty()|| !gameTime.get().matches("\\d+"));
-        int gameTimeValue = Integer.parseInt(gameTime.get());
-        gameSettings.setGameTime(gameTimeValue);
+        // Create the grid pane
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField player1NameField = new TextField();
+        TextField gameTimeField = new TextField();
+
+        grid.add(new Label("Enter Player Name:"), 0, 0);
+        grid.add(player1NameField, 1, 0);
+        grid.add(new Label("Enter Time Limit (in seconds):"), 0, 1);
+        grid.add(gameTimeField, 1, 1);
 
         // Bot Difficulty Input
         List<String> botDifficultyOptions = List.of("Easy", "Medium", "Hard");
-        ChoiceDialog<String> botDifficultyDialog = new ChoiceDialog<>(botDifficultyOptions.get(0), botDifficultyOptions);
-        botDifficultyDialog.setTitle("Game Settings");
-        botDifficultyDialog.setHeaderText(null);
-        botDifficultyDialog.setContentText("Choose Bot Difficulty:");
-        Optional<String> botDifficulty= botDifficultyDialog.showAndWait();
-        int botDifficultyValue = Constants.BOT_LEVEL_EASY;
-        if (!botDifficulty.isPresent()) {
+        ChoiceBox<String> botDifficultyChoiceBox = new ChoiceBox<>();
+        botDifficultyChoiceBox.getItems().addAll(botDifficultyOptions);
+        botDifficultyChoiceBox.setValue(botDifficultyOptions.get(0));
+
+        grid.add(new Label("Choose Bot Difficulty:"), 0, 2);
+        grid.add(botDifficultyChoiceBox, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Enable/Disable ok button depending on whether all fields are filled and time is a valid integer
+        Button okButton = (Button) dialog.getDialogPane().lookupButton(okButtonType);
+        okButton.setDisable(true);
+
+        // Do some validation (disable the ok button if any field is empty or time is not a valid integer)
+        player1NameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty() || gameTimeField.getText().trim().isEmpty() || !gameTimeField.getText().matches("\\d+"));
+        });
+
+        gameTimeField.textProperty().addListener((observable, oldValue, newValue) -> {
+            okButton.setDisable(newValue.trim().isEmpty() || player1NameField.getText().trim().isEmpty() || !gameTimeField.getText().matches("\\d+"));
+        });
+
+        // Set the result converter
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == okButtonType) {
+                GameSettings gameSettings = new GameSettings();
+                gameSettings.setPlayer1Name(player1NameField.getText());
+                gameSettings.setGameTime(Integer.parseInt(gameTimeField.getText()));
+
+                String selectedBotDifficulty = botDifficultyChoiceBox.getValue();
+                int botDifficultyValue = getBotDifficultyValue(selectedBotDifficulty);
+                gameSettings.setBotLevel(botDifficultyValue);
+
+                return gameSettings;
+            }
             return null;
-        }
+        });
 
-        if(botDifficulty.get().equals("Medium")){
-            botDifficultyValue = Constants.BOT_LEVEL_MEDIUM;
-        }
-        if(botDifficulty.get().equals("Hard")){
-            botDifficultyValue = Constants.BOT_LEVEL_HARD;
-        }
+        // Show the dialog and wait for user input
+        Optional<GameSettings> result = dialog.showAndWait();
 
-        gameSettings.setBotLevel(botDifficultyValue);
+        return result.orElse(null);
+    }
 
-        return gameSettings;
+    private static int getBotDifficultyValue(String selectedBotDifficulty) {
+        switch (selectedBotDifficulty) {
+            case "Easy":
+                return Constants.BOT_LEVEL_EASY;
+            case "Medium":
+                return Constants.BOT_LEVEL_MEDIUM;
+            case "Hard":
+                return Constants.BOT_LEVEL_HARD;
+            default:
+                return Constants.BOT_LEVEL_EASY; // Default to Easy if unknown difficulty
+        }
     }
 
 }
