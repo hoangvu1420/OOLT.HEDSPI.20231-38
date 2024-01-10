@@ -2,10 +2,11 @@ package hust.hedspi.coganhgame.ComponentView;
 
 import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 
@@ -13,7 +14,9 @@ import static hust.hedspi.coganhgame.Utilities.AdaptiveUtilities.TILE_SIZE;
 import static hust.hedspi.coganhgame.Utilities.AdaptiveUtilities.PIECE_SIZE;
 
 public class TileComp extends StackPane {
-    private final Ellipse highlighter = new Ellipse(PIECE_SIZE * 0.5, PIECE_SIZE * 0.5);
+    private static final double HIGHLIGHTER_SIZE = PIECE_SIZE * 0.4;
+    private final Circle highlighter = new Circle(HIGHLIGHTER_SIZE);
+    private final DropShadow highlighterEffect = new DropShadow(HIGHLIGHTER_SIZE * 1.5, Color.BLACK);
 
     public TileComp(int row, int col) {
         // Position the tile
@@ -59,8 +62,6 @@ public class TileComp extends StackPane {
 
         // add highlighter
         highlighter.setFill(null);
-        highlighter.setStroke(ViewUtilities.RED_PIECE_COLOR);
-        highlighter.setStrokeWidth(PIECE_SIZE * 0.1);
         highlighter.setVisible(false);
         getChildren().add(highlighter);
     }
@@ -75,8 +76,8 @@ public class TileComp extends StackPane {
     }
 
     public void highlight(boolean side) {
-        Color color = Color.web(side ? ViewUtilities.RED_PIECE_COLOR.toString() : ViewUtilities.BUE_PIECE_COLOR.toString(), 0.7);
-        highlighter.setStroke(color);
+        Color color = Color.web(side ? ViewUtilities.RED_PIECE_COLOR.toString() : ViewUtilities.BUE_PIECE_COLOR.toString(), 0.9);
+        highlighter.setFill(color);
         highlighter.setVisible(true);
     }
 
@@ -85,10 +86,10 @@ public class TileComp extends StackPane {
     }
 
     public void fillHighlighter() {
-        highlighter.setFill(highlighter.getStroke());
+        highlighter.setEffect(highlighterEffect);
     }
 
     public void unfillHighlighter() {
-        highlighter.setFill(null);
+        highlighter.setEffect(null);
     }
 }
