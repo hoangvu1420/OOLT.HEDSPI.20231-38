@@ -15,6 +15,4 @@ module hust.hedspi.coganhgame {
     exports hust.hedspi.coganhgame.Exception;
     exports hust.hedspi.coganhgame.Model.Settings;
     opens hust.hedspi.coganhgame.Controller to javafx.fxml;
-    exports hust.hedspi.coganhgame.Utilities;
-    opens hust.hedspi.coganhgame.Utilities to javafx.fxml;
 }

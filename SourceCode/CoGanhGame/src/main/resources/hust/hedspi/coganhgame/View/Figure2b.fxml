@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Polyline?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="775.0" prefWidth="1009.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.PlayController">
+   <children>
+      <Text layoutX="52.0" layoutY="95.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- Vây / Chẹt " />
+      <Text layoutX="52.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" text="When a player's piece is surrounded by the opponent's pieces, making it unable to move, it is considered to be &quot;Vây&quot; or &quot;Chẹt&quot; (similar to playing Go). Then the surrounded piece will change color. For example, in Figure 2a, the red piece B moves as indicated by the green arrow, making the blue pieces A and C trapped. Pieces A and C will change color to red as in Figure 2b." wrappingWidth="917.6728515625" />
+      <ImageView fitHeight="272.0" fitWidth="257.0" layoutX="192.0" layoutY="280.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/2a.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="267.0" fitWidth="257.0" layoutX="583.0" layoutY="280.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@images/2b.png" />
+         </image>
+      </ImageView>
+      <Text layoutX="305.0" layoutY="579.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2b" />
+      <Text layoutX="703.0" layoutY="590.0" strokeType="OUTSIDE" strokeWidth="0.0" text="2b" />
+      <Text layoutX="378.0" layoutY="393.0" strokeType="OUTSIDE" strokeWidth="0.0" text="C" />
+      <Text layoutX="429.0" layoutY="393.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A" />
+      <Text layoutX="769.0" layoutY="393.0" strokeType="OUTSIDE" strokeWidth="0.0" text="C" />
+      <Text layoutX="820.0" layoutY="394.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A" />
+      <Button layoutX="405.0" layoutY="688.0" mnemonicParsing="false" onAction="#SwitchFigure3" prefHeight="48.0" prefWidth="166.0" text="Next Step " />
+      <Line endX="-56.0" endY="-8.0" layoutX="486.0" layoutY="470.0" startX="-63.0" startY="4.0" />
+      <Line endX="-50.0" endY="-15.0" layoutX="487.0" layoutY="476.0" startX="-43.0" startY="1.0" />
+      <Polyline fill="CHARTREUSE" layoutX="431.0" layoutY="445.0" points="0.0, 60.0, 0.0, 16.0, 6.0, 16.0, 6.0, 60.0" strokeType="INSIDE" />
+      <Button layoutX="906.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBackToFig1" prefHeight="31.0" prefWidth="77.0" style="-fx-background-color: #E74646; -fx-text-fill: white;" text="Back">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+   </children>
+</AnchorPane>

@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Utilities.Constants;
+import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
@@ -15,12 +15,8 @@ public class BotPlayer extends Player {
     private long startTime;
 
     public BotPlayer(int botLevel) {
-        super("Bot", Constants.BLUE_SIDE); // the bot player is always on the blue side (false)
+        super("Bot", Utilities.BLUE_SIDE); // the bot player is always on the blue side (false)
         this.botLevel = botLevel;
-    }
-
-    public int getBotLevel() {
-        return botLevel;
     }
 
     public static int positionCount = 0;
@@ -106,13 +102,13 @@ public class BotPlayer extends Player {
 
     private int evaluateBoard(Tile[][] board) {
         int totalValue = 0;
-        for (int row = 0; row < Constants.HEIGHT; row++) {
-            for (int col = 0; col < Constants.WIDTH; col++) {
+        for (int row = 0; row < Utilities.HEIGHT; row++) {
+            for (int col = 0; col < Utilities.WIDTH; col++) {
                 if (!board[row][col].hasPiece()) {
                     continue;
                 }
                 Piece piece = board[row][col].getPiece();
-                if (piece.getSide() == Constants.RED_SIDE) {
+                if (piece.getSide() == Utilities.RED_SIDE) {
                     totalValue -= 10;
                     totalValue -= favourablePosition[row][col];
                 } else {

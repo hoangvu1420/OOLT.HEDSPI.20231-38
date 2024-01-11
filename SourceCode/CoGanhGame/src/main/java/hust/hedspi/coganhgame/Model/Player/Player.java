@@ -1,6 +1,6 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Utilities.Constants;
+import hust.hedspi.coganhgame.Utilities;
 
 import java.io.Serializable;
 
@@ -13,7 +13,7 @@ public abstract class Player implements Serializable{
     public Player(String name, boolean side) {
         this.name = name;
         this.side = side;
-        this.totalPiece = Constants.TOTAL_PIECE / 2;
+        this.totalPiece = Utilities.TOTAL_PIECE / 2;
     }
 
     public String getName() {
