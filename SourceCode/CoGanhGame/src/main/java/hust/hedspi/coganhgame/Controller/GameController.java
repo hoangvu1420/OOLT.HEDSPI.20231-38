@@ -3,6 +3,8 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
 import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
+import hust.hedspi.coganhgame.Utilities.Constants;
+import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
 import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
@@ -10,6 +12,7 @@ import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.PauseTransition;
@@ -18,11 +21,16 @@ import javafx.beans.value.ChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.Node;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -39,18 +47,44 @@ public class GameController {
     @FXML
     public Button btnExit;
     @FXML
+    public Label currentNameLabel;
+    @FXML
+    public VBox mainVBox;
+    @FXML
+    public Label currentLabel;
+    @FXML
     public ProgressBar prbTimeLeft;
+    @FXML
+    public Label lblTotalPiecesRed;
+    @FXML
+    public Label lblTotalPiecesBlue;
+    @FXML
+    public Label lblTotalTimeBlue;
+    @FXML
+    public Label lblTotalTimeRed;
+    @FXML
+    public VBox vbBlue;
+    @FXML
+    public Label lblBotLevel;
+    @FXML
+    public HBox hbBotLevel;
+    @FXML
+    public  Label player1NameLabel;
+    @FXML
+    public Label player2NameLabel ;
+    @FXML
+    public Label botPositionCountLabel;
+    private int botPositionCount = -1;
 
     private Tile currentTile;
     private Tile draggedTile;
+
     private final Group tileCompGroup = new Group();
     private final Group pieceCompGroup = new Group();
-    private final TileComp[][] viewBoard = new TileComp[WIDTH][HEIGHT];
+    private final TileComp[][] viewBoard = new TileComp[Constants.WIDTH][Constants.HEIGHT];
     private final Map<Piece, PieceComp> pieceMap = new HashMap<>();
     private final ChangeListener<Number> timeLeftListener = (observable, oldValue, newValue) -> {
         if (newValue.intValue() <= 0) {
-            System.out.println("Time out");
-            // TODO: Delete this line after finished the UI, display the time out message on the UI
             switchPlayer();
         }
     };
@@ -71,43 +105,71 @@ public class GameController {
 
     @FXML
     public void initialize() {
-        boardPane.setPrefSize(Utilities.BOARD_WIDTH, Utilities.BOARD_HEIGHT);
         initViewBoard();
         boardPane.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE); // this line is used to make the boardPane fit the size of the board
+        boardPane.setPrefSize(AdaptiveUtilities.BOARD_WIDTH, AdaptiveUtilities.BOARD_HEIGHT);
         boardPane.getChildren().addAll(tileCompGroup, pieceCompGroup);
-        // set the outline of the board
-        boardPane.setStyle("-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15px; -fx-background-color: #EFEFEF;");
-
         timeline.getKeyFrames().addAll(
                 new KeyFrame(Duration.ZERO, new KeyValue(prbTimeLeft.progressProperty(), 1)),
                 new KeyFrame(Duration.seconds(game.getTimeLimit()), new KeyValue(prbTimeLeft.progressProperty(), 0))
         );
 
+        if (!(game instanceof GameWithBot)) {
+            vbBlue.getChildren().remove(botPositionCountLabel);
+            vbBlue.getChildren().remove(hbBotLevel);
+            HBox.setMargin(player2NameLabel, new Insets(0, 0, 10, 0));
+        } else {
+            switch (((BotPlayer) game.getPlayer2()).getBotLevel()) {
+                case Constants.BOT_LEVEL_EASY -> {
+                    lblBotLevel.setText("Easy");
+                    lblBotLevel.setTextFill(Color.web("#5D9C59"));
+                }
+                case Constants.BOT_LEVEL_MEDIUM -> {
+                    lblBotLevel.setText("Medium");
+                    lblBotLevel.setTextFill(Color.web("#FFC436"));
+                }
+                case Constants.BOT_LEVEL_HARD -> {
+                    lblBotLevel.setText("Hard");
+                    lblBotLevel.setTextFill(Color.web("#B31312"));
+                }
+            }
+            botPositionCountLabel.setText("Position count: " + (BotPlayer.positionCount));
+        }
+
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
+        updateCurrentPlayerLabel();
+        player1NameLabel.setText(game.getPlayer1().getName());
+        player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
+        player2NameLabel.setText(game.getPlayer2().getName());
+        player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
+        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
+        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
+        lblTotalTimeRed.setText("Total time: " + ((double) game.getPlayer1().getTotalTime() / 1000) + "s");
+        lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
         runTimer();
     }
 
     private void initViewBoard() {
         Tile[][] modelBoard = game.getBoard();
 
-        for (int row = 0; row < HEIGHT; row++) {
-            for (int col = 0; col < WIDTH; col++) {
+        for (int row = 0; row < Constants.HEIGHT; row++) {
+            for (int col = 0; col < Constants.WIDTH; col++) {
                 TileComp tileComp = new TileComp(row, col);
                 viewBoard[row][col] = tileComp;
 
                 // we use numbers from 1-5 to represent the rows of the board
                 // and letters from A-E to represent the columns of the board
-                if (col == 0 || col == WIDTH - 1) {
-                    Label label = new Label(String.valueOf(HEIGHT - row));
-                    label.setTranslateX(col == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5));
-                    label.setFont(Utilities.COOR_FONT);
+                if (col == 0 || col == Constants.WIDTH - 1) {
+                    Label label = new Label(String.valueOf(Constants.HEIGHT - row));
+                    label.setTranslateX(col == 0 ? -(AdaptiveUtilities.PIECE_SIZE * 1.5) : (AdaptiveUtilities.PIECE_SIZE * 1.5));
+                    label.setFont(ViewUtilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
-                if (row == 0 || row == HEIGHT - 1) {
+                if (row == 0 || row == Constants.HEIGHT - 1) {
                     Label label = new Label(String.valueOf((char) (col + 65)));
-                    label.setTranslateY(row == 0 ? -(PIECE_SIZE * 1.5) : (PIECE_SIZE * 1.5 + 2));
-                    label.setFont(Utilities.COOR_FONT);
+                    label.setTranslateY(row == 0 ? -(AdaptiveUtilities.PIECE_SIZE * 1.5) : (AdaptiveUtilities.PIECE_SIZE * 1.5 + 2));
+                    label.setFont(ViewUtilities.COOR_FONT);
                     tileComp.getChildren().add(label);
                 }
 
@@ -157,6 +219,9 @@ public class GameController {
             pieceComp.relocate(e.getSceneX() - mouseX.get() + pieceComp.getOldX(), e.getSceneY() - mouseY.get() + pieceComp.getOldY());
             int rowDragged = toBoardPos(pieceComp.getLayoutY());
             int colDragged = toBoardPos(pieceComp.getLayoutX());
+            if (rowDragged < 0 || rowDragged >= Constants.HEIGHT || colDragged < 0 || colDragged >= Constants.WIDTH) {
+                return;
+            }
             if (draggedTile == null) {
                 draggedTile = game.getBoard()[rowDragged][colDragged];
             } else if (rowDragged == draggedTile.getRow() && colDragged == draggedTile.getCol()) {
@@ -187,6 +252,11 @@ public class GameController {
                 pieceComp.abortMove();
                 return;
             }
+            if (newRow < 0 || newRow >= Constants.HEIGHT || newCol < 0 || newCol >= Constants.WIDTH) {
+                // if the piece is moved out of the board, we abort the move
+                pieceComp.abortMove();
+                return;
+            }
 
             Move move = new Move(game.getBoard()[oldRow][oldCol], game.getBoard()[newRow][newCol]);
             MoveResult moveResult = game.processMove(move);
@@ -210,24 +280,27 @@ public class GameController {
 
     private int toBoardPos(double pixel) {
         // this method is used to convert the pixel position on the screen to the position on the board
-        return (int) ((int) (pixel + TILE_SIZE / 2) / TILE_SIZE);
+        return (int) ((int) (pixel + AdaptiveUtilities.TILE_SIZE / 2) / AdaptiveUtilities.TILE_SIZE);
     }
 
     private void switchPlayer() {
-        if (game.isGameOver()) {
-            endGame();
-            return;
-        }
+        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
+        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             game.getCurrentPlayer().pauseTimer();
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
             ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
+            if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
+                lblTotalTimeRed.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
+            } else {
+                lblTotalTimeBlue.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
+            }
+        }
+        if (game.isGameOver()) {
+            endGame();
+            return;
         }
         game.switchPlayer();
-
-        System.out.println("Current player: " + game.getCurrentPlayer().getName());
-        // TODO: Delete this line after finished the UI, display the name of the current player on the UI
-
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
             game.getCurrentPlayer().playTimer();
@@ -244,21 +317,30 @@ public class GameController {
                 piece.setDisablePiece();
             }
             botMakeMove();
+            timeline.stop();
+            prbTimeLeft.setProgress(1);
+        }
+        updateCurrentPlayerLabel();
+    }
+
+    private void updateCurrentPlayerLabel() {
+        if (currentNameLabel != null && game != null && game.getCurrentPlayer() != null) {
+            currentNameLabel.setText(game.getCurrentPlayer().getName());
+            currentNameLabel.setTextFill(game.getCurrentPlayer().getSide() == Constants.RED_SIDE ? ViewUtilities.RED_PIECE_COLOR : ViewUtilities.BUE_PIECE_COLOR);
         }
     }
 
     public void runTimer() {
         timeline.stop();
-        prbTimeLeft.setPrefWidth(Utilities.BOARD_WIDTH);
         prbTimeLeft.setProgress(1);
-
-        if (game.getCurrentPlayer().getSide() == RED_SIDE) {
+        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
             prbTimeLeft.setRotate(180);
             prbTimeLeft.setStyle("-fx-accent: #E21818;");
         } else {
             prbTimeLeft.setRotate(0);
             prbTimeLeft.setStyle("-fx-accent: #2666CF;");
         }
+
         timeline.playFromStart();
     }
 
@@ -284,7 +366,7 @@ public class GameController {
             MoveResult botMoveResult = game.processMove(botMove);
             botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
 
-            PauseTransition pause = new PauseTransition(Duration.seconds(Utilities.BOT_MOVE_DELAY));
+            PauseTransition pause = new PauseTransition(Duration.seconds(Constants.BOT_MOVE_DELAY));
             pause.setOnFinished(e -> {
                 if (botMoveResult.capturedPieces() != null) {
                     // if the move is a capture move, we flip the side of the captured pieces
@@ -293,9 +375,9 @@ public class GameController {
                         capturedPieceComp.flipSide();
                     }
                 }
-                System.out.println("Position count: " + BotPlayer.positionCount);
-                // TODO: Delete these lines after finished the UI,
-                //  display the time and position count of the bot on the UI
+                botPositionCount = BotPlayer.positionCount;
+                updateBotPositionCountLabel();
+                lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
                 BotPlayer.positionCount = 0;
                 switchPlayer();
             });
@@ -306,27 +388,32 @@ public class GameController {
         executor.execute(botMoveTask);
     }
 
+    private void updateBotPositionCountLabel() {
+        if (botPositionCount != -1 ) {
+            botPositionCountLabel.setText("Position count: " + botPositionCount);
+        }
+    }
+
     private void endGame() {
         executor.shutdown(); // shutdown the executor to avoid memory leak
-        if (game.getCurrentPlayer() instanceof HumanPlayer) {
-            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
-            game.getCurrentPlayer().pauseTimer();
-        }
+        prbTimeLeft.setProgress(1);
+        timeline.stop();
         for (PieceComp piece : pieceMap.values()) {
             piece.setDisablePiece();
         }
-
-        System.out.println("Game over");
-        System.out.println("Winner: " + game.getCurrentPlayer().getName());
-        System.out.println(game.getPlayer1().getName() + " total time: " + game.getPlayer1().getTotalTime());
-        System.out.println(game.getPlayer2().getName() + " total time: " + game.getPlayer2().getTotalTime());
-        // TODO: Delete these lines after finished the UI, display the winner and total time of each player on the UI
+        currentLabel.setText(" win");
+        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
+            prbTimeLeft.setStyle("-fx-accent: #E21818;");
+        } else {
+            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+        }
     }
 
     @FXML
     public void onBtnExitClick(ActionEvent actionEvent) {
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             game.getCurrentPlayer().pauseTimer();
+            timeline.pause();
         }
 
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -356,6 +443,7 @@ public class GameController {
                 // User chose Cancel or closed the dialog -> play the timer again
                 if (game.getCurrentPlayer() instanceof HumanPlayer) {
                     game.getCurrentPlayer().playTimer();
+                    timeline.play();
                 }
             }
         } else {
