@@ -35,7 +35,7 @@ public class GameApplication extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e){
-            ViewUtilities.showAlert("Error", "Error loading menu view", e.getMessage(), Alert.AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading menu view", e.getMessage());
         }
     }
 

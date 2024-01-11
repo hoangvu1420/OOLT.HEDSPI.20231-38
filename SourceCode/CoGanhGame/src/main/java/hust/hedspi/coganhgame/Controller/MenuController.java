@@ -63,7 +63,7 @@ public class MenuController {
         try {
             game = Game.loadGame();
         } catch (GameNotFoundException e) {
-            ViewUtilities.showAlert("Error", "No saved game found!", AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "No saved game found!");
             return;
         }
 
@@ -84,7 +84,7 @@ public class MenuController {
             newStage.setScene(new Scene(fxmlLoader.load()));
             newStage.setResizable(false);
         } catch (IOException e) {
-            ViewUtilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading game view", e.getMessage());
         }
 
         newStage.setOnShown(event -> currentStage.hide());

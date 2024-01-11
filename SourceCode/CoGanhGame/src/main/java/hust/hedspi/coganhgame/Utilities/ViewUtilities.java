@@ -24,16 +24,16 @@ public final class ViewUtilities {
     public static final Color BUE_PIECE_COLOR = Color.valueOf("#2666CF");
     public static final Font COOR_FONT = new Font("Arial", 20);
 
-    public static void showAlert(String title, String content, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
+    public static void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
     }
 
-    public static void showAlert(String title, String header, String content, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
+    public static void showAlert(String title, String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
