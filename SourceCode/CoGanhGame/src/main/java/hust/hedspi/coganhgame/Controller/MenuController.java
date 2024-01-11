@@ -32,7 +32,7 @@ public class MenuController {
     protected void onNewGameClick(ActionEvent actionEvent) {
         Node source = (Node) actionEvent.getSource();
         Stage currentStage = (Stage) source.getScene().getWindow();
-        String gameMode = AdaptiveUtilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
+        String gameMode = ViewUtilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
         if (gameMode == null || gameMode.isEmpty()) {
             // User closed the game options box, return to the menu
             return;
@@ -40,14 +40,14 @@ public class MenuController {
 
         final GameController[] controller = {null};
         if (gameMode.equals("2 Players")) {
-            GameSettings gameSettings = AdaptiveUtilities.get2PlayersSettings();
+            GameSettings gameSettings = ViewUtilities.get2PlayersSettings();
             if (gameSettings == null) {
                 // User canceled the input
                 return;
             }
             controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getPlayer2Name(), gameSettings.getGameTime());
         } else if (gameMode.equals("Play With Bot")) {
-            GameSettings gameSettings = AdaptiveUtilities.getPlayWithBotSettings();
+            GameSettings gameSettings = ViewUtilities.getPlayWithBotSettings();
             if (gameSettings == null) {
                 return;
             }
