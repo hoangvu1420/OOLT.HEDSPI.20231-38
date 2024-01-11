@@ -18,7 +18,7 @@
 
 #section-title-label {
     -fx-font-weight: bold;
-    -fx-text-fill: blue; 
+    -fx-text-fill: blue;
 }
 
 .sub-section-container {
@@ -28,7 +28,7 @@
 
 #sub-section-title-label {
     -fx-font-weight: bold;
-    -fx-text-fill: green; 
+    -fx-text-fill: green;
 }
 
 .sub-sub-section-container {
@@ -38,5 +38,5 @@
 
 #sub-sub-section-title-label {
     -fx-font-weight: bold;
-    -fx-text-fill: red; 
+    -fx-text-fill: red;
 }
