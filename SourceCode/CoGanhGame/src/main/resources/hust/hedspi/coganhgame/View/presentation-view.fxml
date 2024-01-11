@@ -10,13 +10,12 @@
 <?import javafx.scene.text.Font?>
 
 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="453.0" prefWidth="703.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.PresentationController">
-     <Button fx:id="btnBack" layoutX="52.0" layoutY="416.0" onAction="#onBackClick" text="Back" />
-     <ImageView fx:id="boardImageId" fitHeight="318.0" fitWidth="319.0" layoutX="370.0" layoutY="68.0" pickOnBounds="true" preserveRatio="true">
-      <image>
-         <Image url="@images/board.PNG" />
-      </image>
-     </ImageView>
-     <Button fx:id="btnNext" layoutX="622.0" layoutY="416.0" onAction="#onNextClick" text="Next" />
+     <Button layoutX="52.0" layoutY="416.0" onAction="#onBackClick" text="Back" />
+    <ImageView fx:id="boardImageId" fitHeight="318.0" fitWidth="319.0" layoutX="370.0" layoutY="68.0"
+               pickOnBounds="true" preserveRatio="true">
+        <Image url="@images/board.PNG"/>
+    </ImageView>
+     <Button layoutX="622.0" layoutY="416.0" onAction="#onNextClick" text="Next" />
      <Label layoutX="27.0" layoutY="29.0" text="How to play ?">
          <font>
              <Font name="System Bold" size="14.0" />

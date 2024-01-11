@@ -1,16 +1,9 @@
 package hust.hedspi.coganhgame.Controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import java.io.File;
-import java.io.IOException;
 
 public class PresentationController {
 
@@ -27,8 +20,6 @@ public class PresentationController {
 
     @FXML
     private void initialize() {
-//    	txtBoard.setText("Slide 1: Introduction to the game");
-    	
         loadSlide(currentSlide);
     }
 
@@ -42,7 +33,6 @@ public class PresentationController {
 
     @FXML
     private void onNextClick() {
-        
         if (currentSlide < 10) {
             currentSlide++;
             loadSlide(currentSlide);
