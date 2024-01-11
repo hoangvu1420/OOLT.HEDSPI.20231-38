@@ -13,7 +13,16 @@ import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.layout.GridPane;
 import hust.hedspi.coganhgame.Model.Settings.GameSettings;
+
+import javafx.geometry.Insets;
+import javafx.util.Pair;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ButtonBar;
 
 public final class AdaptiveUtilities {
     public static double TILE_SIZE;
@@ -26,151 +35,6 @@ public final class AdaptiveUtilities {
         BOARD_WIDTH = TILE_SIZE * Constants.WIDTH;
         BOARD_HEIGHT = TILE_SIZE * Constants.HEIGHT;
         PIECE_SIZE = TILE_SIZE * 0.22;
-    }
-
-    public static String showGameOptions(String title, String prompt, String buttonText1, String buttonText2) {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initStyle(StageStyle.UTILITY);
-        stage.setTitle(title);
-        String[] result = {null};
-        // Create buttons
-        Button button1 = new Button(buttonText1);
-        Button button2 = new Button(buttonText2);
-        double buttonWidth = 150.0; // You can adjust the width as needed
-        button1.setMinWidth(buttonWidth);
-        button2.setMinWidth(buttonWidth);
-        // Set actions for the buttons
-        button1.setOnAction(e -> {
-            stage.close();
-            result[0] = buttonText1;
-        });
-        button2.setOnAction(e -> {
-            stage.close();
-            result[0] = buttonText2;
-        });
-        Label label = new Label(prompt);
-        label.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;"); // Increase label font size
-
-        // Increase button font size
-        button1.setStyle("-fx-font-size: 16px;");
-        button2.setStyle("-fx-font-size: 16px;");
-
-        VBox layout = new VBox(20); // Increased spacing between label and buttons
-        layout.setAlignment(Pos.CENTER); // Center the children vertically
-        layout.getChildren().addAll(label, button1, button2); // Add label on top
-
-        // Scene
-        Scene scene = new Scene(layout, 450, 250); // Adjusted width and height
-
-        // Stage setup
-        stage.setScene(scene);
-
-        // Show the stage and wait for the user's choice
-        stage.showAndWait();
-
-        // Return the text of the selected button
-        return result[0];
-    }
-
-    public static GameSettings get2PlayersSettings() {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Game's settings");
-        dialog.setHeaderText(null);
-
-        GameSettings gameSettings = new GameSettings();
-        Optional<String> player1Name;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Player 1 Name:");
-            player1Name = dialog.showAndWait();
-            if (!player1Name.isPresent()) {
-                return null; // User canceled the input for player 1 name
-            }
-        } while (player1Name.get().isEmpty());
-        gameSettings.setPlayer1Name(player1Name.orElse(""));
-
-        Optional<String> player2Name;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Player 2 Name:");
-            player2Name = dialog.showAndWait();
-            if (!player2Name.isPresent()) {
-                return null; // User canceled the input for player 2 name
-            }
-        } while (player2Name.get().isEmpty());
-        dialog.getEditor().clear();
-        gameSettings.setPlayer2Name(player2Name.orElse(""));
-
-        Optional<String> gameTime;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Time Limit (in seconds):");
-            gameTime = dialog.showAndWait();
-            if (!gameTime.isPresent()) {
-                return null; // User canceled the input
-            }
-        } while (gameTime.get().isEmpty()|| !gameTime.get().matches("\\d+"));
-        int gameTimeValue = Integer.parseInt(gameTime.get());
-        gameSettings.setGameTime(gameTimeValue);
-
-        return gameSettings;
-    }
-
-    public static GameSettings getPlayWithBotSettings() {
-        // Player 1 Name Input
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Game's settings");
-        dialog.setHeaderText(null);
-        GameSettings gameSettings = new GameSettings();
-        Optional<String> player1Name;
-
-        // Check if the user canceled the input
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Player Name:");
-            player1Name = dialog.showAndWait();
-            if (!player1Name.isPresent()) {
-                return null; // User canceled the input for player 1 name
-            }
-        } while (player1Name.get().isEmpty());
-        gameSettings.setPlayer1Name(player1Name.orElse(""));
-
-        // Game Time Input
-        Optional<String> gameTime;
-        do {
-            dialog.getEditor().clear();
-            dialog.setContentText("Enter Time Limit (in seconds):");
-            gameTime = dialog.showAndWait();
-            if (!gameTime.isPresent()) {
-                return null; // User canceled the input for player 1 name
-            }
-        } while (gameTime.get().isEmpty()|| !gameTime.get().matches("\\d+"));
-        int gameTimeValue = Integer.parseInt(gameTime.get());
-        gameSettings.setGameTime(gameTimeValue);
-
-        // Bot Difficulty Input
-        List<String> botDifficultyOptions = List.of("Easy", "Medium", "Hard");
-        ChoiceDialog<String> botDifficultyDialog = new ChoiceDialog<>(botDifficultyOptions.get(0), botDifficultyOptions);
-        botDifficultyDialog.setTitle("Game Settings");
-        botDifficultyDialog.setHeaderText(null);
-        botDifficultyDialog.setContentText("Choose Bot Difficulty:");
-        Optional<String> botDifficulty= botDifficultyDialog.showAndWait();
-        int botDifficultyValue = Constants.BOT_LEVEL_EASY;
-        if (!botDifficulty.isPresent()) {
-            return null;
-        }
-
-        if(botDifficulty.get().equals("Medium")){
-            botDifficultyValue = Constants.BOT_LEVEL_MEDIUM;
-        }
-        if(botDifficulty.get().equals("Hard")){
-            botDifficultyValue = Constants.BOT_LEVEL_HARD;
-        }
-
-        gameSettings.setBotLevel(botDifficultyValue);
-
-        return gameSettings;
     }
 
 }
