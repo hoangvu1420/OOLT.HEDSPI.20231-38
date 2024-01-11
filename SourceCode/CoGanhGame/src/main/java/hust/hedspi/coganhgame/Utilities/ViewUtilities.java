@@ -35,5 +35,11 @@ public final class ViewUtilities {
         alert.setContentText(content);
         return alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK;
     }
-
+    public static void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }
