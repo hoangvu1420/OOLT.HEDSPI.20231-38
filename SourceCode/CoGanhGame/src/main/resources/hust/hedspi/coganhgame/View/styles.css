@@ -1,0 +1,42 @@
+#main-container {
+    -fx-alignment: center;
+}
+
+#title-label {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+#main-title-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+
+.section-container {
+    -fx-spacing: 5;
+}
+
+#section-title-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: blue; 
+}
+
+.sub-section-container {
+    -fx-spacing: 5;
+    -fx-padding: 5;
+}
+
+#sub-section-title-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: green; 
+}
+
+.sub-sub-section-container {
+    -fx-spacing: 5;
+    -fx-padding: 5;
+}
+
+#sub-sub-section-title-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: red; 
+}
