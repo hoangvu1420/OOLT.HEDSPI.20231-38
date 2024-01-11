@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Ellipse?>
 <?import javafx.scene.text.*?>
-<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/20.0.1"
+<StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="hust.hedspi.coganhgame.Controller.GameController">
     <BorderPane style="-fx-background-color: #EFEFEFEF;">
         <center>
@@ -125,7 +125,7 @@
             <HBox BorderPane.alignment="CENTER">
                 <Separator orientation="VERTICAL">
                     <HBox.margin>
-                        <Insets bottom="10.0"/>
+                        <Insets bottom="10.0" left="2.0"/>
                     </HBox.margin>
                 </Separator>
                 <VBox alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0">

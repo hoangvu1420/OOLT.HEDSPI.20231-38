@@ -126,7 +126,7 @@ public class GameController {
                 }
                 case Constants.BOT_LEVEL_MEDIUM -> {
                     lblBotLevel.setText("Medium");
-                    lblBotLevel.setTextFill(Color.web("#FFC436"));
+                    lblBotLevel.setTextFill(Color.web("#6C6B30"));
                 }
                 case Constants.BOT_LEVEL_HARD -> {
                     lblBotLevel.setText("Hard");
@@ -456,7 +456,5 @@ public class GameController {
                 currentStage.hide();
             }
         }
-
-
     }
 }
