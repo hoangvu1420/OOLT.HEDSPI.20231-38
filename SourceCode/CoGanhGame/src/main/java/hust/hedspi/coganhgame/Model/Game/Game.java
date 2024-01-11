@@ -10,7 +10,6 @@ import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Player.Player;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
-import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.ArrayList;
