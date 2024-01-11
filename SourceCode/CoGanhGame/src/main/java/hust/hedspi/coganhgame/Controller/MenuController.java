@@ -4,14 +4,12 @@ import hust.hedspi.coganhgame.Exception.GameNotFoundException;
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Settings.GameSettings;
-import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
@@ -32,7 +30,7 @@ public class MenuController {
     protected void onNewGameClick(ActionEvent actionEvent) {
         Node source = (Node) actionEvent.getSource();
         Stage currentStage = (Stage) source.getScene().getWindow();
-        String gameMode = AdaptiveUtilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
+        String gameMode = ViewUtilities.showGameOptions("Choose Game Mode", "Choose Game Mode", "2 Players", "Play With Bot");
         if (gameMode == null || gameMode.isEmpty()) {
             // User closed the game options box, return to the menu
             return;
@@ -40,14 +38,14 @@ public class MenuController {
 
         final GameController[] controller = {null};
         if (gameMode.equals("2 Players")) {
-            GameSettings gameSettings = AdaptiveUtilities.get2PlayersSettings();
+            GameSettings gameSettings = ViewUtilities.get2PlayersSettings();
             if (gameSettings == null) {
                 // User canceled the input
                 return;
             }
             controller[0] = new GameController(gameSettings.getPlayer1Name(), gameSettings.getPlayer2Name(), gameSettings.getGameTime());
         } else if (gameMode.equals("Play With Bot")) {
-            GameSettings gameSettings = AdaptiveUtilities.getPlayWithBotSettings();
+            GameSettings gameSettings = ViewUtilities.getPlayWithBotSettings();
             if (gameSettings == null) {
                 return;
             }
@@ -63,7 +61,7 @@ public class MenuController {
         try {
             game = Game.loadGame();
         } catch (GameNotFoundException e) {
-            ViewUtilities.showAlert("Error", "No saved game found!", AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "No saved game found!");
             return;
         }
 
@@ -84,7 +82,7 @@ public class MenuController {
             newStage.setScene(new Scene(fxmlLoader.load()));
             newStage.setResizable(false);
         } catch (IOException e) {
-            ViewUtilities.showAlert("Error", "Error loading game view", e.getMessage(), AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading game view", e.getMessage());
         }
 
         newStage.setOnShown(event -> currentStage.hide());
@@ -96,6 +94,18 @@ public class MenuController {
 
     @FXML
     public void onHowClick(ActionEvent actionEvent) {
+        try {
+            Node source = (Node) actionEvent.getSource();
+            Stage currentStage = (Stage) source.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("View/presentation-view.fxml"));
+            Stage presentationStage = new Stage();
+            presentationStage.setTitle("How to Play");
+            Scene scene = new Scene(fxmlLoader.load());
+            presentationStage.setScene(scene);
+            presentationStage.show();
+        } catch (IOException e) {
+            ViewUtilities.showAlert("Error", "Error loading presentation view", e.getMessage());
+        }
     }
 
     @FXML

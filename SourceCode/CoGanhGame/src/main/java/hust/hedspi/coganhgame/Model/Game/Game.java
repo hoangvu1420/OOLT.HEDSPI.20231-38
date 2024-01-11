@@ -10,7 +10,6 @@ import hust.hedspi.coganhgame.Model.Player.BotPlayer;
 import hust.hedspi.coganhgame.Model.Player.Player;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
-import javafx.scene.control.Alert;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -243,7 +242,7 @@ public class Game implements Serializable {
             oos.close();
             fos.close();
         } catch (IOException ex) {
-            ViewUtilities.showAlert("Error", "Error saving game", ex.getMessage(), Alert.AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error saving game", ex.getMessage());
         }
     }
 
@@ -260,7 +259,7 @@ public class Game implements Serializable {
             ois.close();
             fis.close();
         } catch (IOException | ClassNotFoundException ex) {
-            ViewUtilities.showAlert("Error", "Error loading game", ex.getMessage(), Alert.AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading game", ex.getMessage());
         }
         return game;
     }

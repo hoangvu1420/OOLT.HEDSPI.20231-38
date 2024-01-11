@@ -6,7 +6,6 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -35,7 +34,7 @@ public class GameApplication extends Application {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e){
-            ViewUtilities.showAlert("Error", "Error loading menu view", e.getMessage(), Alert.AlertType.ERROR);
+            ViewUtilities.showAlert("Error", "Error loading menu view", e.getMessage());
         }
     }
 
