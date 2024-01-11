@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import hust.hedspi.coganhgame.GameApplication;
 import hust.hedspi.coganhgame.Model.Game.Game;
-import hust.hedspi.coganhgame.Utilities;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

@@ -1,7 +1,5 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Utilities;
-
 import java.io.Serializable;
 
 public abstract class Player implements Serializable{

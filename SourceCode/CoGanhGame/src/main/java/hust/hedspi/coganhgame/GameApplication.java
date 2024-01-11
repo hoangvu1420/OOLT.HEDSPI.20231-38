@@ -1,7 +1,5 @@
 package hust.hedspi.coganhgame;
 
-import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
-import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;

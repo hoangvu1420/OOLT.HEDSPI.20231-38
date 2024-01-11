@@ -1,6 +1,5 @@
 package hust.hedspi.coganhgame.ComponentView;
 
-import hust.hedspi.coganhgame.Utilities;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;

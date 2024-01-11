@@ -1,6 +1,5 @@
 package hust.hedspi.coganhgame.ComponentView;
 
-import hust.hedspi.coganhgame.Utilities;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;

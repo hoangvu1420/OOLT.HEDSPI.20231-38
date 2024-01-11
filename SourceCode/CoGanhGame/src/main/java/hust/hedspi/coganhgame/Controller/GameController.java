@@ -3,7 +3,6 @@ package hust.hedspi.coganhgame.Controller;
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
 import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
-import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
@@ -32,8 +31,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static hust.hedspi.coganhgame.Utilities.*;
 
 public class GameController {
     private final Game game;

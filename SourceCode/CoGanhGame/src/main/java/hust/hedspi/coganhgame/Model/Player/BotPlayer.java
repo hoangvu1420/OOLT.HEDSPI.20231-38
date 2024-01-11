@@ -1,6 +1,5 @@
 package hust.hedspi.coganhgame.Model.Player;
 
-import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;

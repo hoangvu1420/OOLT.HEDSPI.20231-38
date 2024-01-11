@@ -1,6 +1,5 @@
 package hust.hedspi.coganhgame.Model.Tile;
 
-import hust.hedspi.coganhgame.Utilities;
 import hust.hedspi.coganhgame.Model.Piece;
 
 import java.util.ArrayList;
