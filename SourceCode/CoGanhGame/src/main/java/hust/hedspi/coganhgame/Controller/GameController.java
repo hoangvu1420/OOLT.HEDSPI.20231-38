@@ -91,7 +91,7 @@ public class GameController {
         }
     };
     private final Timeline timeline = new Timeline();
-    private final ExecutorService executor = Executors.newSingleThreadExecutor(); // this executor is used to run the botMoveTask
+    private ExecutorService executor = Executors.newSingleThreadExecutor(); // this executor is used to run the botMoveTask
 
     public GameController(String player1Name, String player2Name, int timeLimit) {
         this.game = new Game(player1Name, player2Name, timeLimit);
@@ -141,6 +141,7 @@ public class GameController {
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
         updateCurrentPlayerLabel();
+        currentLabel.setText("'s turn");
         player1NameLabel.setText(game.getPlayer1().getName());
         player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
         player2NameLabel.setText(game.getPlayer2().getName());
@@ -412,7 +413,7 @@ public class GameController {
     }
 
     @FXML
-    public void onBtnResetClick(ActionEvent actionEvent) {
+    public void onBtnResetClick() {
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             game.getCurrentPlayer().pauseTimer();
             timeline.pause();
@@ -420,6 +421,7 @@ public class GameController {
 
         if (ViewUtilities.showConfirm("Reset Confirmation", "Are you sure you want to reset the game?")) {
             game.resetGame();
+            executor = Executors.newSingleThreadExecutor(); // recreate the executor
             boardPane.getChildren().clear();
             tileCompGroup.getChildren().clear();
             pieceCompGroup.getChildren().clear();
