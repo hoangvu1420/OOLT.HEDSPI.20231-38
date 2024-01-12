@@ -32,6 +32,10 @@ public abstract class Player implements Serializable{
         return totalPiece;
     }
 
+    public void setTotalTime(int totalTime) {
+        this.totalTime = totalTime;
+    }
+
     public void increaseTotalPiece(int qty) {
         totalPiece += qty;
     }

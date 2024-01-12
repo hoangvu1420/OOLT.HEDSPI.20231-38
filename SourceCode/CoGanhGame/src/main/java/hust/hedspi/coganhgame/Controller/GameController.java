@@ -74,6 +74,8 @@ public class GameController {
     public Label player2NameLabel ;
     @FXML
     public Label botPositionCountLabel;
+    @FXML
+    public Button btnReset;
     private int botPositionCount = -1;
 
     private Tile currentTile;
@@ -406,6 +408,28 @@ public class GameController {
             prbTimeLeft.setStyle("-fx-accent: #E21818;");
         } else {
             prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+        }
+    }
+
+    @FXML
+    public void onBtnResetClick(ActionEvent actionEvent) {
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            game.getCurrentPlayer().pauseTimer();
+            timeline.pause();
+        }
+
+        if (ViewUtilities.showConfirm("Reset Confirmation", "Are you sure you want to reset the game?")) {
+            game.resetGame();
+            boardPane.getChildren().clear();
+            tileCompGroup.getChildren().clear();
+            pieceCompGroup.getChildren().clear();
+            pieceMap.clear();
+            initialize();
+        } else {
+            if (game.getCurrentPlayer() instanceof HumanPlayer) {
+                game.getCurrentPlayer().playTimer();
+                timeline.play();
+            }
         }
     }
 

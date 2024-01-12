@@ -30,6 +30,13 @@
                             <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
+                    <Button fx:id="btnReset" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
+                            onAction="#onBtnResetClick" style="-fx-background-color: #4d8e2f;" text="Reset"
+                            textFill="WHITE">
+                        <cursor>
+                            <Cursor fx:constant="HAND"/>
+                        </cursor>
+                    </Button>
                 </ToolBar>
                 <HBox alignment="CENTER">
                     <Label fx:id="currentNameLabel" style="-fx-font-weight: bold;" text="Red" textFill="#e21818">
