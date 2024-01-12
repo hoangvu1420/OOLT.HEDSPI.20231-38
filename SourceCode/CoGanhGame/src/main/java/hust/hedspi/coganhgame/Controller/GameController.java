@@ -268,8 +268,10 @@ public class GameController {
         pieceComp.getEllipse().setOnMouseReleased(e -> {
             // when the piece is released, that means the player has finished moving the piece
             // then we process the move
-            for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
-                viewBoard[move.getRow()][move.getCol()].removeHighlight();
+            if (!game.isOpening()) {
+                for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
+                    viewBoard[move.getRow()][move.getCol()].removeHighlight();
+                }
             }
 
             int newRow = toBoardPos(pieceComp.getLayoutY());
