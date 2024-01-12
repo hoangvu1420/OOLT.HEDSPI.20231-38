@@ -154,6 +154,14 @@ public class GameController {
         }
         vbRed.getChildren().remove(hbOpenRed);
         vbBlue.getChildren().remove(hbOpenBlue);
+        if (game.isOpening()) {
+            ArrayList<Tile> openTiles = game.checkOpeningTile(game.getOpeningTile(), game.getOpponent().getSide());
+            viewBoard[game.getOpeningTile().getRow()][game.getOpeningTile().getCol()].highlight(game.getCurrentPlayer().getSide());
+            for (Tile openTile : openTiles) {
+                PieceComp openPieceComp = pieceMap.get(openTile.getPiece());
+                openPieceComp.highlightOpen();
+            }
+        }
 
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
@@ -216,24 +224,23 @@ public class GameController {
         pieceComp.getEllipse().setOnMousePressed(e -> {
             mouseX.set(e.getSceneX());
             mouseY.set(e.getSceneY());
-            if (game.isOpening()) {
-                return;
-            }
             int rowPressed = toBoardPos(pieceComp.getLayoutY());
             int colPressed = toBoardPos(pieceComp.getLayoutX());
             Tile currentPressedTile = game.getBoard()[rowPressed][colPressed];
             if (currentTile == null) {
                 currentTile = currentPressedTile;
             }
-            if (!currentTile.equals(currentPressedTile)) {
+            if (!currentTile.equals(currentPressedTile) && !game.isOpening()) {
                 for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
                     viewBoard[move.getRow()][move.getCol()].removeHighlight();
                 }
             }
 
             currentTile = game.getBoard()[rowPressed][colPressed];
-            for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
-                viewBoard[move.getRow()][move.getCol()].highlight(currentTile.getPiece().getSide());
+            if (!game.isOpening()) {
+                for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
+                    viewBoard[move.getRow()][move.getCol()].highlight(currentTile.getPiece().getSide());
+                }
             }
             // bring the piece to the front
             pieceComp.toFront();
@@ -306,7 +313,7 @@ public class GameController {
                     lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
                 }
                 // call the checkOpeningTile method
-                ArrayList<Tile> openTiles = game.checkOpeningTile(move.fromTile());
+                ArrayList<Tile> openTiles = game.checkOpeningTile(move.fromTile(), game.getCurrentPlayer().getSide());
                 if (!openTiles.isEmpty()) {
                     if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
                         vbRed.getChildren().add(hbOpenRed);

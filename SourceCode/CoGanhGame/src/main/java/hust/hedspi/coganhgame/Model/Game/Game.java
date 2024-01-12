@@ -243,13 +243,13 @@ public class Game implements Serializable {
         }
     }
 
-    public ArrayList<Tile> checkOpeningTile(Tile tile) {
+    public ArrayList<Tile> checkOpeningTile(Tile tile, boolean side) {
         ArrayList<Tile> connectedTiles = tile.getConnectedTiles(board);
         ArrayList<Tile> carriedTiles = new ArrayList<>();
         // loop through all the connected tiles, check if there is any piece of the opponent can move to the tile
         boolean canMove = false;
         for (Tile connectedTile : connectedTiles) {
-            if (connectedTile.hasPiece() && connectedTile.getPiece().getSide() == getOpponent().getSide()) {
+            if (connectedTile.hasPiece() && connectedTile.getPiece().getSide() == !side) {
                 canMove = true;
             }
         }
@@ -271,7 +271,7 @@ public class Game implements Serializable {
                     // if both tiles have pieces, check if the pieces have the same side
                     Piece piece1 = tile1.getPiece();
                     Piece piece2 = tile2.getPiece();
-                    if (piece1.getSide() == piece2.getSide() && piece1.getSide() == currentPlayer.getSide()) {
+                    if (piece1.getSide() == piece2.getSide() && piece1.getSide() == side) {
                         // if the pieces have the same side, add the tiles to the carried tiles
                         carriedTiles.add(tile1);
                         carriedTiles.add(tile2);
