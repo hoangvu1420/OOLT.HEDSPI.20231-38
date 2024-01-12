@@ -2,16 +2,16 @@ package hust.hedspi.coganhgame.Controller;
 
 import hust.hedspi.coganhgame.ComponentView.PieceComp;
 import hust.hedspi.coganhgame.ComponentView.TileComp;
-import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
-import hust.hedspi.coganhgame.Utilities.Constants;
-import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
-import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Game.Game;
 import hust.hedspi.coganhgame.Model.Game.GameWithBot;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
+import hust.hedspi.coganhgame.Model.Piece;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
+import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import hust.hedspi.coganhgame.Utilities.AdaptiveUtilities;
+import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -22,18 +22,18 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -49,7 +49,7 @@ public class GameController {
     @FXML
     public Label currentNameLabel;
     @FXML
-    public VBox mainVBox;
+    public VBox vbBoard;
     @FXML
     public Label currentLabel;
     @FXML
@@ -63,19 +63,33 @@ public class GameController {
     @FXML
     public Label lblTotalTimeRed;
     @FXML
+    public VBox vbRed;
+    @FXML
     public VBox vbBlue;
     @FXML
     public Label lblBotLevel;
     @FXML
     public HBox hbBotLevel;
     @FXML
-    public  Label player1NameLabel;
+    public Label player1NameLabel;
     @FXML
-    public Label player2NameLabel ;
+    public Label player2NameLabel;
     @FXML
     public Label botPositionCountLabel;
     @FXML
     public Button btnReset;
+    @FXML
+    public Button btnOpenRed;
+    @FXML
+    public Button btnOpenBlue;
+    @FXML
+    public Button btnPassBlue;
+    @FXML
+    public Button btnPassRed;
+    @FXML
+    public HBox hbOpenRed;
+    @FXML
+    public HBox hbOpenBlue;
     private int botPositionCount = -1;
 
     private Tile currentTile;
@@ -87,6 +101,7 @@ public class GameController {
     private final Map<Piece, PieceComp> pieceMap = new HashMap<>();
     private final ChangeListener<Number> timeLeftListener = (observable, oldValue, newValue) -> {
         if (newValue.intValue() <= 0) {
+            clearOpenHighlight();
             switchPlayer();
         }
     };
@@ -137,6 +152,8 @@ public class GameController {
             }
             botPositionCountLabel.setText("Position count: " + (BotPlayer.positionCount));
         }
+        vbRed.getChildren().remove(hbOpenRed);
+        vbBlue.getChildren().remove(hbOpenBlue);
 
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
@@ -199,12 +216,16 @@ public class GameController {
         pieceComp.getEllipse().setOnMousePressed(e -> {
             mouseX.set(e.getSceneX());
             mouseY.set(e.getSceneY());
+            if (game.isOpening()) {
+                return;
+            }
             int rowPressed = toBoardPos(pieceComp.getLayoutY());
             int colPressed = toBoardPos(pieceComp.getLayoutX());
+            Tile currentPressedTile = game.getBoard()[rowPressed][colPressed];
             if (currentTile == null) {
-                currentTile = game.getBoard()[rowPressed][colPressed];
+                currentTile = currentPressedTile;
             }
-            if (rowPressed != currentTile.getRow() && colPressed != currentTile.getCol()) {
+            if (!currentTile.equals(currentPressedTile)) {
                 for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
                     viewBoard[move.getRow()][move.getCol()].removeHighlight();
                 }
@@ -232,7 +253,7 @@ public class GameController {
             }
             viewBoard[draggedTile.getRow()][draggedTile.getCol()].unfillHighlighter();
             draggedTile = game.getBoard()[rowDragged][colDragged];
-            if (currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
+            if (draggedTile.equals(currentTile) || currentTile.getAvailableMoves(game.getBoard()).contains(draggedTile)) {
                 viewBoard[draggedTile.getRow()][draggedTile.getCol()].fillHighlighter();
             }
         });
@@ -262,7 +283,16 @@ public class GameController {
             }
 
             Move move = new Move(game.getBoard()[oldRow][oldCol], game.getBoard()[newRow][newCol]);
-            MoveResult moveResult = game.processMove(move);
+            if (game.isOpening() && move.toTile() != game.getOpeningTile()) {
+                // if the game is in the opening phase and the move is not to the opening tile, we abort the move
+                pieceComp.abortMove();
+                return;
+            } else {
+                game.setOpeningTile(null);
+            }
+            clearOpenHighlight();
+
+            MoveResult moveResult = game.processMove(move); // process the move
 
             if (moveResult.isValidMove()) {
                 pieceComp.move(newRow, newCol);
@@ -272,8 +302,30 @@ public class GameController {
                         PieceComp capturedPieceComp = pieceMap.get(capturedModelPiece);
                         capturedPieceComp.flipSide();
                     }
+                    lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
+                    lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
                 }
-                switchPlayer();
+                // call the checkOpeningTile method
+                ArrayList<Tile> openTiles = game.checkOpeningTile(move.fromTile());
+                if (!openTiles.isEmpty()) {
+                    if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
+                        vbRed.getChildren().add(hbOpenRed);
+                    } else {
+                        vbBlue.getChildren().add(hbOpenBlue);
+                    }
+                    viewBoard[move.fromTile().getRow()][move.fromTile().getCol()].highlight(game.getOpponent().getSide());
+                    for (Tile openTile : openTiles) {
+                        PieceComp openPieceComp = pieceMap.get(openTile.getPiece());
+                        openPieceComp.highlightOpen();
+                    }
+                    for (PieceComp piece : pieceMap.values()) {
+                        if (piece.getSide() == game.getCurrentPlayer().getSide()) {
+                            piece.setDisablePiece();
+                        }
+                    }
+                } else {
+                    switchPlayer();
+                }
             } else {
                 pieceComp.abortMove();
             }
@@ -287,8 +339,6 @@ public class GameController {
     }
 
     private void switchPlayer() {
-        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
-        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             game.getCurrentPlayer().pauseTimer();
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
@@ -382,6 +432,7 @@ public class GameController {
                 updateBotPositionCountLabel();
                 lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
                 BotPlayer.positionCount = 0;
+                clearOpenHighlight();
                 switchPlayer();
             });
             pause.play();
@@ -392,7 +443,7 @@ public class GameController {
     }
 
     private void updateBotPositionCountLabel() {
-        if (botPositionCount != -1 ) {
+        if (botPositionCount != -1) {
             botPositionCountLabel.setText("Position count: " + botPositionCount);
         }
     }
@@ -409,6 +460,13 @@ public class GameController {
             prbTimeLeft.setStyle("-fx-accent: #E21818;");
         } else {
             prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+        }
+    }
+
+    private void clearOpenHighlight() {
+        viewBoard[currentTile.getRow()][currentTile.getCol()].removeHighlight();
+        for (PieceComp pieceComp : pieceMap.values()) {
+            pieceComp.removeHighlightOpen();
         }
     }
 
@@ -433,6 +491,22 @@ public class GameController {
                 timeline.play();
             }
         }
+    }
+
+    @FXML
+    public void onBtnOpenClick() {
+        vbRed.getChildren().remove(hbOpenRed);
+        vbBlue.getChildren().remove(hbOpenBlue);
+        game.setOpeningTile(currentTile);
+        switchPlayer();
+    }
+
+    @FXML
+    public void onBtnPassClick() {
+        vbRed.getChildren().remove(hbOpenRed);
+        vbBlue.getChildren().remove(hbOpenBlue);
+        clearOpenHighlight();
+        switchPlayer();
     }
 
     @FXML

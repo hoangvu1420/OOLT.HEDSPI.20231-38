@@ -1,10 +1,10 @@
 package hust.hedspi.coganhgame.Model.Game;
 
-import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
 import hust.hedspi.coganhgame.Model.Piece;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import hust.hedspi.coganhgame.Utilities.Constants;
 
 import java.util.ArrayList;
 
@@ -15,6 +15,15 @@ public class GameWithBot extends Game {
 
     public ArrayList<Move> generateMoves() {
         ArrayList<Move> moves = new ArrayList<>();
+        if (isOpening()) {
+            for (Tile tile : getOpeningTile().getConnectedTiles(board)) {
+                if (tile.hasPiece() && tile.getPiece().getSide() == getCurrentPlayer().getSide()) {
+                    moves.add(new Move(tile, getOpeningTile()));
+                }
+            }
+            setOpeningTile(null);
+            return moves;
+        }
         for (int row = 0; row < Constants.HEIGHT; row++) {
             for (int col = 0; col < Constants.WIDTH; col++) {
                 Piece piece = board[row][col].getPiece();

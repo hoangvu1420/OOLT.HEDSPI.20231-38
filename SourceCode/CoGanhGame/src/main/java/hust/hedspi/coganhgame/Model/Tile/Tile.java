@@ -4,6 +4,7 @@ import hust.hedspi.coganhgame.Model.Piece;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public abstract class Tile implements Serializable {
     private Piece piece; // each tile may have a piece or not
@@ -63,5 +64,18 @@ public abstract class Tile implements Serializable {
         } else {
             return new Tile4Direct(piece, row, col);
         }
+    }
+
+    // override equals() and hashCode() to use in HashMap
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (!(obj instanceof Tile tile)) return false;
+        return tile.row == this.row && tile.col == this.col;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(row, col);
     }
 }

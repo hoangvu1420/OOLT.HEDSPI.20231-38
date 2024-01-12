@@ -1,14 +1,14 @@
 package hust.hedspi.coganhgame.Model.Game;
 
-import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
-import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Exception.GameNotFoundException;
-import hust.hedspi.coganhgame.Model.*;
 import hust.hedspi.coganhgame.Model.Move.Move;
 import hust.hedspi.coganhgame.Model.Move.MoveResult;
+import hust.hedspi.coganhgame.Model.Piece;
 import hust.hedspi.coganhgame.Model.Player.BotPlayer;
+import hust.hedspi.coganhgame.Model.Player.HumanPlayer;
 import hust.hedspi.coganhgame.Model.Player.Player;
 import hust.hedspi.coganhgame.Model.Tile.Tile;
+import hust.hedspi.coganhgame.Utilities.Constants;
 import hust.hedspi.coganhgame.Utilities.ViewUtilities;
 
 import java.io.*;
@@ -20,6 +20,7 @@ public class Game implements Serializable {
     private final Player player2;
     private Player currentPlayer;
     private final int timeLimit;
+    private Tile openingTile = null;
 
     public Game(String name1, String name2, int timeLimit) {
         this.player1 = new HumanPlayer(name1, true, timeLimit); // player1 is red and turn first
@@ -102,6 +103,18 @@ public class Game implements Serializable {
 
     public int getTimeLimit() {
         return this.timeLimit;
+    }
+
+    public Tile getOpeningTile() {
+        return this.openingTile;
+    }
+
+    public void setOpeningTile(Tile openingTile) {
+        this.openingTile = openingTile;
+    }
+
+    public boolean isOpening() {
+        return this.openingTile != null;
     }
 
     public void switchPlayer() {
@@ -230,6 +243,46 @@ public class Game implements Serializable {
         }
     }
 
+    public ArrayList<Tile> checkOpeningTile(Tile tile) {
+        ArrayList<Tile> connectedTiles = tile.getConnectedTiles(board);
+        ArrayList<Tile> carriedTiles = new ArrayList<>();
+        // loop through all the connected tiles, check if there is any piece of the opponent can move to the tile
+        boolean canMove = false;
+        for (Tile connectedTile : connectedTiles) {
+            if (connectedTile.hasPiece() && connectedTile.getPiece().getSide() == getOpponent().getSide()) {
+                canMove = true;
+            }
+        }
+        if (!canMove) {
+            return carriedTiles;
+        }
+
+        // loop through all the connected tiles, check each pair of connected tiles
+        for (int i = 0; i < connectedTiles.size(); i++) {
+            Tile tile1 = connectedTiles.get(i);
+            for (int j = i + 1; j < connectedTiles.size(); j++) {
+                Tile tile2 = connectedTiles.get(j);
+
+                if (tile1.getRow() + tile2.getRow() != 2 * tile.getRow() || tile1.getCol() + tile2.getCol() != 2 * tile.getCol()) {
+                    continue;
+                }
+
+                if (tile1.hasPiece() && tile2.hasPiece()) {
+                    // if both tiles have pieces, check if the pieces have the same side
+                    Piece piece1 = tile1.getPiece();
+                    Piece piece2 = tile2.getPiece();
+                    if (piece1.getSide() == piece2.getSide() && piece1.getSide() == currentPlayer.getSide()) {
+                        // if the pieces have the same side, add the tiles to the carried tiles
+                        carriedTiles.add(tile1);
+                        carriedTiles.add(tile2);
+                    }
+                }
+            }
+        }
+
+        return carriedTiles;
+    }
+
     public boolean isGameOver() {
         return getCurrentPlayer().getTotalPiece() == Constants.TOTAL_PIECE || getOpponent().getTotalPiece() == Constants.TOTAL_PIECE;
     }
@@ -244,6 +297,7 @@ public class Game implements Serializable {
         this.player2.increaseTotalPiece(Constants.TOTAL_PIECE / 2 - this.player2.getTotalPiece());
         this.player1.setTotalTime(0);
         this.player2.setTotalTime(0);
+        this.openingTile = null;
         initBoard();
     }
 

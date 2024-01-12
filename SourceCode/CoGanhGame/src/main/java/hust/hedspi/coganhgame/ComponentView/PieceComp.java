@@ -6,6 +6,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.scene.Cursor;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -18,6 +19,7 @@ public class PieceComp extends StackPane {
     private boolean side; // true: red, false: blue
     private double oldX, oldY;
     private final Ellipse ellipse;
+    private final DropShadow highlightEffect = new DropShadow(PIECE_SIZE, Color.YELLOW);
 
     private static final double PIECE_STROKE_WIDTH = PIECE_SIZE * 0.08;
 
@@ -105,5 +107,14 @@ public class PieceComp extends StackPane {
 
     public void setEnablePiece() {
         ellipse.setDisable(false);
+    }
+
+    public void highlightOpen() {
+        highlightEffect.setColor(!side ? ViewUtilities.RED_PIECE_COLOR : ViewUtilities.BUE_PIECE_COLOR);
+        ellipse.setEffect(highlightEffect);
+    }
+
+    public void removeHighlightOpen() {
+        ellipse.setEffect(null);
     }
 }
