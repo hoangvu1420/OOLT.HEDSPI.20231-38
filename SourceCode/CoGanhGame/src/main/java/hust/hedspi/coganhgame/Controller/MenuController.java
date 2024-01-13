@@ -102,6 +102,9 @@ public class MenuController {
             presentationStage.setTitle("How to Play");
             Scene scene = new Scene(fxmlLoader.load());
             presentationStage.setScene(scene);
+            presentationStage.setOnShown(event -> currentStage.hide());
+            presentationStage.setOnHidden(event -> currentStage.show());
+
             presentationStage.show();
         } catch (IOException e) {
             ViewUtilities.showAlert("Error", "Error loading presentation view", e.getMessage());
