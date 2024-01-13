@@ -166,6 +166,15 @@ public class GameController {
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
         updateCurrentPlayerLabel();
+        currentLabel.setText("'s turn");
+        player1NameLabel.setText(game.getPlayer1().getName());
+        player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
+        player2NameLabel.setText(game.getPlayer2().getName());
+        player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
+        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
+        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
+        lblTotalTimeRed.setText("Total time: " + ((double) game.getPlayer1().getTotalTime() / 1000) + "s");
+        lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
         runTimer();
     }
 
