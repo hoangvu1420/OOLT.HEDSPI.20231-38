@@ -166,15 +166,6 @@ public class GameController {
         ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
         game.getCurrentPlayer().playTimer();
         updateCurrentPlayerLabel();
-        currentLabel.setText("'s turn");
-        player1NameLabel.setText(game.getPlayer1().getName());
-        player1NameLabel.setTextFill(ViewUtilities.RED_PIECE_COLOR);
-        player2NameLabel.setText(game.getPlayer2().getName());
-        player2NameLabel.setTextFill(ViewUtilities.BUE_PIECE_COLOR);
-        lblTotalPiecesRed.setText("x " + game.getPlayer1().getTotalPiece());
-        lblTotalPiecesBlue.setText("x " + game.getPlayer2().getTotalPiece());
-        lblTotalTimeRed.setText("Total time: " + ((double) game.getPlayer1().getTotalTime() / 1000) + "s");
-        lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
         runTimer();
     }
 
@@ -230,18 +221,8 @@ public class GameController {
             if (currentTile == null) {
                 currentTile = currentPressedTile;
             }
-            if (!currentTile.equals(currentPressedTile) && !game.isOpening()) {
-                for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
-                    viewBoard[move.getRow()][move.getCol()].removeHighlight();
-                }
-            }
 
             currentTile = game.getBoard()[rowPressed][colPressed];
-            if (!game.isOpening()) {
-                for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
-                    viewBoard[move.getRow()][move.getCol()].highlight(currentTile.getPiece().getSide());
-                }
-            }
             // bring the piece to the front
             pieceComp.toFront();
         });
@@ -348,16 +329,6 @@ public class GameController {
     }
 
     private void switchPlayer() {
-        if (game.getCurrentPlayer() instanceof HumanPlayer) {
-            game.getCurrentPlayer().pauseTimer();
-            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
-            ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
-            if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
-                lblTotalTimeRed.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
-            } else {
-                lblTotalTimeBlue.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
-            }
-        }
         if (game.isGameOver()) {
             endGame();
             return;
@@ -395,13 +366,6 @@ public class GameController {
     private void runTimer() {
         timeline.stop();
         prbTimeLeft.setProgress(1);
-        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
-            prbTimeLeft.setRotate(180);
-            prbTimeLeft.setStyle("-fx-accent: #E21818;");
-        } else {
-            prbTimeLeft.setRotate(0);
-            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
-        }
 
         timeline.playFromStart();
     }
@@ -477,9 +441,6 @@ public class GameController {
             return;
         }
         viewBoard[currentTile.getRow()][currentTile.getCol()].removeHighlight();
-        for (PieceComp pieceComp : pieceMap.values()) {
-            pieceComp.removeHighlightOpen();
-        }
     }
 
     @FXML
