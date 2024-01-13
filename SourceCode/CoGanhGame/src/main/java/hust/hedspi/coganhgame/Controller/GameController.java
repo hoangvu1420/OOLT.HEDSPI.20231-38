@@ -396,7 +396,13 @@ public class GameController {
     private void runTimer() {
         timeline.stop();
         prbTimeLeft.setProgress(1);
-
+        if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) { //-----
+            prbTimeLeft.setRotate(180);
+            prbTimeLeft.setStyle("-fx-accent: #E21818;");
+        } else {
+            prbTimeLeft.setRotate(0);
+            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
+        }
         timeline.playFromStart();
     }
 
@@ -471,6 +477,9 @@ public class GameController {
             return;
         }
         viewBoard[currentTile.getRow()][currentTile.getCol()].removeHighlight();
+        for (PieceComp pieceComp : pieceMap.values()) { //-----
+            pieceComp.removeHighlightOpen();
+        }
     }
 
     @FXML
