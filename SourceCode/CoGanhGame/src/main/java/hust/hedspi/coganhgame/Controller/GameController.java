@@ -230,8 +230,18 @@ public class GameController {
             if (currentTile == null) {
                 currentTile = currentPressedTile;
             }
+                if (!currentTile.equals(currentPressedTile) && !game.isOpening()) { //-----
+                    for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
+                        viewBoard[move.getRow()][move.getCol()].removeHighlight();
+                    }
+                }
 
             currentTile = game.getBoard()[rowPressed][colPressed];
+                if (!game.isOpening()) { //-----
+                    for (Tile move : currentTile.getAvailableMoves(game.getBoard())) {
+                        viewBoard[move.getRow()][move.getCol()].highlight(currentTile.getPiece().getSide());
+                    }
+                }
             // bring the piece to the front
             pieceComp.toFront();
         });
