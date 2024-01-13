@@ -1,72 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ProgressBar?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.Ellipse?>
-<?import javafx.scene.text.Font?>
-
-<StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hust.hedspi.coganhgame.Controller.GameController">
+<?import javafx.scene.text.*?>
+<StackPane xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="hust.hedspi.coganhgame.Controller.GameController">
     <BorderPane style="-fx-background-color: #EFEFEFEF;">
         <center>
             <VBox fx:id="vbBoard" alignment="TOP_CENTER">
                 <Pane fx:id="boardPane" style="-fx-border-color: #0F044C; -fx-border-width: 5px; -fx-border-radius: 15">
                     <VBox.margin>
-                        <Insets bottom="10.0" top="5.0" />
+                        <Insets bottom="10.0" top="5.0"/>
                     </VBox.margin>
                 </Pane>
                 <BorderPane.margin>
-                    <Insets left="5.0" right="5.0" />
+                    <Insets left="5.0" right="5.0"/>
                 </BorderPane.margin>
             </VBox>
         </center>
         <top>
             <VBox alignment="CENTER" BorderPane.alignment="CENTER">
                 <ToolBar nodeOrientation="RIGHT_TO_LEFT">
-                    <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onBtnExitClick" style="-fx-background-color: #CB3B3B;" text="Exit" textFill="WHITE">
+                    <Button fx:id="btnExit" mnemonicParsing="false" onAction="#onBtnExitClick"
+                            style="-fx-background-color: #CB3B3B;" text="Exit" textFill="WHITE">
                         <cursor>
-                            <Cursor fx:constant="HAND" />
+                            <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
-                    <Button fx:id="btnReset" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBtnResetClick" style="-fx-background-color: #4d8e2f;" text="Reset" textFill="WHITE">
+                    <Button fx:id="btnReset" layoutX="10.0" layoutY="10.0" mnemonicParsing="false"
+                            onAction="#onBtnResetClick" style="-fx-background-color: #4d8e2f;" text="Reset"
+                            textFill="WHITE">
                         <cursor>
-                            <Cursor fx:constant="HAND" />
+                            <Cursor fx:constant="HAND"/>
                         </cursor>
                     </Button>
                 </ToolBar>
                 <HBox alignment="CENTER">
                     <Label fx:id="currentNameLabel" style="-fx-font-weight: bold;" text="Red" textFill="#e21818">
                         <font>
-                            <Font name="Calibri" size="40.0" />
+                            <Font name="Calibri" size="40.0"/>
                         </font>
                     </Label>
                     <Label fx:id="currentLabel" style="-fx-font-weight: bold;" text="'s turn">
                         <font>
-                            <Font name="Calibri" size="40.0" />
+                            <Font name="Calibri" size="40.0"/>
                         </font>
                     </Label>
                     <VBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="5.0"/>
                     </VBox.margin>
                 </HBox>
                 <HBox alignment="CENTER">
                     <VBox.margin>
-                        <Insets left="10.0" right="10.0" top="5.0" />
+                        <Insets left="10.0" right="10.0" top="5.0"/>
                     </VBox.margin>
-                    <ProgressBar fx:id="prbTimeLeft" maxWidth="Infinity" prefHeight="15.0" progress="1.0" style="-fx-accent: #E21818;" HBox.hgrow="ALWAYS" />
+                    <ProgressBar fx:id="prbTimeLeft" maxWidth="Infinity" prefHeight="15.0" progress="1.0"
+                                 style="-fx-accent: #E21818;" HBox.hgrow="ALWAYS"/>
                 </HBox>
                 <Separator>
                     <VBox.margin>
-                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
                     </VBox.margin>
                 </Separator>
             </VBox>
@@ -76,18 +72,18 @@
                 <VBox fx:id="vbBlue" alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0">
                     <Label fx:id="player2NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #2666CF;" text="Blue">
                         <font>
-                            <Font name="Calibri Bold Italic" size="30.0" />
+                            <Font name="Calibri Bold Italic" size="30.0"/>
                         </font>
                     </Label>
                     <HBox fx:id="hbBotLevel" alignment="CENTER">
                         <Label text="Bot level: ">
                             <font>
-                                <Font name="Calibri" size="20.0" />
+                                <Font name="Calibri" size="20.0"/>
                             </font>
                         </Label>
                         <Label fx:id="lblBotLevel" layoutX="95.0" layoutY="10.0" text="Easy">
                             <font>
-                                <Font name="Calibri Bold" size="20.0" />
+                                <Font name="Calibri Bold" size="20.0"/>
                             </font>
                         </Label>
                     </HBox>
@@ -95,55 +91,61 @@
                         <graphic>
                             <StackPane>
                                 <padding>
-                                    <Insets right="5.0" />
+                                    <Insets right="5.0"/>
                                 </padding>
-                                <Ellipse layoutX="124.0" layoutY="27.0" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" translateY="3.6" />
-                                <Ellipse fill="#2666cf" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0">
+                                <Ellipse layoutX="124.0" layoutY="27.0" radiusX="20.0" radiusY="16.64" stroke="BLACK"
+                                         strokeType="INSIDE" strokeWidth="2.0" translateY="3.6"/>
+                                <Ellipse fill="#2666cf" radiusX="20.0" radiusY="16.64" stroke="BLACK"
+                                         strokeType="INSIDE" strokeWidth="2.0">
                                     <StackPane.margin>
-                                        <Insets />
+                                        <Insets/>
                                     </StackPane.margin>
                                 </Ellipse>
                             </StackPane>
                         </graphic>
                         <font>
-                            <Font name="Consolas" size="20.0" />
+                            <Font name="Consolas" size="20.0"/>
                         </font>
                     </Label>
                     <Label fx:id="botPositionCountLabel" text="Position count:">
                         <font>
-                            <Font name="Calibri" size="20.0" />
+                            <Font name="Calibri" size="20.0"/>
                         </font>
                     </Label>
                     <Label fx:id="lblTotalTimeBlue" layoutX="70.0" layoutY="195.0" text="Total time:">
                         <font>
-                            <Font name="Calibri" size="20.0" />
+                            <Font name="Calibri" size="20.0"/>
                         </font>
                     </Label>
                     <HBox fx:id="hbOpenBlue" alignment="CENTER" spacing="5.0">
-                        <Button fx:id="btnPassBlue" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnPassClick" style="-fx-background-radius: 10; -fx-border-radius: 10;" text="Pass">
+                        <Button fx:id="btnPassBlue" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnPassClick"
+                                style="-fx-background-radius: 10; -fx-border-radius: 10;" text="Pass">
                             <cursor>
-                                <Cursor fx:constant="HAND" />
+                                <Cursor fx:constant="HAND"/>
                             </cursor>
                             <font>
-                                <Font name="Calibri" size="20.0" />
+                                <Font name="Calibri" size="20.0"/>
                             </font>
                         </Button>
-                        <Button fx:id="btnOpenBlue" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnOpenClick" prefHeight="42.0" prefWidth="120.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #2666cf; -fx-border-width: 3;" text="Open">
+                        <Button fx:id="btnOpenBlue" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnOpenClick"
+                                prefHeight="42.0" prefWidth="120.0"
+                                style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #2666cf; -fx-border-width: 3;"
+                                text="Open">
                             <cursor>
-                                <Cursor fx:constant="HAND" />
+                                <Cursor fx:constant="HAND"/>
                             </cursor>
                             <font>
-                                <Font name="Calibri" size="20.0" />
+                                <Font name="Calibri" size="20.0"/>
                             </font>
                         </Button>
                     </HBox>
                     <HBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="5.0"/>
                     </HBox.margin>
                 </VBox>
                 <Separator halignment="RIGHT" orientation="VERTICAL">
                     <HBox.margin>
-                        <Insets bottom="10.0" />
+                        <Insets bottom="10.0"/>
                     </HBox.margin>
                 </Separator>
             </HBox>
@@ -152,54 +154,61 @@
             <HBox BorderPane.alignment="CENTER">
                 <Separator orientation="VERTICAL">
                     <HBox.margin>
-                        <Insets bottom="10.0" left="2.0" />
+                        <Insets bottom="10.0" left="2.0"/>
                     </HBox.margin>
                 </Separator>
                 <VBox fx:id="vbRed" alignment="TOP_CENTER" prefWidth="250.0" spacing="10.0">
                     <Label fx:id="player1NameLabel" style="-fx-font-weight: bold; -fx-text-fill: #E21818;" text="Red">
                         <font>
-                            <Font name="Calibri Bold Italic" size="30.0" />
+                            <Font name="Calibri Bold Italic" size="30.0"/>
                         </font>
                     </Label>
                     <Label fx:id="lblTotalPiecesRed" text="x 8">
                         <graphic>
                             <StackPane>
                                 <padding>
-                                    <Insets right="5.0" />
+                                    <Insets right="5.0"/>
                                 </padding>
-                                <Ellipse layoutX="124.0" layoutY="27.0" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" translateY="3.6" />
-                                <Ellipse fill="#e21818" radiusX="20.0" radiusY="16.64" stroke="BLACK" strokeType="INSIDE" strokeWidth="2.0" />
+                                <Ellipse layoutX="124.0" layoutY="27.0" radiusX="20.0" radiusY="16.64" stroke="BLACK"
+                                         strokeType="INSIDE" strokeWidth="2.0" translateY="3.6"/>
+                                <Ellipse fill="#e21818" radiusX="20.0" radiusY="16.64" stroke="BLACK"
+                                         strokeType="INSIDE" strokeWidth="2.0"/>
                             </StackPane>
                         </graphic>
                         <font>
-                            <Font name="Consolas" size="20.0" />
+                            <Font name="Consolas" size="20.0"/>
                         </font>
                     </Label>
                     <Label fx:id="lblTotalTimeRed" text="Total time:">
                         <font>
-                            <Font name="Calibri" size="20.0" />
+                            <Font name="Calibri" size="20.0"/>
                         </font>
                     </Label>
                     <HBox fx:id="hbOpenRed" alignment="CENTER" spacing="5.0">
-                        <Button fx:id="btnOpenRed" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnOpenClick" prefHeight="42.0" prefWidth="120.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #e21818; -fx-border-width: 3;" text="Open">
+                        <Button fx:id="btnOpenRed" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnOpenClick"
+                                prefHeight="42.0" prefWidth="120.0"
+                                style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #e21818; -fx-border-width: 3;"
+                                text="Open">
                             <cursor>
-                                <Cursor fx:constant="HAND" />
+                                <Cursor fx:constant="HAND"/>
                             </cursor>
                             <font>
-                                <Font name="Calibri" size="20.0" />
+                                <Font name="Calibri" size="20.0"/>
                             </font>
                         </Button>
-                        <Button fx:id="btnPassRed" layoutX="97.0" layoutY="10.0" maxWidth="150.0" mnemonicParsing="false" onAction="#onBtnPassClick" style="-fx-background-radius: 10; -fx-border-radius: 10;" text="Pass">
+                        <Button fx:id="btnPassRed" layoutX="97.0" layoutY="10.0" maxWidth="150.0"
+                                mnemonicParsing="false" onAction="#onBtnPassClick"
+                                style="-fx-background-radius: 10; -fx-border-radius: 10;" text="Pass">
                             <cursor>
-                                <Cursor fx:constant="HAND" />
+                                <Cursor fx:constant="HAND"/>
                             </cursor>
                             <font>
-                                <Font name="Calibri" size="20.0" />
+                                <Font name="Calibri" size="20.0"/>
                             </font>
                         </Button>
                     </HBox>
                     <HBox.margin>
-                        <Insets top="5.0" />
+                        <Insets top="5.0"/>
                     </HBox.margin>
                 </VBox>
             </HBox>
