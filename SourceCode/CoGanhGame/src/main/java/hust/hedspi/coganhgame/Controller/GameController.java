@@ -348,6 +348,16 @@ public class GameController {
     }
 
     private void switchPlayer() {
+        if (game.getCurrentPlayer() instanceof HumanPlayer) {
+            game.getCurrentPlayer().pauseTimer();
+            ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().removeListener(timeLeftListener);
+            ((HumanPlayer) game.getCurrentPlayer()).setTimeLeft(game.getTimeLimit() * 1000);
+            if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
+                lblTotalTimeRed.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
+            } else {
+                lblTotalTimeBlue.setText("Total time: " + ((double) game.getCurrentPlayer().getTotalTime() / 1000) + "s");
+            }
+        }
         if (game.isGameOver()) {
             endGame();
             return;
@@ -371,6 +381,7 @@ public class GameController {
             botMakeMove();
             timeline.stop();
             prbTimeLeft.setProgress(1);
+            prbTimeLeft.setStyle("-fx-accent: #2666CF;");
         }
         updateCurrentPlayerLabel();
     }
