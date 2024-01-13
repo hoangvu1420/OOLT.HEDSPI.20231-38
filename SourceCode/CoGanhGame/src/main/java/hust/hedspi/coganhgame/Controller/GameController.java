@@ -363,6 +363,7 @@ public class GameController {
             return;
         }
         game.switchPlayer();
+        updateCurrentPlayerLabel();
         if (game.getCurrentPlayer() instanceof HumanPlayer) {
             ((HumanPlayer) game.getCurrentPlayer()).getTimeLeft().addListener(timeLeftListener);
             game.getCurrentPlayer().playTimer();
@@ -383,7 +384,6 @@ public class GameController {
             prbTimeLeft.setProgress(1);
             prbTimeLeft.setStyle("-fx-accent: #2666CF;");
         }
-        updateCurrentPlayerLabel();
     }
 
     private void updateCurrentPlayerLabel() {
@@ -426,6 +426,7 @@ public class GameController {
 
             PieceComp botPieceComp = pieceMap.get(botMove.fromTile().getPiece());
             MoveResult botMoveResult = game.processMove(botMove);
+            clearOpenHighlight();
             botPieceComp.slowMove(botMove.toTile().getRow(), botMove.toTile().getCol());
 
             PauseTransition pause = new PauseTransition(Duration.seconds(Constants.BOT_MOVE_DELAY));
@@ -441,7 +442,6 @@ public class GameController {
                 updateBotPositionCountLabel();
                 lblTotalTimeBlue.setText("Total time: " + ((double) game.getPlayer2().getTotalTime() / 1000) + "s");
                 BotPlayer.positionCount = 0;
-                clearOpenHighlight();
                 switchPlayer();
             });
             pause.play();
