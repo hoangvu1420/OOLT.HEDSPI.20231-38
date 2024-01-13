@@ -246,7 +246,16 @@ public class Game implements Serializable {
     public ArrayList<Tile> checkOpeningTile(Tile tile, boolean side) {
         ArrayList<Tile> connectedTiles = tile.getConnectedTiles(board);
         ArrayList<Tile> carriedTiles = new ArrayList<>();
-
+        // loop through all the connected tiles, check if there is any piece of the opponent can move to the tile
+        boolean canMove = false;
+        for (Tile connectedTile : connectedTiles) {
+            if (connectedTile.hasPiece() && connectedTile.getPiece().getSide() == !side) {
+                canMove = true;
+            }
+        }
+        if (!canMove) {
+            return carriedTiles;
+        }
         // loop through all the connected tiles, check each pair of connected tiles
         for (int i = 0; i < connectedTiles.size(); i++) {
             Tile tile1 = connectedTiles.get(i);
@@ -283,6 +292,11 @@ public class Game implements Serializable {
         if (this.player2 instanceof HumanPlayer) {
             ((HumanPlayer) this.player2).setTimeLeft(this.timeLimit * 1000);
         }
+        this.player1.increaseTotalPiece(Constants.TOTAL_PIECE / 2 - this.player1.getTotalPiece());
+        this.player2.increaseTotalPiece(Constants.TOTAL_PIECE / 2 - this.player2.getTotalPiece());
+        this.player1.setTotalTime(0);
+        this.player2.setTotalTime(0);
+        this.openingTile = null;
         initBoard();
     }
 
