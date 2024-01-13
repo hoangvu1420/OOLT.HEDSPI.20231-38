@@ -392,7 +392,7 @@ public class GameController {
         }
     }
 
-    public void runTimer() {
+    private void runTimer() {
         timeline.stop();
         prbTimeLeft.setProgress(1);
         if (game.getCurrentPlayer().getSide() == Constants.RED_SIDE) {
@@ -473,6 +473,9 @@ public class GameController {
     }
 
     private void clearOpenHighlight() {
+        if (currentTile == null) {
+            return;
+        }
         viewBoard[currentTile.getRow()][currentTile.getCol()].removeHighlight();
         for (PieceComp pieceComp : pieceMap.values()) {
             pieceComp.removeHighlightOpen();
